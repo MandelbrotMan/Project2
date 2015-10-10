@@ -214,7 +214,9 @@ public class MovieDetailActivity extends Activity {
                 JSONObject trailersObject = new JSONObject(urlString);
                  JSONArray trailerArray = trailersObject.getJSONArray("results");
 
-                size = trailerArray.length();
+                if(trailersObject != null){
+                    size = 1;
+                }
                 for(int i = 0; i < trailerArray.length(); i++){
                     JSONObject temp = trailerArray.getJSONObject(i);
                     String stringTemp = temp.getString("name").substring(1);
