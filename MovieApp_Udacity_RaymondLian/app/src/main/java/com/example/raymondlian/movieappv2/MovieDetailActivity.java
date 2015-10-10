@@ -13,20 +13,36 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.LayoutInflater;
+import android.widget.ListView;
+import android.widget.AdapterView;
+import android.widget.Toast;
+
 public class MovieDetailActivity extends Activity {
-    String imageURLString;
-    String movieIdString;
-    ImageView posterView;
+    String ImageURLString;
+    String MovieIdString;
+    ImageView PosterView;
+    ArrayAdapter<String> adapter;
+    ListView listView;
+    int size;
+
+    ArrayList<String> trailerTitles = new ArrayList<>();
+
     ArrayList<String> movieTrailers = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +50,10 @@ public class MovieDetailActivity extends Activity {
         setContentView(R.layout.activity_movie_detail);
         Intent intent = getIntent();
         Bundle recievedPackage = intent.getExtras();
-        imageURLString = recievedPackage.getString("image");
-        movieIdString = recievedPackage.getString("id");
+        ImageURLString = recievedPackage.getString("image");
+        MovieIdString = recievedPackage.getString("id");
+
+
 
         if(isNetworkAvailable()) {
             new imageTask().execute("");
@@ -44,7 +62,7 @@ public class MovieDetailActivity extends Activity {
             TextView dateView = (TextView) findViewById(R.id.releaseDateText);
             TextView ratingView = (TextView) findViewById(R.id.voteAverageText);
             TextView synopsisView = (TextView) findViewById(R.id.synopsisText);
-            posterView = (ImageView) findViewById(R.id.posterImageView);
+            PosterView = (ImageView) findViewById(R.id.posterImageView);
 
 
             titleView.setText(recievedPackage.getString("title"));
@@ -55,9 +73,34 @@ public class MovieDetailActivity extends Activity {
             TextView titleView = (TextView) findViewById(R.id.movieTitleText);
             titleView.setText("Connection lost");
         }
+        ArrayList<String> forecast = new ArrayList<>();
+        forecast.add("Today - Sunny - 88 / 63");
+        forecast.add("Tomorrow - Foggy - 70 / 46");
+        forecast.add("Weds - Cloudy - 72 / 63");
+        forecast.add("Thurs - Rainy - 64 / 51");
+        forecast.add("Fri - Foggy - 70 / 46");
+        forecast.add("Sat - Sunny - 76 / 68");
+
+        adapter = new ArrayAdapter<String>(
+                this,
+                R.layout.trailer_item,
+                R.id.trailerListText,
+                trailerTitles
+        );
+
+        listView = (ListView) findViewById(R.id.trailerListView);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+
+            }
+        });
 
 
     }
+
+
 
 
     @Override
@@ -91,15 +134,22 @@ public class MovieDetailActivity extends Activity {
         protected Bitmap doInBackground(String... param){
             Bitmap bmp = null;
             try {
-                URL posterURL = new URL(imageURLString);
-
-
-
+                URL posterURL = new URL(ImageURLString);
                 posterUrlConnection = (HttpURLConnection) posterURL.openConnection();
                 posterUrlConnection.setRequestMethod("GET");
                 posterUrlConnection.connect();
 
-                 bmp = BitmapFactory.decodeStream(posterURL.openConnection().getInputStream());
+                String url = getTrailerJsonURL();
+                try {
+                    getTrailersJSON(url);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+                bmp = BitmapFactory.decodeStream(posterURL.openConnection().getInputStream());
+
+
 
                 // posterView.setImageBitmap(bmp);
 
@@ -111,20 +161,29 @@ public class MovieDetailActivity extends Activity {
                 }
             }
 
-
             return bmp;
         }
         protected void onPostExecute(Bitmap image){
-            posterView.setImageBitmap(image);
+            PosterView.setImageBitmap(image);
+            listView.setAdapter(adapter);
+            Context context = getApplicationContext();
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, Integer.toString(size), duration);
+            toast.show();
+
         }
-        private void getTrailerJsonData() {
+
+        private String getTrailerJsonURL() {
             HttpURLConnection trailerUrlConnection = null;
+            URL trailersUrl = null;
+
+
 
             Uri base = Uri.parse("https://api.themoviedb.org")
                     .buildUpon()
                     .appendPath("3")
                     .appendPath("movie")
-                    .appendPath(movieIdString)
+                    .appendPath(MovieIdString)
                     .appendPath("videos")
                     .appendQueryParameter("api_key", "0109ddff503db8186924929b1814320e").
                             appendQueryParameter("language", "en").
@@ -132,10 +191,11 @@ public class MovieDetailActivity extends Activity {
 
             try {
 
-                URL trailersURL = new URL(base.toString());
-                trailerUrlConnection = (HttpURLConnection) trailersURL.openConnection();
+               trailersUrl = new URL(base.toString());
+                trailerUrlConnection = (HttpURLConnection) trailersUrl.openConnection();
                 trailerUrlConnection.setRequestMethod("GET");
                 trailerUrlConnection.connect();
+
 
             } catch (IOException e) {
                 Log.e("Error", String.valueOf(e));
@@ -145,7 +205,26 @@ public class MovieDetailActivity extends Activity {
 
                 }
             }
+            String trailerURLString = trailersUrl.toString();
+            return trailerURLString;
+
         }
+        private void getTrailersJSON (String urlString)  throws JSONException {
+
+                JSONObject trailersObject = new JSONObject(urlString);
+                 JSONArray trailerArray = trailersObject.getJSONArray("results");
+
+                size = trailerArray.length();
+                for(int i = 0; i < trailerArray.length(); i++){
+                    JSONObject temp = trailerArray.getJSONObject(i);
+                    String stringTemp = temp.getString("name").substring(1);
+                    trailerTitles.add(stringTemp);
+
+                }
+
+
+        }
+
     }
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
