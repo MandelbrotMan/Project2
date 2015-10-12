@@ -227,7 +227,7 @@ public class MovieDetailActivity extends Activity {
                     trailerTitles.add(stringTemp);
 
                 }
-            Log.v("Size of Trailer paths:", Integer.toString(trailerTitles.size()));
+        
 
 
         }
