@@ -427,7 +427,7 @@ public class MainActivity extends Activity {
         public String savedDate;
         public String savedRating;
         public String savedPlot;
-        public String savedURL;
+        public String savedURL;  //Saved URL is used for the posterPath
         public String savedId;
 
         public MovieObject(String title, String date, String rating, String plot, String id) {
