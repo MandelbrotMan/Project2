@@ -33,12 +33,16 @@ import android.widget.ListView;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 public class MovieDetailActivity extends Activity {
     String ImageURLString;
     String MovieIdString;
     ImageView PosterView;
     ArrayAdapter<String> adapter;
     ListView listView;
+
+    Context mContext = this;
     int size;
 
     ArrayList<String> trailerTitles = new ArrayList<>();
@@ -133,42 +137,17 @@ public class MovieDetailActivity extends Activity {
 
         protected Bitmap doInBackground(String... param){
             Bitmap bmp = null;
-            try {
-                URL posterURL = new URL(ImageURLString);
-                posterUrlConnection = (HttpURLConnection) posterURL.openConnection();
-                posterUrlConnection.setRequestMethod("GET");
-                posterUrlConnection.connect();
-
-                String url = getTrailerJsonURL();
-                try {
-                    getTrailersJSON(url);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-
-                bmp = BitmapFactory.decodeStream(posterURL.openConnection().getInputStream());
-
-
-
-                // posterView.setImageBitmap(bmp);
-
-            } catch (IOException e){
-                Log.e("Error", String.valueOf(e));
-            } finally {
-                if(posterUrlConnection != null){
-                    posterUrlConnection.disconnect();;
-                }
-            }
-
+            Picasso.with(mContext).load(ImageURLString).into(PosterView);
             return bmp;
+
+
+
         }
         protected void onPostExecute(Bitmap image){
-            PosterView.setImageBitmap(image);
             listView.setAdapter(adapter);
             Context context = getApplicationContext();
             int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context, Integer.toString(size), duration);
+            Toast toast = Toast.makeText(context,ImageURLString, duration);
             toast.show();
 
         }
@@ -212,14 +191,14 @@ public class MovieDetailActivity extends Activity {
         private void getTrailersJSON (String urlString)  throws JSONException {
 
                 JSONObject trailersObject = new JSONObject(urlString);
-                 JSONArray trailerArray = trailersObject.getJSONArray("results");
+                JSONArray trailerArray = trailersObject.getJSONArray("results");
 
                 if(trailersObject != null){
                     size = 1;
                 }
                 for(int i = 0; i < trailerArray.length(); i++){
                     JSONObject temp = trailerArray.getJSONObject(i);
-                    String stringTemp = temp.getString("name").substring(1);
+                    String stringTemp = temp.getString("name");
                     trailerTitles.add(stringTemp);
 
                 }

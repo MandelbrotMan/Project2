@@ -90,9 +90,6 @@ public class MainActivity extends Activity {
             adapter.notifyDataSetChanged();
             gridview.setAdapter(adapter);
             int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context, Integer.toString(moviesListed.size()), duration);
-            toast.show();
-
 
            //new ReloadImageTask((GridView)findViewById(R.id.gridview)).execute("");
 
@@ -224,7 +221,7 @@ public class MainActivity extends Activity {
             listTitle.setText(listInfo);
             Context context = getApplicationContext();
             int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context, Integer.toString(moviesListed.size()), duration);
+            Toast toast = Toast.makeText(context,moviesListed.get(1).savedId, duration);
             toast.show();
             HeaderProgress.setVisibility(View.GONE);
 
