@@ -48,7 +48,7 @@ public class MainActivity extends Activity {
 
     //Global to all methods inside MainActivity
     ArrayList<MovieObject> moviesListed;
-
+    ArrayList<MovieObject> favoriteMovies;
 
 
     //Gridview and adapter made global so async task and adapter methods can be used on them.
@@ -86,6 +86,7 @@ public class MainActivity extends Activity {
             }
 
             moviesListed = savedInstanceState.getParcelableArrayList("movies");
+            favoriteMovies = savedInstanceState.getParcelableArrayList("favorites");
             Context context = getApplicationContext();
             adapter.notifyDataSetChanged();
             gridview.setAdapter(adapter);
@@ -101,7 +102,7 @@ public class MainActivity extends Activity {
                                     int position, long id) {
 
                 final Intent i = new Intent(MainActivity.this, MovieDetailActivity.class);
-
+                final Intent i2 = new Intent(MainActivity.this, MovieDetailActivityFragment.class);
 
                 //Prepare information to be sent to the next activity
                 Bundle moviePackage = new Bundle();
@@ -112,12 +113,13 @@ public class MainActivity extends Activity {
                 moviePackage.putString("synopsis", moviesListed.get(position).savedPlot);
                 moviePackage.putString("id", moviesListed.get(position).savedId);
                 i.putExtras(moviePackage);
+                i2.putExtras(moviePackage);
 
                 startActivity(i);
 
             }
         });
-        //gridview.setAdapter(adapter);
+
         super.onCreate(savedInstanceState);
 
 
@@ -128,6 +130,7 @@ public class MainActivity extends Activity {
 
         //Bitmaps implement parcelable already.
         outState.putParcelableArrayList("movies",moviesListed);
+        outState.putParcelableArrayList("favorites",favoriteMovies);
 
         super.onSaveInstanceState(outState);
 

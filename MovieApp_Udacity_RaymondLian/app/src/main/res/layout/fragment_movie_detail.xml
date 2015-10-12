@@ -12,12 +12,9 @@
     tools:context="com.example.raymondlian.movieappv2.MovieDetailActivityFragment">
 
 
-    <TextView android:text="Title" android:layout_width="wrap_content"
+    <TextView android:text="Title" android:layout_width="match_parent"
         android:id="@+id/movieTitleText"
-        android:layout_height="50dp"
-        android:layout_toRightOf="@+id/posterImageView"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_height="20dp"
         android:background="#1094ff" />
 
     <ImageView
@@ -25,7 +22,8 @@
         android:layout_height="225dp"
         android:id="@+id/posterImageView"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="2dp"
+        android:layout_below="@+id/movieTitleText"/>
     <TextView android:text="Release Date" android:layout_width="wrap_content"
         android:id="@+id/releaseDateText"
         android:layout_height="wrap_content"
@@ -59,7 +57,15 @@
         android:id="@+id/trailerListView"
         android:layout_below="@+id/trailerListText">
     </ListView>
-
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="5dp"
+        android:id="@+id/favoriteButton"
+        android:background="#aaffec"
+        android:text="Mark as favorite"
+        android:layout_toRightOf="@+id/posterImageView"
+        android:layout_below="@+id/voteAverageText"/>
 
 
 </RelativeLayout>
