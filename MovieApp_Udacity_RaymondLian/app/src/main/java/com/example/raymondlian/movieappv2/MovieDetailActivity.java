@@ -21,7 +21,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
@@ -77,22 +80,18 @@ public class MovieDetailActivity extends Activity {
             TextView titleView = (TextView) findViewById(R.id.movieTitleText);
             titleView.setText("Connection lost");
         }
-        ArrayList<String> forecast = new ArrayList<>();
-        forecast.add("Today - Sunny - 88 / 63");
-        forecast.add("Tomorrow - Foggy - 70 / 46");
-        forecast.add("Weds - Cloudy - 72 / 63");
-        forecast.add("Thurs - Rainy - 64 / 51");
-        forecast.add("Fri - Foggy - 70 / 46");
-        forecast.add("Sat - Sunny - 76 / 68");
 
+
+        Context context = getApplicationContext();
         adapter = new ArrayAdapter<String>(
-                this,
+                context,
                 R.layout.trailer_item,
                 R.id.trailerListText,
                 trailerTitles
         );
 
         listView = (ListView) findViewById(R.id.trailerListView);
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -131,61 +130,87 @@ public class MovieDetailActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
-    private class imageTask extends AsyncTask<String, Void, Bitmap>{
+    private class imageTask extends AsyncTask<String, Void, Void>{
         HttpURLConnection posterUrlConnection = null;
 
 
-        protected Bitmap doInBackground(String... param){
+        protected Void doInBackground(String... param){
             Bitmap bmp = null;
             Picasso.with(mContext).load(ImageURLString).into(PosterView);
-            return bmp;
+            String movieTrailersUrl = getTrailerJsonURL();
+            Log.v("URL:", movieTrailersUrl);
+            try {
+                getTrailersJSON(movieTrailersUrl);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
 
+            return null;
 
         }
-        protected void onPostExecute(Bitmap image){
+        protected void onPostExecute(){
             listView.setAdapter(adapter);
-            Context context = getApplicationContext();
-            int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context,ImageURLString, duration);
-            toast.show();
+
 
         }
 
         private String getTrailerJsonURL() {
-            HttpURLConnection trailerUrlConnection = null;
-            URL trailersUrl = null;
+            String JsonUrl = "";
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader;
+
+            InputStream stream;
+            URL popularURL;
 
 
+            Uri base = Uri.parse("https://api.themoviedb.org").buildUpon().
+                    appendPath("3").
+                    appendPath("movie").
+                    appendPath(MovieIdString).
+                    appendPath("videos").
+                    appendQueryParameter("api_key", "0109ddff503db8186924929b1814320e").
+                    appendQueryParameter("language", "en").
+                    appendQueryParameter("include_image)langauge", "en, us").build();
 
-            Uri base = Uri.parse("https://api.themoviedb.org")
-                    .buildUpon()
-                    .appendPath("3")
-                    .appendPath("movie")
-                    .appendPath(MovieIdString)
-                    .appendPath("videos")
-                    .appendQueryParameter("api_key", "0109ddff503db8186924929b1814320e").
-                            appendQueryParameter("language", "en").
-                            appendQueryParameter("include_image)langauge", "en, us").build();
 
             try {
+                popularURL = new URL(base.toString());
 
-               trailersUrl = new URL(base.toString());
-                trailerUrlConnection = (HttpURLConnection) trailersUrl.openConnection();
-                trailerUrlConnection.setRequestMethod("GET");
-                trailerUrlConnection.connect();
+                urlConnection = (HttpURLConnection) popularURL.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+
+
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+
+                    buffer.append(line + "\n");
+                }
+
+                if (buffer.length() == 0) {
+                    return null;
+                }
+                JsonUrl = buffer.toString();
 
 
             } catch (IOException e) {
-                Log.e("Error", String.valueOf(e));
+                Log.e("error", String.valueOf(e));
+                return null;
             } finally {
-                if (trailerUrlConnection != null) {
-                    trailerUrlConnection.disconnect();
-
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
                 }
             }
-            String trailerURLString = trailersUrl.toString();
-            return trailerURLString;
+            return JsonUrl;
 
         }
         private void getTrailersJSON (String urlString)  throws JSONException {
@@ -196,12 +221,13 @@ public class MovieDetailActivity extends Activity {
                 if(trailersObject != null){
                     size = 1;
                 }
-                for(int i = 0; i < trailerArray.length(); i++){
+                for(int i = 0; i < trailerArray.length(); ++i){
                     JSONObject temp = trailerArray.getJSONObject(i);
                     String stringTemp = temp.getString("name");
                     trailerTitles.add(stringTemp);
 
                 }
+            Log.v("Size of Trailer paths:", Integer.toString(trailerTitles.size()));
 
 
         }
