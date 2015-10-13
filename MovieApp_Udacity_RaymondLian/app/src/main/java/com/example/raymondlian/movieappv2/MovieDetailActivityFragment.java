@@ -10,6 +10,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -31,13 +34,24 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import android.widget.Button;
+import android.widget.Toast;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MovieDetailActivityFragment extends Fragment {
-    String ImageURLString;
-    String MovieIdString;
+
+    //To be sent back if selected as favorite
+    String ImageURLString; //For posterpath
+    String MovieIdString;  //For pulling additional data of selected movie
+    String Title;
+    String Rating;
+    String ReleaseDate;
+    String Plot;
+
+
+
     ImageView PosterView;
     ArrayAdapter<String> adapter;
     ListView listView;
@@ -58,13 +72,21 @@ public class MovieDetailActivityFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Intent intent = getActivity().getIntent();
         Bundle recievedPackage = intent.getExtras();
-        ImageURLString = recievedPackage.getString("image");
-        MovieIdString = recievedPackage.getString("id");
+
 
 
 
 
         if(isNetworkAvailable()) {
+            ImageURLString = recievedPackage.getString("image");
+            MovieIdString = recievedPackage.getString("id");
+            Plot = recievedPackage.getString("synopsis");
+            Title = recievedPackage.getString("title");
+            ReleaseDate = recievedPackage.getString("release_date");
+            Rating = recievedPackage.getString("vote_average");
+
+
+
             new imageTask().execute("");
 
             TextView titleView = (TextView) inflater1.findViewById(R.id.movieTitleText);
@@ -73,11 +95,10 @@ public class MovieDetailActivityFragment extends Fragment {
             TextView synopsisView = (TextView) inflater1.findViewById(R.id.synopsisText);
             PosterView = (ImageView) inflater1.findViewById(R.id.posterImageView);
 
-
-            titleView.setText(recievedPackage.getString("title"));
-            dateView.setText(recievedPackage.getString("release_date"));
-            ratingView.setText(recievedPackage.getString("vote_average"));
-            synopsisView.setText(recievedPackage.getString("synopsis"));
+            titleView.setText(Title);
+            dateView.setText(ReleaseDate);
+            ratingView.setText(Rating);
+            synopsisView.setText(Plot);
         } else {
             TextView titleView = (TextView) inflater1.findViewById(R.id.movieTitleText);
             titleView.setText("Connection lost");
@@ -101,11 +122,58 @@ public class MovieDetailActivityFragment extends Fragment {
 
             }
         });
+        final Button button = (Button) inflater1.findViewById(R.id.favoriteButton);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context context = getContext();
+                int duration = Toast.LENGTH_LONG;
+                Toast toast = Toast.makeText(context,"Added to favorites", duration);
+                toast.show();
+                if(isNetworkAvailable()) {
+                    Bundle moviePackage = new Bundle();
+                    moviePackage.putString("title", Title);
+                    moviePackage.putString("image", ImageURLString);
+                    moviePackage.putString("release_date", ReleaseDate);
+                    moviePackage.putString("vote_average", Rating);
+                    moviePackage.putString("synopsis", Plot);
+                    moviePackage.putString("id", MovieIdString);
+                }
+            }
+        });
 
 
 
        return  inflater1;
     }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_movie_detail, menu);
+        super.onCreateOptionsMenu(menu,menuInflater);
+
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.Home) {
+            final Intent i = new Intent(getActivity(), MainActivity.class);
+            startActivity(i);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
     private class imageTask extends AsyncTask<String, Void, Void> {
         HttpURLConnection posterUrlConnection = null;
 
