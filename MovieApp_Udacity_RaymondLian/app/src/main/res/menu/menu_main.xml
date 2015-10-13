@@ -4,4 +4,6 @@
         android:orderInCategory="100" android:showAsAction="never" />
     <item android:id="@+id/action_popularityMenu" android:title="@string/action_Popularity"
         android:orderInCategory="100" android:showAsAction="never" />
+    <item android:id="@+id/action_FavoriteMenu" android:title="Favorites"
+        android:orderInCategory="100" android:showAsAction="never"/>
 </menu>

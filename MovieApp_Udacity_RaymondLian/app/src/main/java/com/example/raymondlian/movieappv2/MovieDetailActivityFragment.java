@@ -3,6 +3,7 @@ package com.example.raymondlian.movieappv2;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -49,6 +50,9 @@ public class MovieDetailActivityFragment extends Fragment {
     String Rating;
     String ReleaseDate;
     String Plot;
+
+    //Used to send back MovieObject if Selected as favorite
+    Bundle MoviePackage = new Bundle();
 
 
 
@@ -127,18 +131,22 @@ public class MovieDetailActivityFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+
                 Context context = getContext();
                 int duration = Toast.LENGTH_LONG;
                 Toast toast = Toast.makeText(context,"Added to favorites", duration);
                 toast.show();
                 if(isNetworkAvailable()) {
-                    Bundle moviePackage = new Bundle();
-                    moviePackage.putString("title", Title);
-                    moviePackage.putString("image", ImageURLString);
-                    moviePackage.putString("release_date", ReleaseDate);
-                    moviePackage.putString("vote_average", Rating);
-                    moviePackage.putString("synopsis", Plot);
-                    moviePackage.putString("id", MovieIdString);
+                    MoviePackage.putString("title", Title);
+                    MoviePackage.putString("image", ImageURLString);
+                    MoviePackage.putString("release_date", ReleaseDate);
+                    MoviePackage.putString("vote_average", Rating);
+                    MoviePackage.putString("synopsis", Plot);
+                    MoviePackage.putString("id", MovieIdString);
+
+                    button.setBackgroundColor(Color.RED);
                 }
             }
         });
@@ -165,7 +173,9 @@ public class MovieDetailActivityFragment extends Fragment {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.Home) {
+
             final Intent i = new Intent(getActivity(), MainActivity.class);
+            i.putExtras(MoviePackage);
             startActivity(i);
             return true;
         }

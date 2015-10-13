@@ -55,7 +55,7 @@ public class MainActivity extends Activity {
     GridView gridview;
     ImageAdapter adapter;
     TextView listTitle;
-    int sizeOfArray = 0;
+    int gridviewLoadType = 0; //Adapter uses this to determine what to load. 1 = favorites 0 = search result
 
     LinearLayout HeaderProgress;
 
@@ -68,14 +68,29 @@ public class MainActivity extends Activity {
         setTitle("Blue Ray Movies");
         HeaderProgress = (LinearLayout) findViewById(R.id.ProgressBarLayout);
 
-
         gridview = (GridView) findViewById(R.id.gridview);
         listTitle = (TextView) findViewById(R.id.textView);
 
         adapter = new ImageAdapter(this);
 
+        Intent intent = getIntent();
+        Bundle formMovieDetailPackage = intent.getExtras();
 
-        if (savedInstanceState == null || !savedInstanceState.containsKey("key")) {
+        if(formMovieDetailPackage != null){
+            MovieObject newFavorite = new MovieObject(
+                    formMovieDetailPackage.getString("title"),
+                    formMovieDetailPackage.getString("release_date"),
+                    formMovieDetailPackage.getString("vote_average"),
+                    formMovieDetailPackage.getString("synopsis"),
+                    formMovieDetailPackage.getString("id"),
+                    formMovieDetailPackage.getString("image")
+                    );
+            favoriteMovies.add(newFavorite);
+        }
+
+
+        //For preserving screen data during screen rotation
+        if (savedInstanceState == null || !savedInstanceState.containsKey("movies")) {
             moviesListed = new ArrayList<MovieObject>();
             new DownloadImageTask((GridView) findViewById(R.id.gridview)).execute("popular");
 
@@ -152,6 +167,7 @@ public class MainActivity extends Activity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_popularityMenu
                 ) {
+            gridviewLoadType = 0;
             gridview.setAdapter(null);
 
             new DownloadImageTask((GridView) findViewById(R.id.gridview)).execute("popular");
@@ -159,11 +175,16 @@ public class MainActivity extends Activity {
         }
         if (id == R.id.action_ratingMenu
                 ) {
+            gridviewLoadType = 0;
             gridview.setAdapter(null);
             new DownloadImageTask((GridView) findViewById(R.id.gridview)).execute("top_rated");
 
 
             return true;
+        }
+        if (id == R.id.action_FavoriteMenu){
+            gridviewLoadType = 1;
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -435,6 +456,15 @@ public class MainActivity extends Activity {
             this.savedId = id;
 
         }
+        public MovieObject(String title, String date, String rating, String plot, String id, String url) {
+            this.savedURL = url;
+            this.savedTitle = title;
+            this.savedDate = date;
+            this.savedRating = rating;
+            this.savedPlot = plot;
+            this.savedId = id;
+
+        }
 
         public MovieObject createFromParcel(Parcel in) {
             return new MovieObject(in);
@@ -474,6 +504,14 @@ public class MainActivity extends Activity {
                 return new MovieObject[size];
             }
         };
+
+
+    }
+
+    private void setFavoriteMovies(){
+        if(favoriteMovies.size() > 0){
+
+        }
 
 
     }
