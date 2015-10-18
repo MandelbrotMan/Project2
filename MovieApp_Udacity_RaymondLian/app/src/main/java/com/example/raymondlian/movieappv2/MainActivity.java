@@ -77,15 +77,21 @@ public class MainActivity extends Activity {
         Bundle formMovieDetailPackage = intent.getExtras();
 
         if(formMovieDetailPackage != null){
-            MovieObject newFavorite = new MovieObject(
-                    formMovieDetailPackage.getString("title"),
-                    formMovieDetailPackage.getString("release_date"),
-                    formMovieDetailPackage.getString("vote_average"),
-                    formMovieDetailPackage.getString("synopsis"),
-                    formMovieDetailPackage.getString("id"),
-                    formMovieDetailPackage.getString("image")
-                    );
-            favoriteMovies.add(newFavorite);
+
+                  String title = formMovieDetailPackage.getString("title");
+                  String releaseDate = formMovieDetailPackage.getString("release_date");
+                  String voteAvg =  formMovieDetailPackage.getString("vote_average");
+                  String plot = formMovieDetailPackage.getString("synopsis");
+                  String movieId = formMovieDetailPackage.getString("id");
+                  String imageUrl =  formMovieDetailPackage.getString("image");
+
+             MovieObject newFavorite = new MovieObject(title, releaseDate, voteAvg, plot, movieId, imageUrl);
+          
+            Context context = this;
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, "Added ", duration);
+            toast.show();
+
         }
 
 
@@ -144,7 +150,7 @@ public class MainActivity extends Activity {
 
         //Bitmaps implement parcelable already.
         outState.putParcelableArrayList("movies",moviesListed);
-        outState.putParcelableArrayList("favorites",favoriteMovies);
+       // outState.putParcelableArrayList("favorites",favoriteMovies);
 
         super.onSaveInstanceState(outState);
 
@@ -472,11 +478,13 @@ public class MainActivity extends Activity {
 
 
         public MovieObject(Parcel in) {
+            savedURL = in.readString();
             savedTitle = in.readString();
             savedDate = in.readString();
             savedRating = in.readString();
             savedPlot = in.readString();
             savedId = in.readString();
+
 
         }
 
@@ -486,6 +494,7 @@ public class MainActivity extends Activity {
 
 
         public void writeToParcel(Parcel out, int flags) {
+            out.writeString(savedURL);
             out.writeString(savedTitle);
             out.writeString(savedDate);
             out.writeString(savedRating);

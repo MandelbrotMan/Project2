@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.content.Intent;
 import android.widget.ArrayAdapter;
@@ -47,7 +48,6 @@ public class MovieDetailActivity extends Activity {
 
 
     }
-
 
 
 

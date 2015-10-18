@@ -52,7 +52,7 @@ public class MovieDetailActivityFragment extends Fragment {
     String Plot;
 
     //Used to send back MovieObject if Selected as favorite
-    Bundle MoviePackage = new Bundle();
+    Bundle MoviePackage = null;
 
 
 
@@ -132,13 +132,9 @@ public class MovieDetailActivityFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
+                MoviePackage = new Bundle();
 
-
-                Context context = getContext();
-                int duration = Toast.LENGTH_LONG;
-                Toast toast = Toast.makeText(context,"Added to favorites", duration);
-                toast.show();
-                if(isNetworkAvailable()) {
+                if (isNetworkAvailable()) {
                     MoviePackage.putString("title", Title);
                     MoviePackage.putString("image", ImageURLString);
                     MoviePackage.putString("release_date", ReleaseDate);
@@ -147,6 +143,10 @@ public class MovieDetailActivityFragment extends Fragment {
                     MoviePackage.putString("id", MovieIdString);
 
                     button.setBackgroundColor(Color.RED);
+                    Context context = getContext();
+                    int duration = Toast.LENGTH_LONG;
+                    Toast toast = Toast.makeText(context, "Added to favorites", duration);
+                    toast.show();
                 }
             }
         });
@@ -156,13 +156,29 @@ public class MovieDetailActivityFragment extends Fragment {
        return  inflater1;
     }
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_movie_detail, menu);
-        super.onCreateOptionsMenu(menu,menuInflater);
+        super.onCreateOptionsMenu(menu, menuInflater);
 
 
     }
+
+    /*
+    @Override
+    public void onBackPressed() {
+        String data = mEditText.getText();
+        Intent intent = new Intent();
+        intent.putExtra("MyData", data);
+        setResult(resultcode, intent);
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -175,7 +191,9 @@ public class MovieDetailActivityFragment extends Fragment {
         if (id == R.id.Home) {
 
             final Intent i = new Intent(getActivity(), MainActivity.class);
-            i.putExtras(MoviePackage);
+            if(MoviePackage != null) {
+                i.putExtras(MoviePackage);
+            }
             startActivity(i);
             return true;
         }
