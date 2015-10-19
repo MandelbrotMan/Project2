@@ -53,9 +53,9 @@ public class MainActivity extends Activity {
 
     //Gridview and adapter made global so async task and adapter methods can be used on them.
     GridView gridview;
-    ImageAdapter adapter;
+    ImageAdapter JsonAdapter;
+    ImageAdapter LocalAdapter;
     TextView listTitle;
-    int gridviewLoadType = 0; //Adapter uses this to determine what to load. 1 = favorites 0 = search result
 
     LinearLayout HeaderProgress;
 
@@ -71,7 +71,8 @@ public class MainActivity extends Activity {
         gridview = (GridView) findViewById(R.id.gridview);
         listTitle = (TextView) findViewById(R.id.textView);
 
-        adapter = new ImageAdapter(this);
+        JsonAdapter = new ImageAdapter(this, moviesListed);
+        LocalAdapter = new ImageAdapter(this, favoriteMovies);
 
         Intent intent = getIntent();
         Bundle formMovieDetailPackage = intent.getExtras();
@@ -86,6 +87,7 @@ public class MainActivity extends Activity {
                   String imageUrl =  formMovieDetailPackage.getString("image");
 
              MovieObject newFavorite = new MovieObject(title, releaseDate, voteAvg, plot, movieId, imageUrl);
+             favoriteMovies.add(newFavorite);
 
             Context context = this;
             int duration = Toast.LENGTH_LONG;
@@ -108,8 +110,8 @@ public class MainActivity extends Activity {
             moviesListed = savedInstanceState.getParcelableArrayList("movies");
             favoriteMovies = savedInstanceState.getParcelableArrayList("favorites");
             Context context = getApplicationContext();
-            adapter.notifyDataSetChanged();
-            gridview.setAdapter(adapter);
+            JsonAdapter.notifyDataSetChanged();
+            gridview.setAdapter(JsonAdapter);
 
            //new ReloadImageTask((GridView)findViewById(R.id.gridview)).execute("");
 
@@ -172,7 +174,6 @@ public class MainActivity extends Activity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_popularityMenu
                 ) {
-            gridviewLoadType = 0;
             gridview.setAdapter(null);
 
             new DownloadImageTask((GridView) findViewById(R.id.gridview)).execute("popular");
@@ -180,7 +181,6 @@ public class MainActivity extends Activity {
         }
         if (id == R.id.action_ratingMenu
                 ) {
-            gridviewLoadType = 0;
             gridview.setAdapter(null);
             new DownloadImageTask((GridView) findViewById(R.id.gridview)).execute("top_rated");
 
@@ -188,9 +188,10 @@ public class MainActivity extends Activity {
             return true;
         }
         if (id == R.id.action_FavoriteMenu){
-            adapter.changeType(true);
-            adapter.notifyDataSetChanged();
-            gridview.setAdapter(adapter);
+            moviesListed.clear();
+            gridview.setAdapter(null);
+            LocalAdapter.notifyDataSetChanged();
+            gridview.setAdapter(LocalAdapter);
 
         }
 
@@ -245,9 +246,8 @@ public class MainActivity extends Activity {
 
         protected void onPostExecute(ArrayList<MovieObject> movies) {
 
-            adapter.changeType(true);
-            adapter.notifyDataSetChanged();
-            gridview.setAdapter(adapter);
+            JsonAdapter.notifyDataSetChanged();
+            gridview.setAdapter(JsonAdapter);
             listTitle.setText(listInfo);
             Context context = getApplicationContext();
             HeaderProgress.setVisibility(View.GONE);
@@ -392,17 +392,15 @@ public class MainActivity extends Activity {
 
     public class ImageAdapter extends BaseAdapter {
         private Context mContext;
-        private boolean typeOfList; // Holds true if local and false if source is from network
         private ArrayList<MovieObject> loadList = new ArrayList<MovieObject>();
 
-        public ImageAdapter(Context c) {
-            typeOfList = false;
+        public ImageAdapter(Context c, ArrayList<MovieObject> toDisplay) {
+            loadList = toDisplay;
             mContext = c;
         }
 
         public int getCount() {
-                return moviesListed.size();
-
+                return loadList.size();
         }
 
         public Object getItem(int position) {
@@ -413,9 +411,6 @@ public class MainActivity extends Activity {
         public long getItemId(int position) {
 
             return 0;
-        }
-        private void changeType(boolean changeSource){
-            typeOfList = changeSource;
         }
 
         // create a new ImageView for each item referenced by the Adapter
@@ -432,7 +427,7 @@ public class MainActivity extends Activity {
             }
 
 
-            Picasso.with(mContext).load(moviesListed.get(position).savedURL).into(imageView);
+            Picasso.with(mContext).load(loadList.get(position).savedURL).into(imageView);
 
             return imageView;
         }
