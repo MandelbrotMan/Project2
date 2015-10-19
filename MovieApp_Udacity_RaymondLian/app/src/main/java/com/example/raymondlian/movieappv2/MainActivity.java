@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.widget.BaseAdapter;
 import android.content.Context;
 
@@ -17,7 +16,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
@@ -46,16 +44,18 @@ import org.json.JSONObject;
 import android.widget.Toast;
 public class MainActivity extends Activity {
 
-    //Global to all methods inside MainActivity
-    ArrayList<MovieObject> moviesListed = new ArrayList<MovieObject>();
-    ArrayList<MovieObject> favoriteMovies = new ArrayList<MovieObject>();
+    //Global variables start with Capital letters
+    ArrayList<MovieObject> MoviesListed = new ArrayList<MovieObject>();
+    ArrayList<MovieObject> FavoriteMovies = new ArrayList<MovieObject>();
 
 
     //Gridview and adapter made global so async task and adapter methods can be used on them.
-    GridView gridview;
+    GridView Gridview;
     ImageAdapter JsonAdapter;
     ImageAdapter LocalAdapter;
-    TextView listTitle;
+    TextView ListTitle;
+
+    int CurrentList = 0; //0 if its MoviesListed, 1 if FavoriteMovies --used for item selection
 
     LinearLayout HeaderProgress;
 
@@ -68,11 +68,11 @@ public class MainActivity extends Activity {
         setTitle("Blue Ray Movies");
         HeaderProgress = (LinearLayout) findViewById(R.id.ProgressBarLayout);
 
-        gridview = (GridView) findViewById(R.id.gridview);
-        listTitle = (TextView) findViewById(R.id.textView);
+        Gridview = (GridView) findViewById(R.id.gridview);
+        ListTitle = (TextView) findViewById(R.id.textView);
 
-        JsonAdapter = new ImageAdapter(this, moviesListed);
-        LocalAdapter = new ImageAdapter(this, favoriteMovies);
+        JsonAdapter = new ImageAdapter(this, MoviesListed);
+        LocalAdapter = new ImageAdapter(this, FavoriteMovies);
 
         Intent intent = getIntent();
         Bundle formMovieDetailPackage = intent.getExtras();
@@ -87,7 +87,7 @@ public class MainActivity extends Activity {
                   String imageUrl =  formMovieDetailPackage.getString("image");
 
              MovieObject newFavorite = new MovieObject(title, releaseDate, voteAvg, plot, movieId, imageUrl);
-             favoriteMovies.add(newFavorite);
+             FavoriteMovies.add(newFavorite);
 
             Context context = this;
             int duration = Toast.LENGTH_LONG;
@@ -104,21 +104,21 @@ public class MainActivity extends Activity {
 
         } else {
             if(!isNetworkAvailable()){
-                listTitle.setText("No Network Connection");
+                ListTitle.setText("No Network Connection");
             }
 
-            moviesListed = savedInstanceState.getParcelableArrayList("movies");
-            favoriteMovies = savedInstanceState.getParcelableArrayList("favorites");
+            MoviesListed = savedInstanceState.getParcelableArrayList("movies");
+            FavoriteMovies = savedInstanceState.getParcelableArrayList("favorites");
             Context context = getApplicationContext();
             JsonAdapter.notifyDataSetChanged();
-            gridview.setAdapter(JsonAdapter);
+            Gridview.setAdapter(JsonAdapter);
 
            //new ReloadImageTask((GridView)findViewById(R.id.gridview)).execute("");
 
         }
 
 
-        gridview.setOnItemClickListener(new OnItemClickListener() {
+        Gridview.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
 
@@ -127,14 +127,26 @@ public class MainActivity extends Activity {
 
                 //Prepare information to be sent to the next activity
                 Bundle moviePackage = new Bundle();
-                moviePackage.putString("title", moviesListed.get(position).savedTitle);
-                moviePackage.putString("image", moviesListed.get(position).savedURL);
-                moviePackage.putString("release_date", moviesListed.get(position).savedDate);
-                moviePackage.putString("vote_average", moviesListed.get(position).savedRating);
-                moviePackage.putString("synopsis", moviesListed.get(position).savedPlot);
-                moviePackage.putString("id", moviesListed.get(position).savedId);
-                i.putExtras(moviePackage);
-                i2.putExtras(moviePackage);
+                if(CurrentList == 0) {
+                    moviePackage.putString("title", MoviesListed.get(position).savedTitle);
+                    moviePackage.putString("image", MoviesListed.get(position).savedURL);
+                    moviePackage.putString("release_date", MoviesListed.get(position).savedDate);
+                    moviePackage.putString("vote_average", MoviesListed.get(position).savedRating);
+                    moviePackage.putString("synopsis", MoviesListed.get(position).savedPlot);
+                    moviePackage.putString("id", MoviesListed.get(position).savedId);
+                    i.putExtras(moviePackage);
+                    i2.putExtras(moviePackage);
+
+                }else if(CurrentList == 1){
+                    moviePackage.putString("title", FavoriteMovies.get(position).savedTitle);
+                    moviePackage.putString("image", FavoriteMovies.get(position).savedURL);
+                    moviePackage.putString("release_date", FavoriteMovies.get(position).savedDate);
+                    moviePackage.putString("vote_average", FavoriteMovies.get(position).savedRating);
+                    moviePackage.putString("synopsis", FavoriteMovies.get(position).savedPlot);
+                    moviePackage.putString("id", FavoriteMovies.get(position).savedId);
+                    i.putExtras(moviePackage);
+                    i2.putExtras(moviePackage);
+                }
 
                 startActivity(i);
 
@@ -150,8 +162,8 @@ public class MainActivity extends Activity {
     protected void onSaveInstanceState(Bundle outState) {
 
         //Bitmaps implement parcelable already.
-        outState.putParcelableArrayList("movies",moviesListed);
-        outState.putParcelableArrayList("favorites",favoriteMovies);
+        outState.putParcelableArrayList("movies",MoviesListed);
+        outState.putParcelableArrayList("favorites", FavoriteMovies);
 
         super.onSaveInstanceState(outState);
 
@@ -174,24 +186,25 @@ public class MainActivity extends Activity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_popularityMenu
                 ) {
-            gridview.setAdapter(null);
+            Gridview.setAdapter(null);
 
             new DownloadImageTask((GridView) findViewById(R.id.gridview)).execute("popular");
             return true;
         }
         if (id == R.id.action_ratingMenu
                 ) {
-            gridview.setAdapter(null);
+            Gridview.setAdapter(null);
             new DownloadImageTask((GridView) findViewById(R.id.gridview)).execute("top_rated");
 
 
             return true;
         }
         if (id == R.id.action_FavoriteMenu){
-            moviesListed.clear();
-            gridview.setAdapter(null);
+            CurrentList = 1;
+            MoviesListed.clear();
+            Gridview.setAdapter(null);
             LocalAdapter.notifyDataSetChanged();
-            gridview.setAdapter(LocalAdapter);
+            Gridview.setAdapter(LocalAdapter);
 
         }
 
@@ -208,7 +221,8 @@ public class MainActivity extends Activity {
 
         protected ArrayList<MovieObject> doInBackground(String... urls) {
             //Clear to prevent multiple copies in arrays
-            moviesListed.clear();
+            MoviesListed.clear();
+            CurrentList = 0;
 
             if (urls[0] == "popular") {
                 listInfo = "Most Popular";
@@ -233,7 +247,7 @@ public class MainActivity extends Activity {
 
                 }
             }
-           return moviesListed;
+           return MoviesListed;
         }
 
         @Override
@@ -247,8 +261,8 @@ public class MainActivity extends Activity {
         protected void onPostExecute(ArrayList<MovieObject> movies) {
 
             JsonAdapter.notifyDataSetChanged();
-            gridview.setAdapter(JsonAdapter);
-            listTitle.setText(listInfo);
+            Gridview.setAdapter(JsonAdapter);
+            ListTitle.setText(listInfo);
             Context context = getApplicationContext();
             HeaderProgress.setVisibility(View.GONE);
 
@@ -339,7 +353,7 @@ public class MainActivity extends Activity {
                         singleMovie.getString(get_RELEASE_DATE),
                         Integer.toString(singleMovie.getInt(get_AVERAGE)),
                         singleMovie.getString(get_SYNOPSIS), Integer.toString(singleMovie.getInt(get_ID)));
-                moviesListed.add(temp);
+                MoviesListed.add(temp);
 
             }
 
@@ -372,7 +386,7 @@ public class MainActivity extends Activity {
 
 
 
-                    moviesListed.get(i).savedURL = bitmapURL.toString();
+                    MoviesListed.get(i).savedURL = bitmapURL.toString();
 
                 } catch (IOException e) {
                     return null;
@@ -520,7 +534,7 @@ public class MainActivity extends Activity {
     }
 
     private void setFavoriteMovies(){
-        if(favoriteMovies.size() > 0){
+        if(FavoriteMovies.size() > 0){
 
         }
 
