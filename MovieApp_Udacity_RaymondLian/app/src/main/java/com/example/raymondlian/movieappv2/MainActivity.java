@@ -47,8 +47,8 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 
     //Global to all methods inside MainActivity
-    ArrayList<MovieObject> moviesListed;
-    ArrayList<MovieObject> favoriteMovies;
+    ArrayList<MovieObject> moviesListed = new ArrayList<MovieObject>();
+    ArrayList<MovieObject> favoriteMovies = new ArrayList<MovieObject>();
 
 
     //Gridview and adapter made global so async task and adapter methods can be used on them.
@@ -86,7 +86,7 @@ public class MainActivity extends Activity {
                   String imageUrl =  formMovieDetailPackage.getString("image");
 
              MovieObject newFavorite = new MovieObject(title, releaseDate, voteAvg, plot, movieId, imageUrl);
-          
+
             Context context = this;
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, "Added ", duration);
@@ -97,7 +97,6 @@ public class MainActivity extends Activity {
 
         //For preserving screen data during screen rotation
         if (savedInstanceState == null || !savedInstanceState.containsKey("movies")) {
-            moviesListed = new ArrayList<MovieObject>();
             new DownloadImageTask((GridView) findViewById(R.id.gridview)).execute("popular");
 
 
@@ -150,7 +149,7 @@ public class MainActivity extends Activity {
 
         //Bitmaps implement parcelable already.
         outState.putParcelableArrayList("movies",moviesListed);
-       // outState.putParcelableArrayList("favorites",favoriteMovies);
+        outState.putParcelableArrayList("favorites",favoriteMovies);
 
         super.onSaveInstanceState(outState);
 
@@ -189,7 +188,9 @@ public class MainActivity extends Activity {
             return true;
         }
         if (id == R.id.action_FavoriteMenu){
-            gridviewLoadType = 1;
+            adapter.changeType(true);
+            adapter.notifyDataSetChanged();
+            gridview.setAdapter(adapter);
 
         }
 
@@ -244,7 +245,7 @@ public class MainActivity extends Activity {
 
         protected void onPostExecute(ArrayList<MovieObject> movies) {
 
-
+            adapter.changeType(true);
             adapter.notifyDataSetChanged();
             gridview.setAdapter(adapter);
             listTitle.setText(listInfo);
@@ -391,15 +392,17 @@ public class MainActivity extends Activity {
 
     public class ImageAdapter extends BaseAdapter {
         private Context mContext;
+        private boolean typeOfList; // Holds true if local and false if source is from network
+        private ArrayList<MovieObject> loadList = new ArrayList<MovieObject>();
 
         public ImageAdapter(Context c) {
-
+            typeOfList = false;
             mContext = c;
         }
 
         public int getCount() {
+                return moviesListed.size();
 
-            return moviesListed.size();
         }
 
         public Object getItem(int position) {
@@ -410,6 +413,9 @@ public class MainActivity extends Activity {
         public long getItemId(int position) {
 
             return 0;
+        }
+        private void changeType(boolean changeSource){
+            typeOfList = changeSource;
         }
 
         // create a new ImageView for each item referenced by the Adapter
@@ -424,6 +430,7 @@ public class MainActivity extends Activity {
             } else {
                 imageView = (ImageView) convertView;
             }
+
 
             Picasso.with(mContext).load(moviesListed.get(position).savedURL).into(imageView);
 
