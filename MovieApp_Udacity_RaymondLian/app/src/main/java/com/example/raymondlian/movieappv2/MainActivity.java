@@ -58,12 +58,12 @@ public class MainActivity extends Activity {
     int CurrentList = 0; //0 if its MoviesListed, 1 if FavoriteMovies --used for item selection
 
     LinearLayout HeaderProgress;
-
+    Bundle formMovieDetailPackage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle("Blue Ray Movies");
         HeaderProgress = (LinearLayout) findViewById(R.id.ProgressBarLayout);
@@ -75,26 +75,9 @@ public class MainActivity extends Activity {
         LocalAdapter = new ImageAdapter(this, FavoriteMovies);
 
         Intent intent = getIntent();
-        Bundle formMovieDetailPackage = intent.getExtras();
+        formMovieDetailPackage = intent.getExtras();
 
-        if(formMovieDetailPackage != null){
 
-                  String title = formMovieDetailPackage.getString("title");
-                  String releaseDate = formMovieDetailPackage.getString("release_date");
-                  String voteAvg =  formMovieDetailPackage.getString("vote_average");
-                  String plot = formMovieDetailPackage.getString("synopsis");
-                  String movieId = formMovieDetailPackage.getString("id");
-                  String imageUrl =  formMovieDetailPackage.getString("image");
-
-             MovieObject newFavorite = new MovieObject(title, releaseDate, voteAvg, plot, movieId, imageUrl);
-             FavoriteMovies.add(newFavorite);
-
-            Context context = this;
-            int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context, "Added ", duration);
-            toast.show();
-
-        }
 
 
         //For preserving screen data during screen rotation
@@ -127,7 +110,7 @@ public class MainActivity extends Activity {
 
                 //Prepare information to be sent to the next activity
                 Bundle moviePackage = new Bundle();
-                if(CurrentList == 0) {
+                if (CurrentList == 0) {
                     moviePackage.putString("title", MoviesListed.get(position).savedTitle);
                     moviePackage.putString("image", MoviesListed.get(position).savedURL);
                     moviePackage.putString("release_date", MoviesListed.get(position).savedDate);
@@ -137,7 +120,7 @@ public class MainActivity extends Activity {
                     i.putExtras(moviePackage);
                     i2.putExtras(moviePackage);
 
-                }else if(CurrentList == 1){
+                } else if (CurrentList == 1) {
                     moviePackage.putString("title", FavoriteMovies.get(position).savedTitle);
                     moviePackage.putString("image", FavoriteMovies.get(position).savedURL);
                     moviePackage.putString("release_date", FavoriteMovies.get(position).savedDate);
@@ -153,7 +136,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        super.onCreate(savedInstanceState);
+
 
 
     }
@@ -166,6 +149,33 @@ public class MainActivity extends Activity {
         outState.putParcelableArrayList("favorites", FavoriteMovies);
 
         super.onSaveInstanceState(outState);
+
+    }
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+        MoviesListed = savedInstanceState.getParcelableArrayList("movies");
+        FavoriteMovies = savedInstanceState.getParcelableArrayList("favorites");
+        if(formMovieDetailPackage != null){
+
+            String title = formMovieDetailPackage.getString("title");
+            String releaseDate = formMovieDetailPackage.getString("release_date");
+            String voteAvg =  formMovieDetailPackage.getString("vote_average");
+            String plot = formMovieDetailPackage.getString("synopsis");
+            String movieId = formMovieDetailPackage.getString("id");
+            String imageUrl =  formMovieDetailPackage.getString("image");
+
+            MovieObject newFavorite = new MovieObject(title, releaseDate, voteAvg, plot, movieId, imageUrl);
+            FavoriteMovies.add(newFavorite);
+
+            Context context = this;
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, "Added ", duration);
+            toast.show();
+
+        }
 
     }
 
