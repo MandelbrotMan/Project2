@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import com.squareup.picasso.Picasso;
 
@@ -93,8 +94,16 @@ public class MainActivity extends Activity {
             MoviesListed = savedInstanceState.getParcelableArrayList("movies");
             FavoriteMovies = savedInstanceState.getParcelableArrayList("favorites");
             Context context = getApplicationContext();
-            JsonAdapter.notifyDataSetChanged();
-            Gridview.setAdapter(JsonAdapter);
+            if(CurrentList == 0) {
+                JsonAdapter.restore(this, MoviesListed);
+                JsonAdapter.notifyDataSetChanged();
+                Gridview.setAdapter(JsonAdapter);
+
+            }else if (CurrentList == 1) {
+                LocalAdapter.restore(this, FavoriteMovies);
+                LocalAdapter.notifyDataSetChanged();
+                Gridview.setAdapter(LocalAdapter);
+            }
 
            //new ReloadImageTask((GridView)findViewById(R.id.gridview)).execute("");
 
@@ -436,7 +445,10 @@ public class MainActivity extends Activity {
 
             return 0;
         }
-
+        private void restore(Context rContext, ArrayList<MovieObject> rList){
+            mContext = rContext;
+            loadList = rList;
+        }
         // create a new ImageView for each item referenced by the Adapter
         public View getView(int position, View convertView, ViewGroup parent) {
             ImageView imageView;
