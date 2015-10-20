@@ -77,6 +77,16 @@ public class MainActivity extends Activity {
 
         Intent intent = getIntent();
         formMovieDetailPackage = intent.getExtras();
+        if(formMovieDetailPackage != null){
+
+
+            Context context = this;
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, "Added ", duration);
+            toast.show();
+
+        }
+
 
 
 
@@ -126,9 +136,6 @@ public class MainActivity extends Activity {
                     moviePackage.putString("vote_average", MoviesListed.get(position).savedRating);
                     moviePackage.putString("synopsis", MoviesListed.get(position).savedPlot);
                     moviePackage.putString("id", MoviesListed.get(position).savedId);
-                    i.putExtras(moviePackage);
-                    i2.putExtras(moviePackage);
-
                 } else if (CurrentList == 1) {
                     moviePackage.putString("title", FavoriteMovies.get(position).savedTitle);
                     moviePackage.putString("image", FavoriteMovies.get(position).savedURL);
@@ -136,10 +143,11 @@ public class MainActivity extends Activity {
                     moviePackage.putString("vote_average", FavoriteMovies.get(position).savedRating);
                     moviePackage.putString("synopsis", FavoriteMovies.get(position).savedPlot);
                     moviePackage.putString("id", FavoriteMovies.get(position).savedId);
-                    i.putExtras(moviePackage);
-                    i2.putExtras(moviePackage);
-                }
 
+                }
+                moviePackage.putParcelableArrayList("Favorites", FavoriteMovies);
+                i.putExtras(moviePackage);
+                i2.putExtras(moviePackage);
                 startActivity(i);
 
             }
@@ -167,24 +175,6 @@ public class MainActivity extends Activity {
         // This bundle has also been passed to onCreate.
         MoviesListed = savedInstanceState.getParcelableArrayList("movies");
         FavoriteMovies = savedInstanceState.getParcelableArrayList("favorites");
-        if(formMovieDetailPackage != null){
-
-            String title = formMovieDetailPackage.getString("title");
-            String releaseDate = formMovieDetailPackage.getString("release_date");
-            String voteAvg =  formMovieDetailPackage.getString("vote_average");
-            String plot = formMovieDetailPackage.getString("synopsis");
-            String movieId = formMovieDetailPackage.getString("id");
-            String imageUrl =  formMovieDetailPackage.getString("image");
-
-            MovieObject newFavorite = new MovieObject(title, releaseDate, voteAvg, plot, movieId, imageUrl);
-            FavoriteMovies.add(newFavorite);
-
-            Context context = this;
-            int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context, "Added ", duration);
-            toast.show();
-
-        }
 
     }
 
@@ -221,6 +211,7 @@ public class MainActivity extends Activity {
         if (id == R.id.action_FavoriteMenu){
             CurrentList = 1;
             MoviesListed.clear();
+            LocalAdapter.restore(this, FavoriteMovies);
             Gridview.setAdapter(null);
             LocalAdapter.notifyDataSetChanged();
             Gridview.setAdapter(LocalAdapter);
@@ -483,77 +474,7 @@ public class MainActivity extends Activity {
 
 
     //Holds all the movie contents Information
-    public class MovieObject implements Parcelable {
-        public String savedTitle;
-        public String savedDate;
-        public String savedRating;
-        public String savedPlot;
-        public String savedURL;  //Saved URL is used for the posterPath
-        public String savedId;
 
-        public MovieObject(String title, String date, String rating, String plot, String id) {
-            this.savedURL = null;
-            this.savedTitle = title;
-            this.savedDate = date;
-            this.savedRating = rating;
-            this.savedPlot = plot;
-            this.savedId = id;
-
-        }
-        public MovieObject(String title, String date, String rating, String plot, String id, String url) {
-            this.savedURL = url;
-            this.savedTitle = title;
-            this.savedDate = date;
-            this.savedRating = rating;
-            this.savedPlot = plot;
-            this.savedId = id;
-
-        }
-
-        public MovieObject createFromParcel(Parcel in) {
-            return new MovieObject(in);
-        }
-
-
-        public MovieObject(Parcel in) {
-            savedURL = in.readString();
-            savedTitle = in.readString();
-            savedDate = in.readString();
-            savedRating = in.readString();
-            savedPlot = in.readString();
-            savedId = in.readString();
-
-
-        }
-
-        public int describeContents() {
-            return 0;
-        }
-
-
-        public void writeToParcel(Parcel out, int flags) {
-            out.writeString(savedURL);
-            out.writeString(savedTitle);
-            out.writeString(savedDate);
-            out.writeString(savedRating);
-            out.writeString(savedPlot);
-            out.writeString(savedId);
-
-
-        }
-
-        public final Parcelable.Creator<MovieObject> CREATOR = new Parcelable.Creator<MovieObject>() {
-            public MovieObject createFromParcel(Parcel in) {
-                return new MovieObject(in);
-            }
-
-            public MovieObject[] newArray(int size) {
-                return new MovieObject[size];
-            }
-        };
-
-
-    }
 
     private void setFavoriteMovies(){
         if(FavoriteMovies.size() > 0){

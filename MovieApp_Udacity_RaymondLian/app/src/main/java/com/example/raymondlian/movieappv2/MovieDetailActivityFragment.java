@@ -37,7 +37,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import android.widget.Button;
 import android.widget.Toast;
-
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -51,6 +50,7 @@ public class MovieDetailActivityFragment extends Fragment {
     String ReleaseDate;
     String Plot;
 
+    ArrayList<MovieObject> CurrentFavorites = new ArrayList<MovieObject>();
     //Used to send back MovieObject if Selected as favorite
     Bundle MoviePackage = null;
 
@@ -76,6 +76,8 @@ public class MovieDetailActivityFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Intent intent = getActivity().getIntent();
         Bundle recievedPackage = intent.getExtras();
+
+        CurrentFavorites = recievedPackage.getParcelableArrayList("Favorites");
 
 
 
@@ -135,13 +137,9 @@ public class MovieDetailActivityFragment extends Fragment {
                 MoviePackage = new Bundle();
 
                 if (isNetworkAvailable()) {
-                    MoviePackage.putString("title", Title);
-                    MoviePackage.putString("image", ImageURLString);
-                    MoviePackage.putString("release_date", ReleaseDate);
-                    MoviePackage.putString("vote_average", Rating);
-                    MoviePackage.putString("synopsis", Plot);
-                    MoviePackage.putString("id", MovieIdString);
 
+                    MovieObject newFavorite = new MovieObject(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
+                    CurrentFavorites.add(newFavorite);
                     button.setBackgroundColor(Color.RED);
                     Context context = getContext();
                     int duration = Toast.LENGTH_LONG;
@@ -201,6 +199,7 @@ public class MovieDetailActivityFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    
 
     private class imageTask extends AsyncTask<String, Void, Void> {
         HttpURLConnection posterUrlConnection = null;
