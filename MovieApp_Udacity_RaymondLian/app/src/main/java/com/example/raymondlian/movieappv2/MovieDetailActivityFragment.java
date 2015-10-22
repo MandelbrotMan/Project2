@@ -51,6 +51,7 @@ public class MovieDetailActivityFragment extends Fragment {
     String Plot;
 
     ArrayList<MovieObject> CurrentFavorites = new ArrayList<MovieObject>();
+    ArrayList<MovieObject> CurrentFavorites2 = new ArrayList<MovieObject>();
     //Used to send back MovieObject if Selected as favorite
     Bundle MoviePackage = null;
 
@@ -78,7 +79,9 @@ public class MovieDetailActivityFragment extends Fragment {
         Bundle recievedPackage = intent.getExtras();
 
         CurrentFavorites = recievedPackage.getParcelableArrayList("Favorites");
-
+        for(int i = 0; i < CurrentFavorites.size(); ++i){
+            CurrentFavorites2.add(CurrentFavorites.get(i));
+        }
 
 
 
@@ -139,12 +142,8 @@ public class MovieDetailActivityFragment extends Fragment {
                 if (isNetworkAvailable()) {
 
                     MovieObject newFavorite = new MovieObject(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
-                    CurrentFavorites.add(newFavorite);
                     button.setBackgroundColor(Color.RED);
-                    Context context = getContext();
-                    int duration = Toast.LENGTH_LONG;
-                    Toast toast = Toast.makeText(context, "Added to favorites", duration);
-                    toast.show();
+                    MoviePackage.putParcelable("NewFavorite", newFavorite);
                 }
             }
         });
@@ -168,6 +167,7 @@ public class MovieDetailActivityFragment extends Fragment {
 
 
     }
+
 
     /*
     @Override
@@ -199,7 +199,6 @@ public class MovieDetailActivityFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    
 
     private class imageTask extends AsyncTask<String, Void, Void> {
         HttpURLConnection posterUrlConnection = null;

@@ -47,7 +47,7 @@ public class MainActivity extends Activity {
 
     //Global variables start with Capital letters
     ArrayList<MovieObject> MoviesListed = new ArrayList<MovieObject>();
-    ArrayList<MovieObject> FavoriteMovies = new ArrayList<MovieObject>();
+    static ArrayList<MovieObject> FavoriteMovies = new ArrayList<MovieObject>();
 
 
     //Gridview and adapter made global so async task and adapter methods can be used on them.
@@ -78,12 +78,7 @@ public class MainActivity extends Activity {
         Intent intent = getIntent();
         formMovieDetailPackage = intent.getExtras();
         if(formMovieDetailPackage != null){
-
-
-            Context context = this;
-            int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context, "Added ", duration);
-            toast.show();
+            //MovieObject newFavorite = formMovieDetailPackage.getParcelable("NewFavorite");
 
         }
 
