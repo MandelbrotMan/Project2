@@ -87,7 +87,6 @@ public class MainActivity extends Activity {
                                           formMovieDetailPackage.getString("plot"),
                                           recievedId,
                                           formMovieDetailPackage.getString("imageURLString"));
-                newFavorite.savedFavorite = true;
                 FavoriteMovies.add(newFavorite);
             }
 
@@ -143,7 +142,6 @@ public class MainActivity extends Activity {
                     moviePackage.putString("vote_average", MoviesListed.get(position).savedRating);
                     moviePackage.putString("synopsis", MoviesListed.get(position).savedPlot);
                     moviePackage.putString("id", MoviesListed.get(position).savedId);
-                    moviePackage.putBoolean("favorite", MoviesListed.get(position).savedFavorite);
                 } else if (CurrentList == 1) {
                     moviePackage.putString("title", FavoriteMovies.get(position).savedTitle);
                     moviePackage.putString("image", FavoriteMovies.get(position).savedURL);
@@ -151,7 +149,6 @@ public class MainActivity extends Activity {
                     moviePackage.putString("vote_average", FavoriteMovies.get(position).savedRating);
                     moviePackage.putString("synopsis", FavoriteMovies.get(position).savedPlot);
                     moviePackage.putString("id", FavoriteMovies.get(position).savedId);
-                    moviePackage.putBoolean("favorite", FavoriteMovies.get(position).savedFavorite);
 
                 }
                 moviePackage.putParcelableArrayList("Favorites", FavoriteMovies);

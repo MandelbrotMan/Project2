@@ -49,7 +49,7 @@ public class MovieDetailActivityFragment extends Fragment {
     String Rating;
     String ReleaseDate;
     String Plot;
-    boolean favoriteStatus;
+
 
     //Used to send back MovieObject if Selected as favorite
     Bundle MoviePackage = null;
@@ -86,7 +86,6 @@ public class MovieDetailActivityFragment extends Fragment {
             Title = recievedPackage.getString("title");
             ReleaseDate = recievedPackage.getString("release_date");
             Rating = recievedPackage.getString("vote_average");
-            favoriteStatus = recievedPackage.getBoolean("favorite");
 
 
 
@@ -97,9 +96,8 @@ public class MovieDetailActivityFragment extends Fragment {
             TextView ratingView = (TextView) inflater1.findViewById(R.id.voteAverageText);
             TextView synopsisView = (TextView) inflater1.findViewById(R.id.synopsisText);
             PosterView = (ImageView) inflater1.findViewById(R.id.posterImageView);
-            if(favoriteStatus == true){
-                button.setBackgroundColor(Color.RED);
-            }
+
+
             titleView.setText(Title);
             dateView.setText(ReleaseDate);
             ratingView.setText(Rating);
@@ -135,8 +133,7 @@ public class MovieDetailActivityFragment extends Fragment {
 
                 MoviePackage = new Bundle();
 
-                if(favoriteStatus == false) {
-                    favoriteStatus = true;
+
                     MovieObject newFavorite = new MovieObject(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
                     button.setBackgroundColor(Color.RED);
                     MoviePackage.putString("title", Title);
@@ -145,8 +142,7 @@ public class MovieDetailActivityFragment extends Fragment {
                     MoviePackage.putString("plot", Plot);
                     MoviePackage.putString("movieIdString", MovieIdString);
                     MoviePackage.putString("imageURLString", ImageURLString);
-                    MoviePackage.putBoolean("favorite", favoriteStatus);
-                }
+
             }
         });
 
