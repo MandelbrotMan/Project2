@@ -78,18 +78,7 @@ public class MainActivity extends Activity {
         Intent intent = getIntent();
         formMovieDetailPackage = intent.getExtras();
         if(formMovieDetailPackage != null){
-            String recievedId = formMovieDetailPackage.getString("movieIdString");
-            if(checkInList(FavoriteMovies,recievedId) == false) {
-                MovieObject newFavorite = new MovieObject(
-                                          formMovieDetailPackage.getString("title"),
-                                          formMovieDetailPackage.getString("releaseDate"),
-                                          formMovieDetailPackage.getString("rating"),
-                                          formMovieDetailPackage.getString("plot"),
-                                          recievedId,
-                                          formMovieDetailPackage.getString("imageURLString"));
-                FavoriteMovies.add(newFavorite);
-            }
-
+            //MovieObject newFavorite = formMovieDetailPackage.getParcelable("NewFavorite");
 
         }
 
@@ -482,15 +471,13 @@ public class MainActivity extends Activity {
     //Holds all the movie contents Information
 
 
-    private boolean checkInList(ArrayList<MovieObject> list, String id){
-      for(int i = 0; i < list.size(); ++i){
-          if(list.get(i).savedId == id){
-              return true;
-          }
-      }
-    return false;
-    }
+    private void setFavoriteMovies(){
+        if(FavoriteMovies.size() > 0){
 
+        }
+
+
+    }
 
 
 }
