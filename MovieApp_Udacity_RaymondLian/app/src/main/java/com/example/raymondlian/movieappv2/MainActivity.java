@@ -78,7 +78,19 @@ public class MainActivity extends Activity {
         Intent intent = getIntent();
         formMovieDetailPackage = intent.getExtras();
         if(formMovieDetailPackage != null){
-            //MovieObject newFavorite = formMovieDetailPackage.getParcelable("NewFavorite");
+            String recievedId = formMovieDetailPackage.getString("movieIdString");
+            if(checkInList(FavoriteMovies,recievedId) == false) {
+                MovieObject newFavorite = new MovieObject(
+                                          formMovieDetailPackage.getString("title"),
+                                          formMovieDetailPackage.getString("releaseDate"),
+                                          formMovieDetailPackage.getString("rating"),
+                                          formMovieDetailPackage.getString("plot"),
+                                          recievedId,
+                                          formMovieDetailPackage.getString("imageURLString"));
+                newFavorite.savedFavorite = true;
+                FavoriteMovies.add(newFavorite);
+            }
+
 
         }
 
@@ -131,6 +143,7 @@ public class MainActivity extends Activity {
                     moviePackage.putString("vote_average", MoviesListed.get(position).savedRating);
                     moviePackage.putString("synopsis", MoviesListed.get(position).savedPlot);
                     moviePackage.putString("id", MoviesListed.get(position).savedId);
+                    moviePackage.putBoolean("favorite", MoviesListed.get(position).savedFavorite);
                 } else if (CurrentList == 1) {
                     moviePackage.putString("title", FavoriteMovies.get(position).savedTitle);
                     moviePackage.putString("image", FavoriteMovies.get(position).savedURL);
@@ -138,6 +151,7 @@ public class MainActivity extends Activity {
                     moviePackage.putString("vote_average", FavoriteMovies.get(position).savedRating);
                     moviePackage.putString("synopsis", FavoriteMovies.get(position).savedPlot);
                     moviePackage.putString("id", FavoriteMovies.get(position).savedId);
+                    moviePackage.putBoolean("favorite", FavoriteMovies.get(position).savedFavorite);
 
                 }
                 moviePackage.putParcelableArrayList("Favorites", FavoriteMovies);
@@ -471,13 +485,15 @@ public class MainActivity extends Activity {
     //Holds all the movie contents Information
 
 
-    private void setFavoriteMovies(){
-        if(FavoriteMovies.size() > 0){
-
-        }
-
-
+    private boolean checkInList(ArrayList<MovieObject> list, String id){
+      for(int i = 0; i < list.size(); ++i){
+          if(list.get(i).savedId == id){
+              return true;
+          }
+      }
+    return false;
     }
+
 
 
 }

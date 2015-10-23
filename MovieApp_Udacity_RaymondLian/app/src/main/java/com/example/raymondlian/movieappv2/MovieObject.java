@@ -14,6 +14,7 @@ public class MovieObject implements Parcelable {
     public String savedPlot;
     public String savedURL;  //Saved URL is used for the posterPath
     public String savedId;
+    public boolean savedFavorite;
 
     public MovieObject(String title, String date, String rating, String plot, String id) {
         this.savedURL = null;
@@ -22,6 +23,7 @@ public class MovieObject implements Parcelable {
         this.savedRating = rating;
         this.savedPlot = plot;
         this.savedId = id;
+        this.savedFavorite = false;
 
     }
     public MovieObject(String title, String date, String rating, String plot, String id, String url) {
@@ -31,6 +33,7 @@ public class MovieObject implements Parcelable {
         this.savedRating = rating;
         this.savedPlot = plot;
         this.savedId = id;
+        this.savedFavorite = false;
 
     }
 
@@ -46,6 +49,7 @@ public class MovieObject implements Parcelable {
         savedRating = in.readString();
         savedPlot = in.readString();
         savedId = in.readString();
+        savedFavorite = in.readByte() != 0;
 
 
     }
@@ -62,6 +66,7 @@ public class MovieObject implements Parcelable {
         out.writeString(savedRating);
         out.writeString(savedPlot);
         out.writeString(savedId);
+        out.writeByte((byte) (savedFavorite ? 1 : 0));
 
 
     }
