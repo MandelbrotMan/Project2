@@ -49,6 +49,7 @@ public class MovieDetailActivityFragment extends Fragment {
     String Rating;
     String ReleaseDate;
     String Plot;
+    Toast MToast;
 
 
     //Used to send back MovieObject if Selected as favorite
@@ -62,7 +63,7 @@ public class MovieDetailActivityFragment extends Fragment {
     Button button;
 
     Context mContext = getContext();
-    int size;
+    boolean FavStatus;
 
     ArrayList<String> trailerTitles = new ArrayList<>();
 
@@ -86,7 +87,7 @@ public class MovieDetailActivityFragment extends Fragment {
             Title = recievedPackage.getString("title");
             ReleaseDate = recievedPackage.getString("release_date");
             Rating = recievedPackage.getString("vote_average");
-
+            FavStatus = recievedPackage.getBoolean("favStatus");
 
 
             new imageTask().execute("");
@@ -102,6 +103,12 @@ public class MovieDetailActivityFragment extends Fragment {
             dateView.setText(ReleaseDate);
             ratingView.setText(Rating);
             synopsisView.setText(Plot);
+            if(FavStatus == true){
+                button.setBackgroundResource(R.drawable.star_gold);
+            } else{
+                button.setBackgroundResource(R.drawable.starblack);
+            }
+
         } else {
             TextView titleView = (TextView) inflater1.findViewById(R.id.movieTitleText);
             titleView.setText("Connection lost");
@@ -131,17 +138,21 @@ public class MovieDetailActivityFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                MoviePackage = new Bundle();
+                if(FavStatus == false){
 
-
+                    MoviePackage = new Bundle();
                     MovieObject newFavorite = new MovieObject(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
-                    button.setBackgroundColor(Color.RED);
+                   button.setBackgroundResource(R.drawable.star_gold);
                     MoviePackage.putString("title", Title);
                     MoviePackage.putString("releaseDate", ReleaseDate);
                     MoviePackage.putString("rating", Rating);
                     MoviePackage.putString("plot", Plot);
                     MoviePackage.putString("movieIdString", MovieIdString);
                     MoviePackage.putString("imageURLString", ImageURLString);
+
+                }
+
+
 
             }
         });

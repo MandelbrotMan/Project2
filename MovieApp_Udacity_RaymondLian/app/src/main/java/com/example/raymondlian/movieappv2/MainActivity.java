@@ -56,7 +56,7 @@ public class MainActivity extends Activity {
     ImageAdapter LocalAdapter;
     TextView ListTitle;
 
-    int CurrentList = 0; //0 if its MoviesListed, 1 if FavoriteMovies --used for item selection
+    static int CurrentList = 0; //0 if its MoviesListed, 1 if FavoriteMovies --used for item selection
 
     LinearLayout HeaderProgress;
     Bundle formMovieDetailPackage;
@@ -147,6 +147,11 @@ public class MainActivity extends Activity {
                     moviePackage.putString("vote_average", MoviesListed.get(position).savedRating);
                     moviePackage.putString("synopsis", MoviesListed.get(position).savedPlot);
                     moviePackage.putString("id", MoviesListed.get(position).savedId);
+                    if(checkInList(MoviesListed.get(position).savedId,FavoriteMovies)){
+                        moviePackage.putBoolean("favStatus", true);
+                    } else {
+                        moviePackage.putBoolean("favStatus", false);
+                    }
                 } else if (CurrentList == 1) {
                     moviePackage.putString("title", FavoriteMovies.get(position).savedTitle);
                     moviePackage.putString("image", FavoriteMovies.get(position).savedURL);
@@ -154,6 +159,8 @@ public class MainActivity extends Activity {
                     moviePackage.putString("vote_average", FavoriteMovies.get(position).savedRating);
                     moviePackage.putString("synopsis", FavoriteMovies.get(position).savedPlot);
                     moviePackage.putString("id", FavoriteMovies.get(position).savedId);
+                    moviePackage.putBoolean("favStatus", true); // by default
+
 
                 }
                 i.putExtras(moviePackage);

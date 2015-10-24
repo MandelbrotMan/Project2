@@ -58,12 +58,10 @@
         android:layout_below="@+id/trailerListText">
     </ListView>
     <Button
-        android:layout_width="100dp"
+        android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginLeft="5dp"
         android:id="@+id/favoriteButton"
-        android:background="#aaffec"
-        android:text="Mark as favorite"
         android:layout_toRightOf="@+id/posterImageView"
         android:layout_below="@+id/voteAverageText"/>
 
