@@ -78,8 +78,14 @@ public class MainActivity extends Activity {
         Intent intent = getIntent();
         formMovieDetailPackage = intent.getExtras();
         if(formMovieDetailPackage != null){
-            //MovieObject newFavorite = formMovieDetailPackage.getParcelable("NewFavorite");
-
+            MovieObject newFavorite = new MovieObject(
+                    formMovieDetailPackage.getString("title"),
+                    formMovieDetailPackage.getString("releaseDate"),
+                    formMovieDetailPackage.getString("rating"),
+                    formMovieDetailPackage.getString("plot"),
+                    formMovieDetailPackage.getString("movieIdString"),
+                    formMovieDetailPackage.getString("imageURLString"));
+            FavoriteMovies.add(newFavorite);
         }
 
 
