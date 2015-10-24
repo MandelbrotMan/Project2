@@ -77,15 +77,25 @@ public class MainActivity extends Activity {
 
         Intent intent = getIntent();
         formMovieDetailPackage = intent.getExtras();
+
+
+
         if(formMovieDetailPackage != null){
-            MovieObject newFavorite = new MovieObject(
-                    formMovieDetailPackage.getString("title"),
-                    formMovieDetailPackage.getString("releaseDate"),
-                    formMovieDetailPackage.getString("rating"),
-                    formMovieDetailPackage.getString("plot"),
-                    formMovieDetailPackage.getString("movieIdString"),
-                    formMovieDetailPackage.getString("imageURLString"));
-            FavoriteMovies.add(newFavorite);
+            if(!checkInList(formMovieDetailPackage.getString("movieIdString"), FavoriteMovies)){
+                MovieObject newFavorite = new MovieObject(
+                        formMovieDetailPackage.getString("title"),
+                        formMovieDetailPackage.getString("releaseDate"),
+                        formMovieDetailPackage.getString("rating"),
+                        formMovieDetailPackage.getString("plot"),
+                        formMovieDetailPackage.getString("movieIdString"),
+                        formMovieDetailPackage.getString("imageURLString"));
+                Log.v("movie id1:", formMovieDetailPackage.getString("movieIdString"));
+
+                FavoriteMovies.add(newFavorite);
+                Log.v("movie id2:", FavoriteMovies.get(0).savedId);
+            }
+
+
         }
 
 
@@ -146,7 +156,6 @@ public class MainActivity extends Activity {
                     moviePackage.putString("id", FavoriteMovies.get(position).savedId);
 
                 }
-                moviePackage.putParcelableArrayList("Favorites", FavoriteMovies);
                 i.putExtras(moviePackage);
                 i2.putExtras(moviePackage);
                 startActivity(i);
@@ -477,11 +486,15 @@ public class MainActivity extends Activity {
     //Holds all the movie contents Information
 
 
-    private void setFavoriteMovies(){
-        if(FavoriteMovies.size() > 0){
-
-        }
-
+    private boolean checkInList( String id, ArrayList<MovieObject> objects){
+        boolean status = false;
+        for(int i = 0; i < objects.size(); ++i){
+           if(id.equals(objects.get(i).savedId)){
+               Log.v("Favorite Id list:", objects.get(i).savedId);
+               status = true;
+           }
+       }
+        return  status;
 
     }
 
