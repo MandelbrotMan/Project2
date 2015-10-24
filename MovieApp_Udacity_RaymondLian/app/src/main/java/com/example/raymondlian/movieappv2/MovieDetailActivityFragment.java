@@ -54,6 +54,7 @@ public class MovieDetailActivityFragment extends Fragment {
 
     //Used to send back MovieObject if Selected as favorite
     Bundle MoviePackage = null;
+    MovieObject Movie;
 
 
 
@@ -79,41 +80,52 @@ public class MovieDetailActivityFragment extends Fragment {
         Intent intent = getActivity().getIntent();
         Bundle recievedPackage = intent.getExtras();
 
-
-        if(isNetworkAvailable()) {
-            ImageURLString = recievedPackage.getString("image");
-            MovieIdString = recievedPackage.getString("id");
-            Plot = recievedPackage.getString("synopsis");
-            Title = recievedPackage.getString("title");
-            ReleaseDate = recievedPackage.getString("release_date");
-            Rating = recievedPackage.getString("vote_average");
-            FavStatus = recievedPackage.getBoolean("favStatus");
+        button = (Button) inflater1.findViewById(R.id.favoriteButton);
+        TextView titleView = (TextView) inflater1.findViewById(R.id.movieTitleText);
+        TextView dateView = (TextView) inflater1.findViewById(R.id.releaseDateText);
+        TextView ratingView = (TextView) inflater1.findViewById(R.id.voteAverageText);
+        TextView synopsisView = (TextView) inflater1.findViewById(R.id.synopsisText);
+        PosterView = (ImageView) inflater1.findViewById(R.id.posterImageView);
 
 
-            new imageTask().execute("");
-            button = (Button) inflater1.findViewById(R.id.favoriteButton);
-            TextView titleView = (TextView) inflater1.findViewById(R.id.movieTitleText);
-            TextView dateView = (TextView) inflater1.findViewById(R.id.releaseDateText);
-            TextView ratingView = (TextView) inflater1.findViewById(R.id.voteAverageText);
-            TextView synopsisView = (TextView) inflater1.findViewById(R.id.synopsisText);
-            PosterView = (ImageView) inflater1.findViewById(R.id.posterImageView);
+        if(savedInstanceState == null) {
+            if (isNetworkAvailable()) {
+                ImageURLString = recievedPackage.getString("image");
+                MovieIdString = recievedPackage.getString("id");
+                Plot = recievedPackage.getString("synopsis");
+                Title = recievedPackage.getString("title");
+                ReleaseDate = recievedPackage.getString("release_date");
+                Rating = recievedPackage.getString("vote_average");
+                FavStatus = recievedPackage.getBoolean("favStatus");
 
+                Movie = new MovieObject(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
 
-            titleView.setText(Title);
-            dateView.setText(ReleaseDate);
-            ratingView.setText(Rating);
-            synopsisView.setText(Plot);
-            if(FavStatus == true){
-                button.setBackgroundResource(R.drawable.star_gold);
-            } else{
-                button.setBackgroundResource(R.drawable.starblack);
+                new imageTask().execute("");
+
+            } else {
+
+                titleView.setText("Connection lost");
             }
-
         } else {
-            TextView titleView = (TextView) inflater1.findViewById(R.id.movieTitleText);
-            titleView.setText("Connection lost");
+            Movie = savedInstanceState.getParcelable("movie");
+            FavStatus = savedInstanceState.getBoolean("status");
+            Title = Movie.savedTitle;
+            ReleaseDate = Movie.savedDate;
+            Rating = Movie.savedRating;
+            MovieIdString = Movie.savedId;
+            ImageURLString = Movie.savedURL;
+            Plot = Movie.savedPlot;
+            new imageTask().execute("");
         }
-
+        if (FavStatus == true) {
+            button.setBackgroundResource(R.drawable.stargold);
+        } else {
+            button.setBackgroundResource(R.drawable.starblack);
+        }
+        titleView.setText(Title);
+        dateView.setText(ReleaseDate);
+        ratingView.setText(Rating);
+        synopsisView.setText(Plot);
 
         adapter = new ArrayAdapter<String>(
                 getActivity(),
@@ -139,10 +151,13 @@ public class MovieDetailActivityFragment extends Fragment {
             public void onClick(View v) {
 
                 if(FavStatus == false){
-
+                    CharSequence text = "Added!";
+                    int duration = Toast.LENGTH_SHORT;
+                    MToast = Toast.makeText(getContext(), text, duration);
+                    MToast.show();
                     MoviePackage = new Bundle();
                     MovieObject newFavorite = new MovieObject(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
-                   button.setBackgroundResource(R.drawable.star_gold);
+                   button.setBackgroundResource(R.drawable.stargold);
                     MoviePackage.putString("title", Title);
                     MoviePackage.putString("releaseDate", ReleaseDate);
                     MoviePackage.putString("rating", Rating);
@@ -151,6 +166,7 @@ public class MovieDetailActivityFragment extends Fragment {
                     MoviePackage.putString("imageURLString", ImageURLString);
 
                 }
+
 
 
 
@@ -165,6 +181,12 @@ public class MovieDetailActivityFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+    }
+    @Override
+    public void onSaveInstanceState(Bundle bundle) {
+        bundle.putParcelable("movie", Movie);
+        bundle.putBoolean("status", FavStatus);
+        super.onSaveInstanceState(bundle);
     }
 
 

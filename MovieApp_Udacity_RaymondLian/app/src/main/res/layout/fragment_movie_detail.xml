@@ -63,8 +63,15 @@
         android:layout_marginLeft="5dp"
         android:id="@+id/favoriteButton"
         android:layout_toRightOf="@+id/posterImageView"
+        android:layout_below="@+id/reviewButton"/>
+    <Button
+        android:layout_width= "wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:text="Reviews"
+        android:id="@+id/reviewButton"
+        android:layout_toRightOf="@+id/posterImageView"
         android:layout_below="@+id/voteAverageText"/>
-
 
 </RelativeLayout>
     </ScrollView>

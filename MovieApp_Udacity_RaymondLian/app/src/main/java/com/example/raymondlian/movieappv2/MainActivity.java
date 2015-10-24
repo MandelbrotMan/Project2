@@ -89,10 +89,7 @@ public class MainActivity extends Activity {
                         formMovieDetailPackage.getString("plot"),
                         formMovieDetailPackage.getString("movieIdString"),
                         formMovieDetailPackage.getString("imageURLString"));
-                Log.v("movie id1:", formMovieDetailPackage.getString("movieIdString"));
-
-                FavoriteMovies.add(newFavorite);
-                Log.v("movie id2:", FavoriteMovies.get(0).savedId);
+                        FavoriteMovies.add(newFavorite);
             }
 
 
