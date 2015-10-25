@@ -1,9 +1,9 @@
 package com.example.raymondlian.movieappv2;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -42,6 +42,7 @@ import android.widget.Toast;
  */
 public class MovieDetailActivityFragment extends Fragment {
 
+
     //To be sent back if selected as favorite
     String ImageURLString; //For posterpath
     String MovieIdString;  //For pulling additional data of selected movie
@@ -61,11 +62,11 @@ public class MovieDetailActivityFragment extends Fragment {
     ImageView PosterView;
     ArrayAdapter<String> adapter;
     ListView listView;
-    Button button;
-
+    Button FavoriteButton;
+    Button ReviewButton;
     Context mContext = getContext();
     boolean FavStatus;
-
+    Intent I;
     ArrayList<String> trailerTitles = new ArrayList<>();
 
     public MovieDetailActivityFragment() {
@@ -80,7 +81,10 @@ public class MovieDetailActivityFragment extends Fragment {
         Intent intent = getActivity().getIntent();
         Bundle recievedPackage = intent.getExtras();
 
-        button = (Button) inflater1.findViewById(R.id.favoriteButton);
+
+        //UI Components
+        ReviewButton = (Button) inflater1.findViewById(R.id.reviewButton);
+        FavoriteButton = (Button) inflater1.findViewById(R.id.favoriteButton);
         TextView titleView = (TextView) inflater1.findViewById(R.id.movieTitleText);
         TextView dateView = (TextView) inflater1.findViewById(R.id.releaseDateText);
         TextView ratingView = (TextView) inflater1.findViewById(R.id.voteAverageText);
@@ -118,9 +122,9 @@ public class MovieDetailActivityFragment extends Fragment {
             new imageTask().execute("");
         }
         if (FavStatus == true) {
-            button.setBackgroundResource(R.drawable.stargold);
+            FavoriteButton.setBackgroundResource(R.drawable.stargold);
         } else {
-            button.setBackgroundResource(R.drawable.starblack);
+            FavoriteButton.setBackgroundResource(R.drawable.starblack);
         }
         titleView.setText(Title);
         dateView.setText(ReleaseDate);
@@ -146,11 +150,11 @@ public class MovieDetailActivityFragment extends Fragment {
         });
 
 
-        button.setOnClickListener(new View.OnClickListener() {
+        FavoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(FavStatus == false){
+                if (FavStatus == false) {
                     CharSequence text = "Added!";
                     int duration = Toast.LENGTH_SHORT;
                     MToast = Toast.makeText(getContext(), text, duration);
@@ -158,7 +162,7 @@ public class MovieDetailActivityFragment extends Fragment {
                     FavStatus = true;
                     MoviePackage = new Bundle();
                     MovieObject newFavorite = new MovieObject(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
-                   button.setBackgroundResource(R.drawable.stargold);
+                    FavoriteButton.setBackgroundResource(R.drawable.stargold);
                     MoviePackage.putString("title", Title);
                     MoviePackage.putString("releaseDate", ReleaseDate);
                     MoviePackage.putString("rating", Rating);
@@ -169,20 +173,55 @@ public class MovieDetailActivityFragment extends Fragment {
                 }
 
 
-
-
             }
         });
 
+        ReviewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentReviewPage = new Intent(getActivity(), ReviewsActivity.class);
+                startActivity(intentReviewPage);
+            }
+        });
+
+        getActivity().setResult(Activity.RESULT_OK, I);
 
 
        return  inflater1;
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        I = new Intent(getActivity(), MainActivity.class);
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
+    /*
+    @Override
+    public void onBackPressed() {
+        if (FavStatus == false) {
+            CharSequence text = "Added!";
+            int duration = Toast.LENGTH_SHORT;
+            MToast = Toast.makeText(getContext(), text, duration);
+            MToast.show();
+            FavStatus = true;
+            MoviePackage = new Bundle();
+            MovieObject newFavorite = new MovieObject(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
+            FavoriteButton.setBackgroundResource(R.drawable.stargold);
+            MoviePackage.putString("title", Title);
+            MoviePackage.putString("releaseDate", ReleaseDate);
+            MoviePackage.putString("rating", Rating);
+            MoviePackage.putString("plot", Plot);
+            MoviePackage.putString("movieIdString", MovieIdString);
+            MoviePackage.putString("imageURLString", ImageURLString);
+
+        }
+        I.putExtras(MoviePackage);
+        getActivity().setResult(getActivity().RESULT_OK, I);
+
+
+
+    }*/
+   
     @Override
     public void onSaveInstanceState(Bundle bundle) {
         bundle.putParcelable("movie", Movie);
@@ -201,14 +240,7 @@ public class MovieDetailActivityFragment extends Fragment {
     }
 
 
-    /*
-    @Override
-    public void onBackPressed() {
-        String data = mEditText.getText();
-        Intent intent = new Intent();
-        intent.putExtra("MyData", data);
-        setResult(resultcode, intent);
-    }*/
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -220,11 +252,12 @@ public class MovieDetailActivityFragment extends Fragment {
         //noinspection SimplifiableIfStatement
         if (id == R.id.Home) {
 
-            final Intent i = new Intent(getActivity(), MainActivity.class);
             if(MoviePackage != null) {
-                i.putExtras(MoviePackage);
+                I = new Intent(getActivity(), MainActivity.class);
+                I.putExtras(MoviePackage);
+
             }
-            startActivity(i);
+            startActivity(I);
             return true;
         }
 
@@ -242,7 +275,6 @@ public class MovieDetailActivityFragment extends Fragment {
 
             try {
                 getTrailersJSON(movieTrailersUrl);
-                Log.v("Size:", Integer.toString(trailerTitles.size()));
             } catch (JSONException e) {
                 e.printStackTrace();
             }

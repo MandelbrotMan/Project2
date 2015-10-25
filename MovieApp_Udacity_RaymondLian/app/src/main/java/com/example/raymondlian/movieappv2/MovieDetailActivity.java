@@ -46,7 +46,6 @@ public class MovieDetailActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
 
-
     }
 
 
