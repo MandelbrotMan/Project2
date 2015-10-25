@@ -155,6 +155,7 @@ public class MovieDetailActivityFragment extends Fragment {
                     int duration = Toast.LENGTH_SHORT;
                     MToast = Toast.makeText(getContext(), text, duration);
                     MToast.show();
+                    FavStatus = true;
                     MoviePackage = new Bundle();
                     MovieObject newFavorite = new MovieObject(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
                    button.setBackgroundResource(R.drawable.stargold);
