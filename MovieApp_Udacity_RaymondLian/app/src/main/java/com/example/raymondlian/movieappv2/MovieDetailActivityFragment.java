@@ -37,10 +37,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import android.widget.Button;
 import android.widget.Toast;
+import android.view.KeyEvent;
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MovieDetailActivityFragment extends Fragment {
+    OnHeadlineSelectedListener mCallback;
+
 
 
     //To be sent back if selected as favorite
@@ -64,7 +67,7 @@ public class MovieDetailActivityFragment extends Fragment {
     ListView listView;
     Button FavoriteButton;
     Button ReviewButton;
-    Context mContext = getContext();
+    Context mContext = getActivity();
     boolean FavStatus;
     Intent I;
     ArrayList<String> trailerTitles = new ArrayList<>();
@@ -76,7 +79,7 @@ public class MovieDetailActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View inflater1 = inflater.inflate(R.layout.fragment_movie_detail, container);
-
+        Log.v("Echo", " echo");
         super.onCreate(savedInstanceState);
         Intent intent = getActivity().getIntent();
         Bundle recievedPackage = intent.getExtras();
@@ -155,6 +158,7 @@ public class MovieDetailActivityFragment extends Fragment {
             public void onClick(View v) {
 
                 if (FavStatus == false) {
+
                     CharSequence text = "Added!";
                     int duration = Toast.LENGTH_SHORT;
                     MToast = Toast.makeText(getContext(), text, duration);
@@ -169,6 +173,7 @@ public class MovieDetailActivityFragment extends Fragment {
                     MoviePackage.putString("plot", Plot);
                     MoviePackage.putString("movieIdString", MovieIdString);
                     MoviePackage.putString("imageURLString", ImageURLString);
+                    mCallback.onArticleSelected(Title);
 
                 }
 
@@ -194,34 +199,10 @@ public class MovieDetailActivityFragment extends Fragment {
         I = new Intent(getActivity(), MainActivity.class);
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+
     }
-    /*
-    @Override
-    public void onBackPressed() {
-        if (FavStatus == false) {
-            CharSequence text = "Added!";
-            int duration = Toast.LENGTH_SHORT;
-            MToast = Toast.makeText(getContext(), text, duration);
-            MToast.show();
-            FavStatus = true;
-            MoviePackage = new Bundle();
-            MovieObject newFavorite = new MovieObject(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
-            FavoriteButton.setBackgroundResource(R.drawable.stargold);
-            MoviePackage.putString("title", Title);
-            MoviePackage.putString("releaseDate", ReleaseDate);
-            MoviePackage.putString("rating", Rating);
-            MoviePackage.putString("plot", Plot);
-            MoviePackage.putString("movieIdString", MovieIdString);
-            MoviePackage.putString("imageURLString", ImageURLString);
 
-        }
-        I.putExtras(MoviePackage);
-        getActivity().setResult(getActivity().RESULT_OK, I);
-
-
-
-    }*/
-   
     @Override
     public void onSaveInstanceState(Bundle bundle) {
         bundle.putParcelable("movie", Movie);
@@ -262,6 +243,25 @@ public class MovieDetailActivityFragment extends Fragment {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    // Container Activity must implement this interface
+    public interface OnHeadlineSelectedListener {
+        public void onArticleSelected(String position);
+    }
+
+    @Override
+    public void onAttach(Context c) {
+        super.onAttach(c);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback = (OnHeadlineSelectedListener) c;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(c
+                    + " must implement OnHeadlineSelectedListener");
+        }
     }
 
 
@@ -378,8 +378,6 @@ public class MovieDetailActivityFragment extends Fragment {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
-
-
 
 
 }

@@ -24,10 +24,6 @@
             android:label="@string/title_activity_movie_detail" >
         </activity>
         <activity
-            android:name=".Main2Activity"
-            android:label="@string/title_activity_main2" >
-        </activity>
-        <activity
             android:name=".ReviewsActivity"
             android:label="@string/title_activity_reviews" >
         </activity>

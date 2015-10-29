@@ -39,15 +39,16 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-public class MovieDetailActivity extends Activity {
-
+public class MovieDetailActivity extends Activity    implements MovieDetailActivityFragment.OnHeadlineSelectedListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
-
     }
-
+    @Override
+    public void onArticleSelected(String position) {
+           Log.v("Interface: ", position);
+    }
 
 
 }
