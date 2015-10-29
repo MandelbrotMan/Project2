@@ -42,7 +42,7 @@ import android.view.KeyEvent;
  * A placeholder fragment containing a simple view.
  */
 public class MovieDetailActivityFragment extends Fragment {
-    OnHeadlineSelectedListener mCallback;
+    OnFavoriteSelectedListener mCallback;
 
 
 
@@ -58,7 +58,8 @@ public class MovieDetailActivityFragment extends Fragment {
 
     //Used to send back MovieObject if Selected as favorite
     Bundle MoviePackage = null;
-    MovieObject Movie;
+
+    MovieObject Movie; //For on rotation saveInstance
 
 
 
@@ -79,7 +80,6 @@ public class MovieDetailActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View inflater1 = inflater.inflate(R.layout.fragment_movie_detail, container);
-        Log.v("Echo", " echo");
         super.onCreate(savedInstanceState);
         Intent intent = getActivity().getIntent();
         Bundle recievedPackage = intent.getExtras();
@@ -173,7 +173,7 @@ public class MovieDetailActivityFragment extends Fragment {
                     MoviePackage.putString("plot", Plot);
                     MoviePackage.putString("movieIdString", MovieIdString);
                     MoviePackage.putString("imageURLString", ImageURLString);
-                    mCallback.onArticleSelected(Title);
+                    mCallback.onFavoriteSelected(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
 
                 }
 
@@ -246,8 +246,8 @@ public class MovieDetailActivityFragment extends Fragment {
     }
 
     // Container Activity must implement this interface
-    public interface OnHeadlineSelectedListener {
-        public void onArticleSelected(String position);
+    public interface OnFavoriteSelectedListener {
+        public void onFavoriteSelected(String title, String date, String rating, String plot, String id, String url);
     }
 
     @Override
@@ -257,7 +257,7 @@ public class MovieDetailActivityFragment extends Fragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mCallback = (OnHeadlineSelectedListener) c;
+            mCallback = (OnFavoriteSelectedListener) c;
         } catch (ClassCastException e) {
             throw new ClassCastException(c
                     + " must implement OnHeadlineSelectedListener");

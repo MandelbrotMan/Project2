@@ -39,15 +39,45 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-public class MovieDetailActivity extends Activity    implements MovieDetailActivityFragment.OnHeadlineSelectedListener {
+public class MovieDetailActivity extends Activity    implements MovieDetailActivityFragment.OnFavoriteSelectedListener {
+
+    String ImageURLString; //For posterpath
+    String MovieIdString;  //For pulling additional data of selected movie
+    String Title;
+    String Rating;
+    String ReleaseDate;
+    String Plot;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
+
+    }
+
+    @Override
+    public void onFavoriteSelected(String title, String date, String rating, String plot, String id, String url) {
+        Title = title;
+        Rating = rating;
+        ImageURLString = url;
+        MovieIdString = id;
+        ReleaseDate = date;
+        Plot = plot;
     }
     @Override
-    public void onArticleSelected(String position) {
-           Log.v("Interface: ", position);
+    public void onBackPressed(){
+        Intent i = new Intent(this, MainActivity.class);
+        if(!Title.isEmpty()) {
+            Bundle MoviePackage = new Bundle();
+            MoviePackage.putString("title", Title);
+            MoviePackage.putString("releaseDate", ReleaseDate);
+            MoviePackage.putString("rating", Rating);
+            MoviePackage.putString("plot", Plot);
+            MoviePackage.putString("movieIdString", MovieIdString);
+            MoviePackage.putString("imageURLString", ImageURLString);
+            i.putExtras(MoviePackage);
+        }
+        startActivity(i);
     }
 
 
