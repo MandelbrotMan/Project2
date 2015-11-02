@@ -42,7 +42,8 @@ import android.view.KeyEvent;
  * A placeholder fragment containing a simple view.
  */
 public class MovieDetailActivityFragment extends Fragment {
-    OnFavoriteSelectedListener mCallback;
+    OnFavoriteSelectedListener mCallback; // used to communicate between fragment and main activity
+
 
 
 
@@ -79,10 +80,12 @@ public class MovieDetailActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View inflater1 = inflater.inflate(R.layout.fragment_movie_detail, container);
         super.onCreate(savedInstanceState);
         Intent intent = getActivity().getIntent();
         Bundle recievedPackage = intent.getExtras();
+
 
 
         //UI Components
@@ -124,9 +127,14 @@ public class MovieDetailActivityFragment extends Fragment {
             Plot = Movie.savedPlot;
             new imageTask().execute("");
         }
+        //mCallback must be initialize with some value to prevent a void error
         if (FavStatus == true) {
             FavoriteButton.setBackgroundResource(R.drawable.stargold);
+            mCallback.onFavoriteSelected(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
+
         } else {
+            mCallback.onFavoriteSelected("","","","","","");
+
             FavoriteButton.setBackgroundResource(R.drawable.starblack);
         }
         titleView.setText(Title);

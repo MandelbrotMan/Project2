@@ -168,31 +168,6 @@ public class MainActivity extends Activity {
         });
 
 
-
-
-    }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            if (resultCode == RESULT_OK) {
-                formMovieDetailPackage = data.getExtras();
-                if(formMovieDetailPackage != null){
-                    if(!checkInList(formMovieDetailPackage.getString("movieIdString"), FavoriteMovies)){
-                        MovieObject newFavorite = new MovieObject(
-                                formMovieDetailPackage.getString("title"),
-                                formMovieDetailPackage.getString("releaseDate"),
-                                formMovieDetailPackage.getString("rating"),
-                                formMovieDetailPackage.getString("plot"),
-                                formMovieDetailPackage.getString("movieIdString"),
-                                formMovieDetailPackage.getString("imageURLString"));
-                        FavoriteMovies.add(newFavorite);
-                    }
-
-
-                }
-            }
-        }
     }
 
         @Override
