@@ -83,7 +83,7 @@ public class MovieDetailActivityFragment extends Fragment {
 
         View inflater1 = inflater.inflate(R.layout.fragment_movie_detail, container);
         super.onCreate(savedInstanceState);
-        Intent intent = getActivity().getIntent();
+        final Intent intent = getActivity().getIntent();
         Bundle recievedPackage = intent.getExtras();
 
 
@@ -193,6 +193,9 @@ public class MovieDetailActivityFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intentReviewPage = new Intent(getActivity(), ReviewsActivity.class);
+                intentReviewPage.putExtra("id", MovieIdString);
+
+
                 startActivity(intentReviewPage);
             }
         });
