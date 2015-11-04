@@ -74,6 +74,7 @@ public class MovieDetailActivityFragment extends Fragment {
     Intent I;
     ArrayList<TrailerObject> trailerObjects = new ArrayList<>();
 
+
     public MovieDetailActivityFragment() {
     }
 
@@ -142,7 +143,13 @@ public class MovieDetailActivityFragment extends Fragment {
         ratingView.setText(Rating);
         synopsisView.setText(Plot);
 
-        TrailerAdapter adapter = new TrailerAdapter(this, trailerObjects);
+        ArrayList<TrailerObject> trailerObjectsTest = new ArrayList<>();
+        TrailerObject temp1 = new TrailerObject("tet", "re");
+        TrailerObject temp2 = new TrailerObject("red","");
+        trailerObjectsTest.add(temp1);
+        trailerObjectsTest.add(temp2);
+
+        TrailerAdapter adapter = new TrailerAdapter(this, trailerObjectsTest);
 
         listView = (ListView) inflater1.findViewById(R.id.trailerListView);
         listView.setAdapter(adapter);
@@ -369,7 +376,7 @@ public class MovieDetailActivityFragment extends Fragment {
 
             JSONObject trailersObject = new JSONObject(urlString);
             JSONArray trailerArray = trailersObject.getJSONArray("results");
-
+            Log.v("size",Integer.toString(trailerArray.length()));
 
             for(int i = 0; i < trailerArray.length(); ++i){
                 JSONObject temp = trailerArray.getJSONObject(i);
@@ -394,10 +401,10 @@ public class MovieDetailActivityFragment extends Fragment {
             TrailerObject item = getItem(position);
             // Check if an existing view is being reused, otherwise inflate the view
             if (convertView == null) {
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_movie_detail, parent, false);
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.trailer_item, parent, false);
             }
             // Lookup view for data population
-            TextView Name = (TextView) convertView.findViewById(R.id.trailerListText);
+            TextView Name = (TextView) convertView.findViewById(R.id.list_item_trailer_textview);
             // Populate the data into the template view using the data object
             Name.setText((CharSequence) item.trailer_title);
             // Return the completed view to render on screen
