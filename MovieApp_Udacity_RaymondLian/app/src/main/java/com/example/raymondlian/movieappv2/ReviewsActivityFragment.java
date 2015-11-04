@@ -184,7 +184,8 @@ public class ReviewsActivityFragment extends Fragment {
 
             for (int i = 0; i < trailerArray.length(); ++i) {
                 JSONObject temp = trailerArray.getJSONObject(i);
-                String stringTemp = temp.getString("content");
+                String stringTemp = "Author: "  + temp.getString("author");
+                stringTemp = stringTemp + "\n" + temp.getString("content");
                 Reviews.add(stringTemp);
 
             }

@@ -72,7 +72,7 @@ public class MovieDetailActivityFragment extends Fragment {
     Context mContext = getActivity();
     boolean FavStatus;
     Intent I;
-    ArrayList<String> trailerTitles = new ArrayList<>();
+    ArrayList<TrailerObject> trailerObjects = new ArrayList<>();
 
     public MovieDetailActivityFragment() {
     }
@@ -142,12 +142,7 @@ public class MovieDetailActivityFragment extends Fragment {
         ratingView.setText(Rating);
         synopsisView.setText(Plot);
 
-        adapter = new ArrayAdapter<String>(
-                getActivity(),
-                R.layout.trailer_item,
-                R.id.list_item_trailer_textview,
-                trailerTitles
-        );
+        TrailerAdapter adapter = new TrailerAdapter(this, trailerObjects);
 
         listView = (ListView) inflater1.findViewById(R.id.trailerListView);
         listView.setAdapter(adapter);
@@ -169,7 +164,7 @@ public class MovieDetailActivityFragment extends Fragment {
 
                     CharSequence text = "Added!";
                     int duration = Toast.LENGTH_SHORT;
-                    MToast = Toast.makeText(getContext(), text, duration);
+                    MToast = Toast.makeText(getActivity(), text, duration);
                     MToast.show();
                     FavStatus = true;
                     MoviePackage = new Bundle();
@@ -184,6 +179,11 @@ public class MovieDetailActivityFragment extends Fragment {
                     mCallback.onFavoriteSelected(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
 
                 }
+                /*
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://www.youtube.com/watch?v=cyY8Gyt_rls"));
+                startActivity(intent);
+                */
 
 
             }
@@ -297,8 +297,8 @@ public class MovieDetailActivityFragment extends Fragment {
         protected void onPostExecute(){
             adapter.clear();
             String trailerName = "";
-            for(int i = 0; i < trailerTitles.size(); ++i) {
-                trailerName = trailerTitles.get(i);
+            for(int i = 0; i < trailerObjects.size(); ++i) {
+                trailerName = trailerObjects.get(i).trailer_title;
                 adapter.add(trailerName);
             }
             adapter.notifyDataSetChanged();
@@ -373,8 +373,8 @@ public class MovieDetailActivityFragment extends Fragment {
 
             for(int i = 0; i < trailerArray.length(); ++i){
                 JSONObject temp = trailerArray.getJSONObject(i);
-                String stringTemp = temp.getString("name");
-                trailerTitles.add(stringTemp);
+                TrailerObject tempTrailer = new TrailerObject(temp.getString("name"),temp.getString("source"));
+                trailerObjects.add(tempTrailer);
 
             }
 
@@ -383,12 +383,36 @@ public class MovieDetailActivityFragment extends Fragment {
         }
 
     }
+    public class TrailerAdapter extends ArrayAdapter<TrailerObject> {
+        public TrailerAdapter(MovieDetailActivityFragment context, ArrayList<TrailerObject> trailer) {
+            super(getActivity(), 0, trailer);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            // Get the data item for this position
+            TrailerObject item = getItem(position);
+            // Check if an existing view is being reused, otherwise inflate the view
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_movie_detail, parent, false);
+            }
+            // Lookup view for data population
+            TextView Name = (TextView) convertView.findViewById(R.id.trailerListText);
+            // Populate the data into the template view using the data object
+            Name.setText((CharSequence) item.trailer_title);
+            // Return the completed view to render on screen
+            return convertView;
+        }
+    }
+
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
+
+
 
 
 }
