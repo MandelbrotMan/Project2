@@ -143,14 +143,10 @@ public class MovieDetailActivityFragment extends Fragment {
         ratingView.setText(Rating);
         synopsisView.setText(Plot);
 
-        ArrayList<TrailerObject> trailerObjectsTest = new ArrayList<>();
-        TrailerObject temp1 = new TrailerObject("tet", "re");
-        TrailerObject temp2 = new TrailerObject("red","");
-        trailerObjectsTest.add(temp1);
-        trailerObjectsTest.add(temp2);
+     ;
 
-        TrailerAdapter adapter = new TrailerAdapter(this, trailerObjectsTest);
-
+        TrailerAdapter adapter = new TrailerAdapter(this, trailerObjects);
+        Log.v("Size of trailers list: ", Integer.toString(trailerObjects.size()));
         listView = (ListView) inflater1.findViewById(R.id.trailerListView);
         listView.setAdapter(adapter);
 
@@ -376,11 +372,10 @@ public class MovieDetailActivityFragment extends Fragment {
 
             JSONObject trailersObject = new JSONObject(urlString);
             JSONArray trailerArray = trailersObject.getJSONArray("results");
-            Log.v("size",Integer.toString(trailerArray.length()));
 
             for(int i = 0; i < trailerArray.length(); ++i){
                 JSONObject temp = trailerArray.getJSONObject(i);
-                TrailerObject tempTrailer = new TrailerObject(temp.getString("name"),temp.getString("source"));
+                TrailerObject tempTrailer = new TrailerObject(temp.getString("name"),temp.getString("key"));
                 trailerObjects.add(tempTrailer);
 
             }
