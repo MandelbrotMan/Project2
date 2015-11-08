@@ -155,6 +155,10 @@ public class MovieDetailActivityFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(trailerObjects.get(position).trailer_url));
+                startActivity(intent);
+
             }
         });
 
@@ -183,9 +187,7 @@ public class MovieDetailActivityFragment extends Fragment {
 
                 }
                 /*
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("https://www.youtube.com/watch?v=cyY8Gyt_rls"));
-                startActivity(intent);
+
                 */
 
 
@@ -375,8 +377,36 @@ public class MovieDetailActivityFragment extends Fragment {
 
             for(int i = 0; i < trailerArray.length(); ++i){
                 JSONObject temp = trailerArray.getJSONObject(i);
-                TrailerObject tempTrailer = new TrailerObject(temp.getString("name"),temp.getString("key"));
+                String trailerLink = null;
+
+                Uri base = Uri.parse("https://youtube.com").buildUpon().
+                        appendPath("watch").
+                        appendQueryParameter("v", temp.getString("key")).build();
+
+                HttpURLConnection urlConnection = null;
+
+                try {
+                  URL  trailerURL = new URL(base.toString());
+
+                urlConnection = (HttpURLConnection) trailerURL.openConnection();
+                    urlConnection.setRequestMethod("GET");
+                    urlConnection.connect();
+
+                } catch (IOException e) {
+                    Log.e("error", String.valueOf(e));
+                } finally {
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                        trailerLink = base.toString();
+                    }
+                }
+
+                TrailerObject tempTrailer = new TrailerObject(temp.getString("name"),trailerLink);
+
                 trailerObjects.add(tempTrailer);
+
+
+
 
             }
 
