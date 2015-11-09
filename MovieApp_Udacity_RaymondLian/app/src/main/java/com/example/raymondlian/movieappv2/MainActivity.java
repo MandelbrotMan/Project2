@@ -190,48 +190,7 @@ public class MainActivity extends Activity {
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_popularityMenu
-                ) {
-            Gridview.setAdapter(null);
-
-            new DownloadImageTask((GridView) findViewById(R.id.gridview)).execute("popular");
-            return true;
-        }
-        if (id == R.id.action_ratingMenu
-                ) {
-            Gridview.setAdapter(null);
-            new DownloadImageTask((GridView) findViewById(R.id.gridview)).execute("top_rated");
-
-
-            return true;
-        }
-        if (id == R.id.action_FavoriteMenu){
-            CurrentList = 1;
-            MoviesListed.clear();
-            LocalAdapter.restore(this, FavoriteMovies);
-            Gridview.setAdapter(null);
-            LocalAdapter.notifyDataSetChanged();
-            Gridview.setAdapter(LocalAdapter);
-
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     private class DownloadImageTask extends AsyncTask<String, Void, ArrayList<MovieObject>> {
         GridView bmImage;

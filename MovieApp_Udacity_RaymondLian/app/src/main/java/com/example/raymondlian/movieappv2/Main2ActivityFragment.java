@@ -11,6 +11,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -60,7 +63,6 @@ public class Main2ActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View root = (View)inflater.inflate(R.layout.fragment_main2, container, false);
 
-        getActivity().setContentView(R.layout.activity_main);
         getActivity().setTitle("Blue Ray Movies");
         HeaderProgress = (LinearLayout) root.findViewById(R.id.ProgressBarLayout);
 
@@ -162,10 +164,63 @@ public class Main2ActivityFragment extends Fragment {
             }
         });
 
-
+        setHasOptionsMenu(true);
         return root;
+
+    }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        super.onCreateOptionsMenu(menu, menuInflater);
+        menu.clear();
+        menuInflater.inflate(R.menu.menu_main, menu);
+
+
+    }
+    @Override
+    public void onSaveInstanceState(Bundle bundle) {
+        bundle.putParcelableArrayList("movies", MoviesListed);
+        bundle.putParcelableArrayList("favorites", FavoriteMovies);
+        super.onSaveInstanceState(bundle);
     }
 
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_popularityMenu
+                ) {
+            Gridview.setAdapter(null);
+
+            new DownloadImageTask((GridView) getActivity().findViewById(R.id.gridview)).execute("popular");
+            return true;
+        }
+        if (id == R.id.action_ratingMenu
+                ) {
+            Gridview.setAdapter(null);
+            new DownloadImageTask((GridView) getActivity().findViewById(R.id.gridview)).execute("top_rated");
+
+
+            return true;
+        }
+        if (id == R.id.action_FavoriteMenu){
+            CurrentList = 1;
+            MoviesListed.clear();
+            LocalAdapter.restore(getActivity(), FavoriteMovies);
+            Gridview.setAdapter(null);
+            LocalAdapter.notifyDataSetChanged();
+            Gridview.setAdapter(LocalAdapter);
+
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
     private class DownloadImageTask extends AsyncTask<String, Void, ArrayList<MovieObject>> {
         GridView bmImage;
         String listInfo = "";
