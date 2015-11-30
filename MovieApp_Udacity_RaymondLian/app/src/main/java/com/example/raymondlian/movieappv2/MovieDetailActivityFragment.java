@@ -84,6 +84,7 @@ public class MovieDetailActivityFragment extends Fragment {
 
         View inflater1 = inflater.inflate(R.layout.fragment_movie_detail, container);
         super.onCreate(savedInstanceState);
+
         final Intent intent = getActivity().getIntent();
         Bundle recievedPackage = intent.getExtras();
 
@@ -100,7 +101,7 @@ public class MovieDetailActivityFragment extends Fragment {
 
 
         if(savedInstanceState == null) {
-            if (isNetworkAvailable()) {
+            if (isNetworkAvailable() && recievedPackage != null) {
                 ImageURLString = recievedPackage.getString("image");
                 MovieIdString = recievedPackage.getString("id");
                 Plot = recievedPackage.getString("synopsis");
@@ -186,9 +187,7 @@ public class MovieDetailActivityFragment extends Fragment {
                     mCallback.onFavoriteSelected(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
 
                 }
-                /*
 
-                */
 
 
             }
@@ -212,7 +211,7 @@ public class MovieDetailActivityFragment extends Fragment {
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        I = new Intent(getActivity(), MainActivity.class);
+        I = new Intent(getActivity(), Main2Activity.class);
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
@@ -250,7 +249,7 @@ public class MovieDetailActivityFragment extends Fragment {
         if (id == R.id.Home) {
 
             if(MoviePackage != null) {
-                I = new Intent(getActivity(), MainActivity.class);
+                I = new Intent(getActivity(), Main2Activity.class);
                 I.putExtras(MoviePackage);
 
             }

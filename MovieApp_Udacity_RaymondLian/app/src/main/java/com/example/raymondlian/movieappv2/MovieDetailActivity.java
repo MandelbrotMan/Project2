@@ -66,7 +66,7 @@ public class MovieDetailActivity extends Activity    implements MovieDetailActiv
     }
     @Override
     public void onBackPressed(){
-        Intent i = new Intent(this, MainActivity.class);
+        Intent i = new Intent(this, Main2Activity.class);
         if(!Title.isEmpty()) {
             Bundle MoviePackage = new Bundle();
             MoviePackage.putString("title", Title);

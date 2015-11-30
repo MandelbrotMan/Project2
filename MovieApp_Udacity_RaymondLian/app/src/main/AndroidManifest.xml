@@ -27,10 +27,6 @@
             android:name=".ReviewsActivity"
             android:label="@string/title_activity_reviews" >
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:label="MainActivity" >
-        </activity>
     </application>
 
 </manifest>
