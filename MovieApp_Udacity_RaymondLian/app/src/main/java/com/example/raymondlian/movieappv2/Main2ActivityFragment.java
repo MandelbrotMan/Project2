@@ -129,7 +129,7 @@ public class Main2ActivityFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
 
-                final Intent i = new Intent(getActivity(), MovieDetailActivity.class);
+                final Intent i = new Intent(getActivity(), Main2Activity.class);
                 final Intent i2 = new Intent(getActivity(), MovieDetailActivityFragment.class);
 
                 //Prepare information to be sent to the next activity

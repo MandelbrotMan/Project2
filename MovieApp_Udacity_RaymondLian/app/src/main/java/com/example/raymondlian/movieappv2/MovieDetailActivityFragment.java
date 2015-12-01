@@ -42,7 +42,7 @@ import android.view.KeyEvent;
  * A placeholder fragment containing a simple view.
  */
 public class MovieDetailActivityFragment extends Fragment {
-    OnFavoriteSelectedListener mCallback; // used to communicate between fragment and main activity
+   OnFavoriteSelectedListener mCallback; // used to communicate between fragment and main activity
 
 
 
@@ -129,7 +129,7 @@ public class MovieDetailActivityFragment extends Fragment {
             mCallback.onFavoriteSelected(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
 
         } else {
-            mCallback.onFavoriteSelected("","","","","","");
+          mCallback.onFavoriteSelected("","","","","","");
 
             FavoriteButton.setBackgroundResource(R.drawable.starblack);
         }
