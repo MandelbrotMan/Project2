@@ -39,7 +39,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-public class MovieDetailActivity extends Activity    implements MovieDetailActivityFragment.OnFavoriteSelectedListener {
+public class MovieDetailActivity extends Activity  {
 
     String ImageURLString; //For posterpath
     String MovieIdString;  //For pulling additional data of selected movie
@@ -55,15 +55,7 @@ public class MovieDetailActivity extends Activity    implements MovieDetailActiv
 
     }
 
-    @Override
-    public void onFavoriteSelected(String title, String date, String rating, String plot, String id, String url) {
-        Title = title;
-        Rating = rating;
-        ImageURLString = url;
-        MovieIdString = id;
-        ReleaseDate = date;
-        Plot = plot;
-    }
+
     @Override
     public void onBackPressed(){
         Intent i = new Intent(this, Main2Activity.class);

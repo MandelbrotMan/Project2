@@ -121,7 +121,7 @@ public class MovieDetailActivityFragment extends Fragment {
             MovieIdString = Movie.savedId;
             ImageURLString = Movie.savedURL;
             Plot = Movie.savedPlot;
-            //new imageTask().execute("");
+            new imageTask().execute("");
         }
         //mCallback must be initialize with some value to prevent a void error
         if (FavStatus == true) {
@@ -205,7 +205,7 @@ public class MovieDetailActivityFragment extends Fragment {
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
-       // I = new Intent(getActivity(), Main2Activity.class);
+        I = new Intent(getActivity(), Main2Activity.class);
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
@@ -224,7 +224,7 @@ public class MovieDetailActivityFragment extends Fragment {
 
 
 
-
+   
 
     // Container Activity must implement this interface
     public interface OnFavoriteSelectedListener {
