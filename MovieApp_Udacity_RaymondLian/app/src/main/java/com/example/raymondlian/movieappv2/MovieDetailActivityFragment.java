@@ -224,7 +224,7 @@ public class MovieDetailActivityFragment extends Fragment {
 
 
 
-   
+
 
     // Container Activity must implement this interface
     public interface OnFavoriteSelectedListener {
