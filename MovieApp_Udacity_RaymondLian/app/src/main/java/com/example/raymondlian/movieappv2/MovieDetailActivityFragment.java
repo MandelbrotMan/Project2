@@ -86,11 +86,7 @@ public class MovieDetailActivityFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         final Intent intent = getActivity().getIntent();
-        Bundle recievedPackage = intent.getExtras();
-
-
-
-        //UI Components
+        Bundle recievedPackage = intent.getExtras();     //UI Components
         ReviewButton = (Button) inflater1.findViewById(R.id.reviewButton);
         FavoriteButton = (Button) inflater1.findViewById(R.id.favoriteButton);
         TextView titleView = (TextView) inflater1.findViewById(R.id.movieTitleText);
@@ -98,8 +94,6 @@ public class MovieDetailActivityFragment extends Fragment {
         TextView ratingView = (TextView) inflater1.findViewById(R.id.voteAverageText);
         TextView synopsisView = (TextView) inflater1.findViewById(R.id.synopsisText);
         PosterView = (ImageView) inflater1.findViewById(R.id.posterImageView);
-
-
         if(savedInstanceState == null) {
             if (isNetworkAvailable() && recievedPackage != null) {
                 ImageURLString = recievedPackage.getString("image");
@@ -127,7 +121,7 @@ public class MovieDetailActivityFragment extends Fragment {
             MovieIdString = Movie.savedId;
             ImageURLString = Movie.savedURL;
             Plot = Movie.savedPlot;
-            new imageTask().execute("");
+            //new imageTask().execute("");
         }
         //mCallback must be initialize with some value to prevent a void error
         if (FavStatus == true) {
@@ -211,7 +205,7 @@ public class MovieDetailActivityFragment extends Fragment {
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        I = new Intent(getActivity(), Main2Activity.class);
+       // I = new Intent(getActivity(), Main2Activity.class);
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
@@ -226,39 +220,11 @@ public class MovieDetailActivityFragment extends Fragment {
     }
 
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_movie_detail, menu);
-        super.onCreateOptionsMenu(menu, menuInflater);
-
-
-    }
 
 
 
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.Home) {
-
-            if(MoviePackage != null) {
-                I = new Intent(getActivity(), Main2Activity.class);
-                I.putExtras(MoviePackage);
-
-            }
-            startActivity(I);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     // Container Activity must implement this interface
     public interface OnFavoriteSelectedListener {

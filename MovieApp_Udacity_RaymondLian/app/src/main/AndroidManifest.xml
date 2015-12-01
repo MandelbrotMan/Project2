@@ -27,6 +27,10 @@
             android:name=".ReviewsActivity"
             android:label="@string/title_activity_reviews" >
         </activity>
+        <activity
+            android:name=".TestActivity"
+            android:label="@string/title_activity_test" >
+        </activity>
     </application>
 
 </manifest>
