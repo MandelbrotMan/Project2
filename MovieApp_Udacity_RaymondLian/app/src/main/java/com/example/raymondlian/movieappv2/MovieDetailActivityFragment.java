@@ -42,7 +42,7 @@ import android.view.KeyEvent;
  * A placeholder fragment containing a simple view.
  */
 public class MovieDetailActivityFragment extends Fragment {
-   OnFavoriteSelectedListener mCallback; // used to communicate between fragment and main activity
+   //OnFavoriteSelectedListener mCallback; // used to communicate between fragment and main activity
 
 
 
@@ -84,7 +84,7 @@ public class MovieDetailActivityFragment extends Fragment {
 
         View inflater1 = inflater.inflate(R.layout.fragment_movie_detail, container);
         super.onCreate(savedInstanceState);
-
+        /*
         final Intent intent = getActivity().getIntent();
         Bundle recievedPackage = intent.getExtras();     //UI Components
         ReviewButton = (Button) inflater1.findViewById(R.id.reviewButton);
@@ -126,10 +126,10 @@ public class MovieDetailActivityFragment extends Fragment {
         //mCallback must be initialize with some value to prevent a void error
         if (FavStatus == true) {
             FavoriteButton.setBackgroundResource(R.drawable.stargold);
-            mCallback.onFavoriteSelected(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
+           // mCallback.onFavoriteSelected(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
 
         } else {
-          mCallback.onFavoriteSelected("","","","","","");
+          //mCallback.onFavoriteSelected("","","","","","");
 
             FavoriteButton.setBackgroundResource(R.drawable.starblack);
         }
@@ -178,13 +178,14 @@ public class MovieDetailActivityFragment extends Fragment {
                     MoviePackage.putString("plot", Plot);
                     MoviePackage.putString("movieIdString", MovieIdString);
                     MoviePackage.putString("imageURLString", ImageURLString);
-                    mCallback.onFavoriteSelected(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
+                  //  mCallback.onFavoriteSelected(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
 
                 }
 
 
 
             }
+
         });
 
         ReviewButton.setOnClickListener(new View.OnClickListener() {
@@ -200,12 +201,12 @@ public class MovieDetailActivityFragment extends Fragment {
 
         getActivity().setResult(Activity.RESULT_OK, I);
 
-
+ */
        return  inflater1;
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        I = new Intent(getActivity(), Main2Activity.class);
+       // I = new Intent(getActivity(), Main2Activity.class);
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
@@ -225,7 +226,7 @@ public class MovieDetailActivityFragment extends Fragment {
 
 
 
-
+/*
     // Container Activity must implement this interface
     public interface OnFavoriteSelectedListener {
         public void onFavoriteSelected(String title, String date, String rating, String plot, String id, String url);
@@ -238,7 +239,7 @@ public class MovieDetailActivityFragment extends Fragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mCallback = (OnFavoriteSelectedListener) c;
+            //mCallback = (OnFavoriteSelectedListener) c;
         } catch (ClassCastException e) {
             throw new ClassCastException(c
                     + " must implement OnHeadlineSelectedListener");
@@ -409,7 +410,7 @@ public class MovieDetailActivityFragment extends Fragment {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-
+*/
 
 
 }

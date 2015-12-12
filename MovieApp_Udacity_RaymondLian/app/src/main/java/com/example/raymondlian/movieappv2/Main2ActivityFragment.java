@@ -54,7 +54,7 @@ public class Main2ActivityFragment extends Fragment {
     ImageAdapter JsonAdapter;
     ImageAdapter LocalAdapter;
     TextView ListTitle;
-
+    View root;
     static int CurrentList = 0; //0 if its MoviesListed, 1 if FavoriteMovies --used for item selection
 
     LinearLayout HeaderProgress;
@@ -66,7 +66,7 @@ public class Main2ActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = (View)inflater.inflate(R.layout.fragment_main2, container, false);
+        root = (View)inflater.inflate(R.layout.fragment_main2, container, false);
 
         getActivity().setTitle("Blue Ray Movies");
         HeaderProgress = (LinearLayout) root.findViewById(R.id.ProgressBarLayout);
@@ -92,6 +92,7 @@ public class Main2ActivityFragment extends Fragment {
                         formMovieDetailPackage.getString("movieIdString"),
                         formMovieDetailPackage.getString("imageURLString"));
                 FavoriteMovies.add(newFavorite);
+
             }
 
 
@@ -103,7 +104,7 @@ public class Main2ActivityFragment extends Fragment {
 
         //For preserving screen data during screen rotation
         if (savedInstanceState == null || !savedInstanceState.containsKey("movies")) {
-           // new DownloadImageTask((GridView) root.findViewById(R.id.gridview)).execute("popular");
+            new DownloadImageTask((GridView) root.findViewById(R.id.gridview)).execute("popular");
 
 
         } else {
@@ -125,7 +126,7 @@ public class Main2ActivityFragment extends Fragment {
                 Gridview.setAdapter(LocalAdapter);
             }
 
-            //new ReloadImageTask((GridView)findViewById(R.id.gridview)).execute("");
+
 
         }
 
@@ -162,6 +163,9 @@ public class Main2ActivityFragment extends Fragment {
 
                 }
 
+                ((Main2Activity)getActivity()).switchToMovieDetail();
+               //transaction.remove(getActivity().getFragmentManager().findFragmentById(R.id.fragment_gridview));
+              //  transaction.commit();
             }
         });
 
@@ -199,13 +203,8 @@ public class Main2ActivityFragment extends Fragment {
                 ) {
             Gridview.setAdapter(null);
 
-            Main2ActivityFragment fragment = new Main2ActivityFragment();
-            manager = getFragmentManager();
-            FragmentTransaction transaction = manager.beginTransaction();
-            transaction.remove(this);
 
-
-           // new DownloadImageTask((GridView) getActivity().findViewById(R.id.gridview)).execute("popular");
+           new DownloadImageTask((GridView) getActivity().findViewById(R.id.gridview)).execute("popular");
             return true;
         }
         if (id == R.id.action_ratingMenu
