@@ -2,7 +2,6 @@ package com.example.raymondlian.movieappv2;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -47,6 +46,7 @@ public class Main2ActivityFragment extends Fragment {
     ArrayList<MovieObject> MoviesListed = new ArrayList<MovieObject>();
     static ArrayList<MovieObject> FavoriteMovies = new ArrayList<MovieObject>();
 
+    OnMovieSelectedListener mCallback;
 
     FragmentManager manager;
 
@@ -140,6 +140,7 @@ public class Main2ActivityFragment extends Fragment {
                 //Prepare information to be sent to the next activity
                 Bundle moviePackage = new Bundle();
                 if (CurrentList == 0) {
+                    /*
                     moviePackage.putString("title", MoviesListed.get(position).savedTitle);
                     moviePackage.putString("image", MoviesListed.get(position).savedURL);
                     moviePackage.putString("release_date", MoviesListed.get(position).savedDate);
@@ -150,15 +151,23 @@ public class Main2ActivityFragment extends Fragment {
                         moviePackage.putBoolean("favStatus", true);
                     } else {
                         moviePackage.putBoolean("favStatus", false);
-                    }
+                    }*/
+                    mCallback.onMovieSelected(MoviesListed.get(position).savedTitle,
+                            MoviesListed.get(position).savedDate,
+                            MoviesListed.get(position).savedRating,
+                            MoviesListed.get(position).savedPlot,
+                            MoviesListed.get(position).savedId,
+                            MoviesListed.get(position).savedURL);
                 } else if (CurrentList == 1) {
-                    moviePackage.putString("title", FavoriteMovies.get(position).savedTitle);
-                    moviePackage.putString("image", FavoriteMovies.get(position).savedURL);
-                    moviePackage.putString("release_date", FavoriteMovies.get(position).savedDate);
-                    moviePackage.putString("vote_average", FavoriteMovies.get(position).savedRating);
-                    moviePackage.putString("synopsis", FavoriteMovies.get(position).savedPlot);
-                    moviePackage.putString("id", FavoriteMovies.get(position).savedId);
-                    moviePackage.putBoolean("favStatus", true); // by default
+                /*
+                     // by default
+                */
+                    mCallback.onMovieSelected(MoviesListed.get(position).savedTitle,
+                            MoviesListed.get(position).savedDate,
+                            MoviesListed.get(position).savedRating,
+                            MoviesListed.get(position).savedPlot,
+                            MoviesListed.get(position).savedId,
+                            MoviesListed.get(position).savedURL);
 
 
                 }
@@ -173,6 +182,26 @@ public class Main2ActivityFragment extends Fragment {
         return root;
 
     }
+    public interface OnMovieSelectedListener {
+        public void onMovieSelected(String title, String date, String rating, String plot, String id, String url);
+    }
+
+    @Override
+    public void onAttach(Context c) {
+        super.onAttach(c);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback = (OnMovieSelectedListener) c;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(c
+                    + " must implement OnHeadlineSelectedListener");
+        }
+    }
+
+
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
         // Inflate the menu; this adds items to the action bar if it is present.

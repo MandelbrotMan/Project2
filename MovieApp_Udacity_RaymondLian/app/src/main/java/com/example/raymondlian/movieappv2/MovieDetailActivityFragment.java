@@ -126,10 +126,10 @@ public class MovieDetailActivityFragment extends Fragment {
         //mCallback must be initialize with some value to prevent a void error
         if (FavStatus == true) {
             FavoriteButton.setBackgroundResource(R.drawable.stargold);
-           // mCallback.onFavoriteSelected(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
+            mCallback.onFavoriteSelected(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
 
         } else {
-          //mCallback.onFavoriteSelected("","","","","","");
+          mCallback.onFavoriteSelected("","","","","","");
 
             FavoriteButton.setBackgroundResource(R.drawable.starblack);
         }
