@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 public class Main2Activity extends Activity implements MovieDetailActivityFragment.OnFavoriteSelectedListener, Main2ActivityFragment.OnMovieSelectedListener{
     String ImageURLString; //For posterpath
@@ -47,9 +48,11 @@ public class Main2Activity extends Activity implements MovieDetailActivityFragme
         fragment1.setArguments(moviePackage);
         FragmentTransaction transaction = manager.beginTransaction();
 
-        transaction.replace(R.id.fragment_container_main, fragment1);
-        transaction.addToBackStack("Gridview");
-        transaction.commit();
+if(manager.findFragmentById(R.id.fragment2) == null) {
+    transaction.replace(R.id.fragment_container_main, fragment1);
+    transaction.addToBackStack("Gridview");
+    transaction.commit();
+}
 
 
 
