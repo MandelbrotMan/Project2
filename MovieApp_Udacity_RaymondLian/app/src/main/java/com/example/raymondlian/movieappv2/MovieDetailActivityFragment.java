@@ -82,18 +82,18 @@ public class MovieDetailActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View inflater1 = inflater.inflate(R.layout.fragment_movie_detail, container);
+        View view=inflater.inflate(R.layout.fragment_movie_detail, container,false);
         super.onCreate(savedInstanceState);
-        /*
+
         final Intent intent = getActivity().getIntent();
         Bundle recievedPackage = intent.getExtras();     //UI Components
-        ReviewButton = (Button) inflater1.findViewById(R.id.reviewButton);
-        FavoriteButton = (Button) inflater1.findViewById(R.id.favoriteButton);
-        TextView titleView = (TextView) inflater1.findViewById(R.id.movieTitleText);
-        TextView dateView = (TextView) inflater1.findViewById(R.id.releaseDateText);
-        TextView ratingView = (TextView) inflater1.findViewById(R.id.voteAverageText);
-        TextView synopsisView = (TextView) inflater1.findViewById(R.id.synopsisText);
-        PosterView = (ImageView) inflater1.findViewById(R.id.posterImageView);
+        ReviewButton = (Button) view.findViewById(R.id.reviewButton);
+        FavoriteButton = (Button) view.findViewById(R.id.favoriteButton);
+        TextView titleView = (TextView) view.findViewById(R.id.movieTitleText);
+        TextView dateView = (TextView) view.findViewById(R.id.releaseDateText);
+        TextView ratingView = (TextView) view.findViewById(R.id.voteAverageText);
+        TextView synopsisView = (TextView) view.findViewById(R.id.synopsisText);
+        PosterView = (ImageView) view.findViewById(R.id.posterImageView);
         if(savedInstanceState == null) {
             if (isNetworkAvailable() && recievedPackage != null) {
                 ImageURLString = recievedPackage.getString("image");
@@ -142,7 +142,7 @@ public class MovieDetailActivityFragment extends Fragment {
 
         TrailerAdapter adapter = new TrailerAdapter(this, trailerObjects);
         Log.v("Size of trailers list: ", Integer.toString(trailerObjects.size()));
-        listView = (ListView) inflater1.findViewById(R.id.trailerListView);
+        listView = (ListView) view.findViewById(R.id.trailerListView);
         listView.setAdapter(adapter);
 
 
@@ -201,8 +201,8 @@ public class MovieDetailActivityFragment extends Fragment {
 
         getActivity().setResult(Activity.RESULT_OK, I);
 
- */
-       return  inflater1;
+
+       return  view;
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -226,7 +226,7 @@ public class MovieDetailActivityFragment extends Fragment {
 
 
 
-/*
+
     // Container Activity must implement this interface
     public interface OnFavoriteSelectedListener {
         public void onFavoriteSelected(String title, String date, String rating, String plot, String id, String url);
@@ -410,7 +410,7 @@ public class MovieDetailActivityFragment extends Fragment {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-*/
+
 
 
 }
