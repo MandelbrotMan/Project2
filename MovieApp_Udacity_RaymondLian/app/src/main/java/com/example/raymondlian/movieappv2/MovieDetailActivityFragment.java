@@ -54,6 +54,7 @@ public class MovieDetailActivityFragment extends Fragment {
     String Rating;
     String ReleaseDate;
     String Plot;
+    boolean FavStatus;
     Toast MToast;
 
 
@@ -70,8 +71,8 @@ public class MovieDetailActivityFragment extends Fragment {
     Button FavoriteButton;
     Button ReviewButton;
     Context mContext = getActivity();
-    boolean FavStatus;
-    Intent I;
+
+
     ArrayList<TrailerObject> trailerObjects = new ArrayList<>();
 
 
@@ -85,8 +86,8 @@ public class MovieDetailActivityFragment extends Fragment {
         View view=inflater.inflate(R.layout.fragment_movie_detail, container,false);
         super.onCreate(savedInstanceState);
 
-        final Intent intent = getActivity().getIntent();
-        Bundle recievedPackage = intent.getExtras();     //UI Components
+
+        Bundle recievedPackage = this.getArguments();   //UI Components
         ReviewButton = (Button) view.findViewById(R.id.reviewButton);
         FavoriteButton = (Button) view.findViewById(R.id.favoriteButton);
         TextView titleView = (TextView) view.findViewById(R.id.movieTitleText);
@@ -126,10 +127,10 @@ public class MovieDetailActivityFragment extends Fragment {
         //mCallback must be initialize with some value to prevent a void error
         if (FavStatus == true) {
             FavoriteButton.setBackgroundResource(R.drawable.stargold);
-            mCallback.onFavoriteSelected(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
+            mCallback.onFavoriteSelected(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString, FavStatus);
 
         } else {
-          mCallback.onFavoriteSelected("","","","","","");
+          mCallback.onFavoriteSelected("","","","","","", false);
 
             FavoriteButton.setBackgroundResource(R.drawable.starblack);
         }
@@ -178,7 +179,7 @@ public class MovieDetailActivityFragment extends Fragment {
                     MoviePackage.putString("plot", Plot);
                     MoviePackage.putString("movieIdString", MovieIdString);
                     MoviePackage.putString("imageURLString", ImageURLString);
-                  //  mCallback.onFavoriteSelected(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
+                   mCallback.onFavoriteSelected(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString, FavStatus);
 
                 }
 
@@ -199,7 +200,7 @@ public class MovieDetailActivityFragment extends Fragment {
             }
         });
 
-        getActivity().setResult(Activity.RESULT_OK, I);
+
 
 
        return  view;
@@ -229,7 +230,7 @@ public class MovieDetailActivityFragment extends Fragment {
 
     // Container Activity must implement this interface
     public interface OnFavoriteSelectedListener {
-        public void onFavoriteSelected(String title, String date, String rating, String plot, String id, String url);
+        public void onFavoriteSelected(String title, String date, String rating, String plot, String id, String url, boolean fav);
     }
 
     @Override

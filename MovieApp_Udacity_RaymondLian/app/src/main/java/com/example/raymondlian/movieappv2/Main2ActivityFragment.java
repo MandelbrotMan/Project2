@@ -157,7 +157,7 @@ public class Main2ActivityFragment extends Fragment {
                             MoviesListed.get(position).savedRating,
                             MoviesListed.get(position).savedPlot,
                             MoviesListed.get(position).savedId,
-                            MoviesListed.get(position).savedURL);
+                            MoviesListed.get(position).savedURL, false);
                 } else if (CurrentList == 1) {
                 /*
                      // by default
@@ -167,7 +167,7 @@ public class Main2ActivityFragment extends Fragment {
                             MoviesListed.get(position).savedRating,
                             MoviesListed.get(position).savedPlot,
                             MoviesListed.get(position).savedId,
-                            MoviesListed.get(position).savedURL);
+                            MoviesListed.get(position).savedURL, true);
 
 
                 }
@@ -183,7 +183,7 @@ public class Main2ActivityFragment extends Fragment {
 
     }
     public interface OnMovieSelectedListener {
-        public void onMovieSelected(String title, String date, String rating, String plot, String id, String url);
+        public void onMovieSelected(String title, String date, String rating, String plot, String id, String url, boolean status);
     }
 
     @Override
