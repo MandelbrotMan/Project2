@@ -8,7 +8,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class Main2Activity extends Activity {
+public class Main2Activity extends Activity implements MovieDetailActivityFragment.OnFavoriteSelectedListener{
     String ImageURLString; //For posterpath
     String MovieIdString;  //For pulling additional data of selected movie
     String Title;
@@ -48,6 +48,10 @@ public class Main2Activity extends Activity {
         transaction.commit();
 
 
+
+    }
+
+    public void onFavoriteSelected(String title, String date, String rating, String plot, String id, String url){
 
     }
 

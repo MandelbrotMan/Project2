@@ -42,7 +42,7 @@ import android.view.KeyEvent;
  * A placeholder fragment containing a simple view.
  */
 public class MovieDetailActivityFragment extends Fragment {
-   //OnFavoriteSelectedListener mCallback; // used to communicate between fragment and main activity
+   OnFavoriteSelectedListener mCallback; // used to communicate between fragment and main activity
 
 
 
@@ -239,7 +239,7 @@ public class MovieDetailActivityFragment extends Fragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            //mCallback = (OnFavoriteSelectedListener) c;
+            mCallback = (OnFavoriteSelectedListener) c;
         } catch (ClassCastException e) {
             throw new ClassCastException(c
                     + " must implement OnHeadlineSelectedListener");
