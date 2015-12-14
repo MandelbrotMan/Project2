@@ -24,13 +24,30 @@ public class Main2Activity extends Activity implements MovieDetailActivityFragme
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
-        Main2ActivityFragment fragment = new Main2ActivityFragment();
-        manager = getFragmentManager();
-        /*
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.add(R.id.fragment_container_main, fragment, "Gridview");
-        transaction.commit();
-        */
+        boolean tabletSize = getResources().getBoolean(R.bool.has_two_panes);
+        if (tabletSize) {
+            Main2ActivityFragment fragment = new Main2ActivityFragment();
+            manager = getFragmentManager();
+
+            FragmentTransaction transaction = manager.beginTransaction();
+            transaction.add(R.id.fragment_container_main, fragment, "Gridview");
+            transaction.commit();
+
+        } else {
+            Main2ActivityFragment fragment = new Main2ActivityFragment();
+            manager = getFragmentManager();
+
+            FragmentTransaction transaction = manager.beginTransaction();
+            transaction.add(R.id.fragment_container_main, fragment, "Gridview");
+            transaction.commit();
+
+            MovieDetailActivityFragment fragment2 = new MovieDetailActivityFragment();
+            manager = getFragmentManager();
+            transaction.add(R.id.fragment_container_main, fragment2, "Gridview");
+            transaction.commit();
+        }
+
+
 
 
     }
@@ -48,11 +65,11 @@ public class Main2Activity extends Activity implements MovieDetailActivityFragme
         fragment1.setArguments(moviePackage);
         FragmentTransaction transaction = manager.beginTransaction();
 
-if(manager.findFragmentById(R.id.fragment2) == null) {
+
     transaction.replace(R.id.fragment_container_main, fragment1);
     transaction.addToBackStack("Gridview");
     transaction.commit();
-}
+
 
 
 
