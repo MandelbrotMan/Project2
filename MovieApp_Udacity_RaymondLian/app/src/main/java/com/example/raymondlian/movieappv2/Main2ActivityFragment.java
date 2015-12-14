@@ -152,7 +152,7 @@ public class Main2ActivityFragment extends Fragment {
                     } else {
                         moviePackage.putBoolean("favStatus", false);
                     }*/
-                    mCallback.onMovieSelected(MoviesListed.get(position).savedTitle,
+                    mCallback.updateData(MoviesListed.get(position).savedTitle,
                             MoviesListed.get(position).savedDate,
                             MoviesListed.get(position).savedRating,
                             MoviesListed.get(position).savedPlot,
@@ -162,7 +162,7 @@ public class Main2ActivityFragment extends Fragment {
                 /*
                      // by default
                 */
-                    mCallback.onMovieSelected(MoviesListed.get(position).savedTitle,
+                    mCallback.updateData(MoviesListed.get(position).savedTitle,
                             MoviesListed.get(position).savedDate,
                             MoviesListed.get(position).savedRating,
                             MoviesListed.get(position).savedPlot,
@@ -171,19 +171,27 @@ public class Main2ActivityFragment extends Fragment {
 
 
                 }
+                boolean tabletSize = getResources().getBoolean(R.bool.has_two_panes);
+                if (!tabletSize) {
 
-                ((Main2Activity)getActivity()).switchToMovieDetail();
+                    ((Main2Activity)getActivity()).switchToMovieDetail();
+                } else {
+                    ((Main2Activity)getActivity()).updateMovieDetail();
+                }
+
+
                //transaction.remove(getActivity().getFragmentManager().findFragmentById(R.id.fragment_gridview));
               //  transaction.commit();
             }
         });
+
 
         setHasOptionsMenu(true);
         return root;
 
     }
     public interface OnMovieSelectedListener {
-        public void onMovieSelected(String title, String date, String rating, String plot, String id, String url, boolean status);
+       void updateData(String title, String date, String rating, String plot, String id, String url, boolean status);
     }
 
     @Override
@@ -196,7 +204,7 @@ public class Main2ActivityFragment extends Fragment {
             mCallback = (OnMovieSelectedListener) c;
         } catch (ClassCastException e) {
             throw new ClassCastException(c
-                    + " must implement OnHeadlineSelectedListener");
+                    + " must implement movie selected listener");
         }
     }
 

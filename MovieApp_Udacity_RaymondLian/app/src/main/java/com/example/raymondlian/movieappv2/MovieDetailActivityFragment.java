@@ -41,9 +41,9 @@ import android.view.KeyEvent;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MovieDetailActivityFragment extends Fragment {
-   OnFavoriteSelectedListener mCallback; // used to communicate between fragment and main activity
-
+public class MovieDetailActivityFragment extends Fragment implements Main2Activity.CommunicationFromActivity{
+  // used to communicate between fragment and main activity
+   public Main2Activity.CommunicationFromActivity interfaceCommunicator;
 
 
 
@@ -68,6 +68,10 @@ public class MovieDetailActivityFragment extends Fragment {
     ImageView PosterView;
     ArrayAdapter<String> adapter;
     ListView listView;
+    TextView titleView;
+    TextView dateView;
+    TextView ratingView;
+    TextView synopsisView;
     Button FavoriteButton;
     Button ReviewButton;
     Context mContext = getActivity();
@@ -78,6 +82,8 @@ public class MovieDetailActivityFragment extends Fragment {
 
     public MovieDetailActivityFragment() {
     }
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//On create
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -87,14 +93,18 @@ public class MovieDetailActivityFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
 
-        Bundle recievedPackage = this.getArguments();   //UI Components
+        Bundle recievedPackage = this.getArguments();
+
+        //Connect UI variables with XML id's
         ReviewButton = (Button) view.findViewById(R.id.reviewButton);
         FavoriteButton = (Button) view.findViewById(R.id.favoriteButton);
-        TextView titleView = (TextView) view.findViewById(R.id.movieTitleText);
-        TextView dateView = (TextView) view.findViewById(R.id.releaseDateText);
-        TextView ratingView = (TextView) view.findViewById(R.id.voteAverageText);
-        TextView synopsisView = (TextView) view.findViewById(R.id.synopsisText);
+        titleView = (TextView) view.findViewById(R.id.movieTitleText);
+        dateView = (TextView) view.findViewById(R.id.releaseDateText);
+        ratingView = (TextView) view.findViewById(R.id.voteAverageText);
+        synopsisView = (TextView) view.findViewById(R.id.synopsisText);
         PosterView = (ImageView) view.findViewById(R.id.posterImageView);
+
+        //When the fragment is opened. Used in phone. Initializes the variables for UI
         if(savedInstanceState == null) {
             if (isNetworkAvailable() && recievedPackage != null) {
                 ImageURLString = recievedPackage.getString("image");
@@ -113,7 +123,9 @@ public class MovieDetailActivityFragment extends Fragment {
 
                 titleView.setText("Connection lost");
             }
-        } else {
+        }
+        // If the item screen rotates
+        else {
             Movie = savedInstanceState.getParcelable("movie");
             FavStatus = savedInstanceState.getBoolean("status");
             Title = Movie.savedTitle;
@@ -127,20 +139,19 @@ public class MovieDetailActivityFragment extends Fragment {
         //mCallback must be initialize with some value to prevent a void error
         if (FavStatus == true) {
             FavoriteButton.setBackgroundResource(R.drawable.stargold);
-            mCallback.onFavoriteSelected(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString, FavStatus);
+            interfaceCommunicator.updateData(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString, FavStatus);
 
         } else {
-          mCallback.onFavoriteSelected("","","","","","", false);
+          interfaceCommunicator.updateData("", "", "", "", "", "", false);
 
             FavoriteButton.setBackgroundResource(R.drawable.starblack);
         }
+
+        //Assigns values attained to UI
         titleView.setText(Title);
         dateView.setText(ReleaseDate);
         ratingView.setText(Rating);
         synopsisView.setText(Plot);
-
-     ;
-
         TrailerAdapter adapter = new TrailerAdapter(this, trailerObjects);
         Log.v("Size of trailers list: ", Integer.toString(trailerObjects.size()));
         listView = (ListView) view.findViewById(R.id.trailerListView);
@@ -171,15 +182,8 @@ public class MovieDetailActivityFragment extends Fragment {
                     MToast.show();
                     FavStatus = true;
                     MoviePackage = new Bundle();
-                    MovieObject newFavorite = new MovieObject(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
                     FavoriteButton.setBackgroundResource(R.drawable.stargold);
-                    MoviePackage.putString("title", Title);
-                    MoviePackage.putString("releaseDate", ReleaseDate);
-                    MoviePackage.putString("rating", Rating);
-                    MoviePackage.putString("plot", Plot);
-                    MoviePackage.putString("movieIdString", MovieIdString);
-                    MoviePackage.putString("imageURLString", ImageURLString);
-                   mCallback.onFavoriteSelected(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString, FavStatus);
+                   interfaceCommunicator.updateData(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString, FavStatus);
 
                 }
 
@@ -225,13 +229,9 @@ public class MovieDetailActivityFragment extends Fragment {
 
 
 
+////////////////////////////////////////////////////////////////////////////////////////////
+//Interface
 
-
-
-    // Container Activity must implement this interface
-    public interface OnFavoriteSelectedListener {
-        public void onFavoriteSelected(String title, String date, String rating, String plot, String id, String url, boolean fav);
-    }
 
     @Override
     public void onAttach(Context c) {
@@ -240,14 +240,35 @@ public class MovieDetailActivityFragment extends Fragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mCallback = (OnFavoriteSelectedListener) c;
+           interfaceCommunicator = (Main2Activity.CommunicationFromActivity) c;
         } catch (ClassCastException e) {
             throw new ClassCastException(c
-                    + " must implement OnHeadlineSelectedListener");
+                    + " must implement interfaceCommunicator");
         }
     }
+    @Override
+    public void  updateData(String titleS, String dateS, String ratingS, String plotS, String idS, String urlS, boolean statusS){
+        titleView.setText(titleS);
+        dateView.setText(dateS);
+        ratingView.setText(ratingS);
+    }
+    public void update(){
+        ImageView PosterView;
+        ArrayAdapter<String> adapter;
+        ListView listView;
+        TextView titleView;
+        TextView dateView;
+        TextView ratingView;
+        TextView synopsisView;
+        Button FavoriteButton;
+        Button ReviewButton;
 
 
+
+
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////
+//Image tasks and async methods
     private class imageTask extends AsyncTask<String, Void, Void> {
         HttpURLConnection posterUrlConnection = null;
 
