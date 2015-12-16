@@ -6,7 +6,8 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.example.raymondlian.movieappv2.MovieDetailActivityFragment"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/movieDetail">
 
 
     <TextView android:text="Title" android:layout_width="match_parent"

@@ -1,8 +1,10 @@
 package com.example.raymondlian.movieappv2;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -11,7 +13,6 @@ import android.view.View;
 import android.widget.TextView;
 
 public class Main2Activity extends Activity implements  Main2ActivityFragment.OnMovieSelectedListener{
-   public CommunicationFromActivity communicationFromActivity;
 
     String ImageURLString; //For posterpath
     String MovieIdString;  //For pulling additional data of selected movie
@@ -48,7 +49,7 @@ public class Main2Activity extends Activity implements  Main2ActivityFragment.On
 
             fragmentDetail = new MovieDetailActivityFragment();
             manager = getFragmentManager();
-            transaction.add(R.id.fragment_container_main, fragmentDetail, "Gridview");
+            transaction.add(R.id.fragment_container_main, fragmentDetail, "Details");
             transaction.commit();
         }
 
@@ -79,22 +80,8 @@ public class Main2Activity extends Activity implements  Main2ActivityFragment.On
 
 
     }
-    public void updateMovieDetail(){
-        Bundle moviePackage = new Bundle();
-        moviePackage.putString("title", Title);
-        moviePackage.putString("image", ImageURLString);
-        moviePackage.putString("release_date", ReleaseDate);
-        moviePackage.putString("vote_average", Rating);
-        moviePackage.putString("synopsis", Plot);
-        moviePackage.putString("id", MovieIdString);
-        moviePackage.putBoolean("favStatus", FavStatus);
 
-        MovieDetailActivityFragment fragment1 = new MovieDetailActivityFragment();
-        fragment1.setArguments(moviePackage);
 
-        //TextView titleView = (TextView) fragment1.getActivity().findViewById(R.id.movieTitleText);
-        //titleView.setText(Title);
-    }
     @Override
     public void updateData(String titleS, String dateS, String ratingS, String plotS, String idS, String urlS, boolean statusS){
         ImageURLString  = urlS;
@@ -104,12 +91,31 @@ public class Main2Activity extends Activity implements  Main2ActivityFragment.On
         Rating = ratingS;
         Plot = plotS;
         FavStatus = statusS;
-        communicationFromActivity.updateData( titleS, dateS, ratingS, plotS, idS, urlS, statusS);
+
+
+    }
+    public void update(){
+        fragmentDetail = new MovieDetailActivityFragment();
+        manager = getFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.remove(getFragmentManager().findFragmentByTag("Details"));
+        transaction.commit();
+
+        Bundle moviePackage = new Bundle();
+        moviePackage.putString("title", Title);
+        moviePackage.putString("image", ImageURLString);
+        moviePackage.putString("release_date", ReleaseDate);
+        moviePackage.putString("vote_average", Rating);
+        moviePackage.putString("synopsis", Plot);
+        moviePackage.putString("id", MovieIdString);
+        moviePackage.putBoolean("favStatus", FavStatus);
+        Fragment fragment1 = getFragmentManager().findFragmentByTag("Details");
+        fragment1.setArguments(moviePackage);
+        manager = getFragmentManager();
+        transaction.add(R.id.fragment_container_main, fragment1, "Details");
+        transaction.commit();
     }
 
-    public interface CommunicationFromActivity{
-     void updateData(String titleS, String dateS, String ratingS, String plotS, String idS, String urlS, boolean statusS);
-    }
 
 
 }

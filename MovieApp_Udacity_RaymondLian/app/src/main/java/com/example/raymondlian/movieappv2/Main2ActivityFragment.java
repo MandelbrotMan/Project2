@@ -174,14 +174,12 @@ public class Main2ActivityFragment extends Fragment {
                 boolean tabletSize = getResources().getBoolean(R.bool.has_two_panes);
                 if (!tabletSize) {
 
-                    ((Main2Activity)getActivity()).switchToMovieDetail();
                 } else {
-                    ((Main2Activity)getActivity()).updateMovieDetail();
+                    ((Main2Activity)getActivity()).update();
                 }
 
 
-               //transaction.remove(getActivity().getFragmentManager().findFragmentById(R.id.fragment_gridview));
-              //  transaction.commit();
+
             }
         });
 

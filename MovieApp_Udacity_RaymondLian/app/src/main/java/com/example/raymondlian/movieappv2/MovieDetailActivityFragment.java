@@ -41,9 +41,9 @@ import android.view.KeyEvent;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MovieDetailActivityFragment extends Fragment implements Main2Activity.CommunicationFromActivity{
+public class MovieDetailActivityFragment extends Fragment{
   // used to communicate between fragment and main activity
-   public Main2Activity.CommunicationFromActivity interfaceCommunicator;
+
 
 
 
@@ -75,6 +75,8 @@ public class MovieDetailActivityFragment extends Fragment implements Main2Activi
     Button FavoriteButton;
     Button ReviewButton;
     Context mContext = getActivity();
+    View view;
+
 
 
     ArrayList<TrailerObject> trailerObjects = new ArrayList<>();
@@ -89,7 +91,7 @@ public class MovieDetailActivityFragment extends Fragment implements Main2Activi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view=inflater.inflate(R.layout.fragment_movie_detail, container,false);
+        view=inflater.inflate(R.layout.fragment_movie_detail, container,false);
         super.onCreate(savedInstanceState);
 
 
@@ -139,10 +141,10 @@ public class MovieDetailActivityFragment extends Fragment implements Main2Activi
         //mCallback must be initialize with some value to prevent a void error
         if (FavStatus == true) {
             FavoriteButton.setBackgroundResource(R.drawable.stargold);
-            interfaceCommunicator.updateData(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString, FavStatus);
+            //interfaceCommunicator.updateData(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString, FavStatus);
 
         } else {
-          interfaceCommunicator.updateData("", "", "", "", "", "", false);
+          //interfaceCommunicator.updateData("", "", "", "", "", "", false);
 
             FavoriteButton.setBackgroundResource(R.drawable.starblack);
         }
@@ -183,7 +185,7 @@ public class MovieDetailActivityFragment extends Fragment implements Main2Activi
                     FavStatus = true;
                     MoviePackage = new Bundle();
                     FavoriteButton.setBackgroundResource(R.drawable.stargold);
-                   interfaceCommunicator.updateData(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString, FavStatus);
+                  // interfaceCommunicator.updateData(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString, FavStatus);
 
                 }
 
@@ -224,7 +226,12 @@ public class MovieDetailActivityFragment extends Fragment implements Main2Activi
         bundle.putBoolean("status", FavStatus);
         super.onSaveInstanceState(bundle);
     }
+    @Override
+    public void onActivityCreated(Bundle bundle){
+        super.onActivityCreated(bundle);
 
+
+    }
 
 
 
@@ -233,25 +240,6 @@ public class MovieDetailActivityFragment extends Fragment implements Main2Activi
 //Interface
 
 
-    @Override
-    public void onAttach(Context c) {
-        super.onAttach(c);
-
-        // This makes sure that the container activity has implemented
-        // the callback interface. If not, it throws an exception
-        try {
-           interfaceCommunicator = (Main2Activity.CommunicationFromActivity) c;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(c
-                    + " must implement interfaceCommunicator");
-        }
-    }
-    @Override
-    public void  updateData(String titleS, String dateS, String ratingS, String plotS, String idS, String urlS, boolean statusS){
-        titleView.setText(titleS);
-        dateView.setText(dateS);
-        ratingView.setText(ratingS);
-    }
     public void update(){
         ImageView PosterView;
         ArrayAdapter<String> adapter;
@@ -267,6 +255,7 @@ public class MovieDetailActivityFragment extends Fragment implements Main2Activi
 
 
     }
+
     ////////////////////////////////////////////////////////////////////////////////////////////
 //Image tasks and async methods
     private class imageTask extends AsyncTask<String, Void, Void> {
