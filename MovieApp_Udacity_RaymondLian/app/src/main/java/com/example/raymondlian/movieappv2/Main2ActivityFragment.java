@@ -46,7 +46,7 @@ public class Main2ActivityFragment extends Fragment {
     ArrayList<MovieObject> MoviesListed = new ArrayList<MovieObject>();
     static ArrayList<MovieObject> FavoriteMovies = new ArrayList<MovieObject>();
 
-    OnMovieSelectedListener mCallback;
+    MovieDetailActivityFragment.OnMovieSelectedListener communicator;
 
     FragmentManager manager;
 
@@ -140,29 +140,24 @@ public class Main2ActivityFragment extends Fragment {
                 //Prepare information to be sent to the next activity
                 Bundle moviePackage = new Bundle();
                 if (CurrentList == 0) {
-                    /*
-                    moviePackage.putString("title", MoviesListed.get(position).savedTitle);
-                    moviePackage.putString("image", MoviesListed.get(position).savedURL);
-                    moviePackage.putString("release_date", MoviesListed.get(position).savedDate);
-                    moviePackage.putString("vote_average", MoviesListed.get(position).savedRating);
-                    moviePackage.putString("synopsis", MoviesListed.get(position).savedPlot);
-                    moviePackage.putString("id", MoviesListed.get(position).savedId);
+
                     if (checkInList(MoviesListed.get(position).savedId, FavoriteMovies)) {
                         moviePackage.putBoolean("favStatus", true);
                     } else {
                         moviePackage.putBoolean("favStatus", false);
-                    }*/
-                    mCallback.updateData(MoviesListed.get(position).savedTitle,
+                    }
+                    communicator.updateData(MoviesListed.get(position).savedTitle,
                             MoviesListed.get(position).savedDate,
                             MoviesListed.get(position).savedRating,
                             MoviesListed.get(position).savedPlot,
                             MoviesListed.get(position).savedId,
                             MoviesListed.get(position).savedURL, false);
+
                 } else if (CurrentList == 1) {
-                /*
+
                      // by default
-                */
-                    mCallback.updateData(MoviesListed.get(position).savedTitle,
+
+                    communicator.updateData(MoviesListed.get(position).savedTitle,
                             MoviesListed.get(position).savedDate,
                             MoviesListed.get(position).savedRating,
                             MoviesListed.get(position).savedPlot,
@@ -175,7 +170,12 @@ public class Main2ActivityFragment extends Fragment {
                 if (!tabletSize) {
 
                 } else {
-                    ((Main2Activity)getActivity()).update();
+                    communicator.updateData(MoviesListed.get(position).savedTitle,
+                            MoviesListed.get(position).savedDate,
+                            MoviesListed.get(position).savedRating,
+                            MoviesListed.get(position).savedPlot,
+                            MoviesListed.get(position).savedId,
+                            MoviesListed.get(position).savedURL, true);
                 }
 
 
@@ -188,23 +188,12 @@ public class Main2ActivityFragment extends Fragment {
         return root;
 
     }
-    public interface OnMovieSelectedListener {
-       void updateData(String title, String date, String rating, String plot, String id, String url, boolean status);
-    }
-
     @Override
-    public void onAttach(Context c) {
-        super.onAttach(c);
-
-        // This makes sure that the container activity has implemented
-        // the callback interface. If not, it throws an exception
-        try {
-            mCallback = (OnMovieSelectedListener) c;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(c
-                    + " must implement movie selected listener");
-        }
+    public  void onActivityCreated(Bundle saveInstanceState){
+        super.onActivityCreated(saveInstanceState);
+        communicator = (MovieDetailActivityFragment.OnMovieSelectedListener) getActivity();
     }
+
 
 
 

@@ -43,7 +43,7 @@ import android.view.KeyEvent;
  */
 public class MovieDetailActivityFragment extends Fragment{
   // used to communicate between fragment and main activity
-
+    OnMovieSelectedListener movieSelectedListener;
 
 
 
@@ -240,20 +240,32 @@ public class MovieDetailActivityFragment extends Fragment{
 //Interface
 
 
-    public void update(){
-        ImageView PosterView;
-        ArrayAdapter<String> adapter;
-        ListView listView;
-        TextView titleView;
-        TextView dateView;
-        TextView ratingView;
-        TextView synopsisView;
-        Button FavoriteButton;
-        Button ReviewButton;
+    public void update(String title, String date, String rating, String plot, String id, String url, boolean status){
+
+        titleView.setText(title);
+        dateView.setText(date);
+       ratingView.setText(rating);
+        synopsisView.setText(plot);
 
 
 
+    }
+    public interface OnMovieSelectedListener {
+        void updateData(String title, String date, String rating, String plot, String id, String url, boolean status);
+    }
 
+    @Override
+    public void onAttach(Context c) {
+        super.onAttach(c);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+           movieSelectedListener  = (OnMovieSelectedListener) c;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(c
+                    + " must implement movie selected listener");
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////

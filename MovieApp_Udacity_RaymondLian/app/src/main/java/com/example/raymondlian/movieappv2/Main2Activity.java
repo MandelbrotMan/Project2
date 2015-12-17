@@ -12,15 +12,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-public class Main2Activity extends Activity implements  Main2ActivityFragment.OnMovieSelectedListener{
+public class Main2Activity extends Activity implements  MovieDetailActivityFragment.OnMovieSelectedListener{
 
-    String ImageURLString; //For posterpath
-    String MovieIdString;  //For pulling additional data of selected movie
-    String Title;
-    String Rating;
-    String ReleaseDate;
-    String Plot;
-    boolean FavStatus;
+    String ImageURLString = " "; //For posterpath
+    String MovieIdString = " ";  //For pulling additional data of selected movie
+    String Title = " ";
+    String Rating = " ";
+    String ReleaseDate = " ";
+    String Plot= " ";
+    boolean FavStatus = false;
     FragmentManager manager;
     Main2ActivityFragment fragmentMain;
     MovieDetailActivityFragment fragmentDetail;
@@ -84,6 +84,7 @@ public class Main2Activity extends Activity implements  Main2ActivityFragment.On
 
     @Override
     public void updateData(String titleS, String dateS, String ratingS, String plotS, String idS, String urlS, boolean statusS){
+
         ImageURLString  = urlS;
         MovieIdString = idS;
         Title = titleS;
@@ -93,27 +94,13 @@ public class Main2Activity extends Activity implements  Main2ActivityFragment.On
         FavStatus = statusS;
 
 
-    }
-    public void update(){
-        fragmentDetail = new MovieDetailActivityFragment();
-        manager = getFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.remove(getFragmentManager().findFragmentByTag("Details"));
-        transaction.commit();
 
-        Bundle moviePackage = new Bundle();
-        moviePackage.putString("title", Title);
-        moviePackage.putString("image", ImageURLString);
-        moviePackage.putString("release_date", ReleaseDate);
-        moviePackage.putString("vote_average", Rating);
-        moviePackage.putString("synopsis", Plot);
-        moviePackage.putString("id", MovieIdString);
-        moviePackage.putBoolean("favStatus", FavStatus);
-        Fragment fragment1 = getFragmentManager().findFragmentByTag("Details");
-        fragment1.setArguments(moviePackage);
-        manager = getFragmentManager();
-        transaction.add(R.id.fragment_container_main, fragment1, "Details");
-        transaction.commit();
+        MovieDetailActivityFragment temp = (MovieDetailActivityFragment) manager.findFragmentByTag("Details");
+
+        temp.update(Title, ReleaseDate, Rating, Plot, MovieIdString,ImageURLString,FavStatus);
+
+
+
     }
 
 
