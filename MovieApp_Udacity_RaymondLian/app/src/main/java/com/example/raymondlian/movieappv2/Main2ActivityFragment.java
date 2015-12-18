@@ -138,6 +138,11 @@ public class Main2ActivityFragment extends Fragment {
                                     int position, long id) {
 
                 positionSelected = position;
+                if(CurrentList == 0) {
+                    new trailerTask().execute(MoviesListed.get(positionSelected).savedId);
+                }else {
+                    new trailerTask().execute(FavoriteMovies.get(positionSelected).savedId);
+                }
 
 
                 /*
@@ -574,7 +579,7 @@ public class Main2ActivityFragment extends Fragment {
 
 
     }
-    private class imageTask extends AsyncTask<String, Void, Void> {
+    private class trailerTask extends AsyncTask<String, Void, Void> {
         HttpURLConnection posterUrlConnection = null;
 
 
@@ -599,6 +604,8 @@ public class Main2ActivityFragment extends Fragment {
                         MoviesListed.get(positionSelected).savedPlot,
                         MoviesListed.get(positionSelected).savedId,
                         MoviesListed.get(positionSelected).savedURL, false, trailerObjects);
+                
+
 
             } else if (CurrentList == 1) {
                 communicator.updateData(FavoriteMovies.get(positionSelected).savedTitle,
