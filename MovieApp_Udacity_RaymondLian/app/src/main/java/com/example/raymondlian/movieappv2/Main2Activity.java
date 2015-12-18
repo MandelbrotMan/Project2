@@ -12,6 +12,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class Main2Activity extends Activity implements  MovieDetailActivityFragment.OnMovieSelectedListener{
 
     String ImageURLString = " "; //For posterpath
@@ -24,6 +26,7 @@ public class Main2Activity extends Activity implements  MovieDetailActivityFragm
     FragmentManager manager;
     Main2ActivityFragment fragmentMain;
     MovieDetailActivityFragment fragmentDetail;
+    ArrayList<TrailerObject> trailerObjects = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +86,7 @@ public class Main2Activity extends Activity implements  MovieDetailActivityFragm
 
 
     @Override
-    public void updateData(String titleS, String dateS, String ratingS, String plotS, String idS, String urlS, boolean statusS){
+    public void updateData(String titleS, String dateS, String ratingS, String plotS, String idS, String urlS, boolean statusS, ArrayList<TrailerObject> list){
 
         ImageURLString  = urlS;
         MovieIdString = idS;
@@ -97,7 +100,7 @@ public class Main2Activity extends Activity implements  MovieDetailActivityFragm
 
         MovieDetailActivityFragment temp = (MovieDetailActivityFragment) manager.findFragmentByTag("Details");
 
-        temp.update(Title, ReleaseDate, Rating, Plot, MovieIdString,ImageURLString,FavStatus);
+        temp.update(Title, ReleaseDate, Rating, Plot, MovieIdString,ImageURLString,FavStatus, trailerObjects);
 
 
 

@@ -77,9 +77,11 @@ public class MovieDetailActivityFragment extends Fragment{
     Context mContext = getActivity();
     View view;
 
-
-
     ArrayList<TrailerObject> trailerObjects = new ArrayList<>();
+
+
+
+
 
 
     public MovieDetailActivityFragment() {
@@ -119,7 +121,6 @@ public class MovieDetailActivityFragment extends Fragment{
 
                 Movie = new MovieObject(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
 
-                new imageTask().execute("");
 
             } else {
 
@@ -136,15 +137,14 @@ public class MovieDetailActivityFragment extends Fragment{
             MovieIdString = Movie.savedId;
             ImageURLString = Movie.savedURL;
             Plot = Movie.savedPlot;
-            new imageTask().execute("");
+
         }
         //mCallback must be initialize with some value to prevent a void error
         if (FavStatus == true) {
             FavoriteButton.setBackgroundResource(R.drawable.stargold);
-            //interfaceCommunicator.updateData(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString, FavStatus);
 
         } else {
-          //interfaceCommunicator.updateData("", "", "", "", "", "", false);
+
 
             FavoriteButton.setBackgroundResource(R.drawable.starblack);
         }
@@ -185,7 +185,6 @@ public class MovieDetailActivityFragment extends Fragment{
                     FavStatus = true;
                     MoviePackage = new Bundle();
                     FavoriteButton.setBackgroundResource(R.drawable.stargold);
-                  // interfaceCommunicator.updateData(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString, FavStatus);
 
                 }
 
@@ -240,18 +239,28 @@ public class MovieDetailActivityFragment extends Fragment{
 //Interface
 
 
-    public void update(String title, String date, String rating, String plot, String id, String url, boolean status){
+    public void update(String title, String date, String rating, String plot, String id, String url, boolean status, ArrayList<TrailerObject> list){
+       ImageURLString = url; //For posterpath
+       MovieIdString = id;  //For pulling additional data of selected movie
+       Title = title;
+       Rating = rating;
+       ReleaseDate = rating;
+       Plot = plot;
+
 
         titleView.setText(title);
         dateView.setText(date);
-       ratingView.setText(rating);
+        ratingView.setText(rating);
         synopsisView.setText(plot);
+        Picasso.with(mContext).load(url).into(PosterView);
+
+        addList(list);
 
 
 
     }
     public interface OnMovieSelectedListener {
-        void updateData(String title, String date, String rating, String plot, String id, String url, boolean status);
+        void updateData(String title, String date, String rating, String plot, String id, String url, boolean status, ArrayList<TrailerObject> list);
     }
 
     @Override
@@ -270,140 +279,7 @@ public class MovieDetailActivityFragment extends Fragment{
 
     ////////////////////////////////////////////////////////////////////////////////////////////
 //Image tasks and async methods
-    private class imageTask extends AsyncTask<String, Void, Void> {
-        HttpURLConnection posterUrlConnection = null;
 
-
-        protected Void doInBackground(String... param){
-            Picasso.with(mContext).load(ImageURLString).into(PosterView);
-            String movieTrailersUrl = getTrailerJsonURL();
-
-            try {
-                getTrailersJSON(movieTrailersUrl);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-
-            return null;
-
-        }
-        protected void onPostExecute(){
-            adapter.clear();
-            String trailerName = "";
-            for(int i = 0; i < trailerObjects.size(); ++i) {
-                trailerName = trailerObjects.get(i).trailer_title;
-                adapter.add(trailerName);
-            }
-            adapter.notifyDataSetChanged();
-
-
-
-        }
-
-        private String getTrailerJsonURL() {
-            String JsonUrl = "";
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader;
-
-            InputStream stream;
-            URL popularURL;
-
-
-            Uri base = Uri.parse("https://api.themoviedb.org").buildUpon().
-                    appendPath("3").
-                    appendPath("movie").
-                    appendPath(MovieIdString).
-                    appendPath("videos").
-                    appendQueryParameter("api_key", "0109ddff503db8186924929b1814320e").
-                    appendQueryParameter("language", "en").
-                    appendQueryParameter("include_image)langauge", "en, us").build();
-
-
-            try {
-                popularURL = new URL(base.toString());
-
-                urlConnection = (HttpURLConnection) popularURL.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-
-
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    return null;
-                }
-                JsonUrl = buffer.toString();
-
-
-            } catch (IOException e) {
-                Log.e("error", String.valueOf(e));
-                return null;
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-            }
-            return JsonUrl;
-
-        }
-        private void getTrailersJSON (String urlString)  throws JSONException {
-
-            JSONObject trailersObject = new JSONObject(urlString);
-            JSONArray trailerArray = trailersObject.getJSONArray("results");
-
-            for(int i = 0; i < trailerArray.length(); ++i){
-                JSONObject temp = trailerArray.getJSONObject(i);
-                String trailerLink = null;
-
-                Uri base = Uri.parse("https://youtube.com").buildUpon().
-                        appendPath("watch").
-                        appendQueryParameter("v", temp.getString("key")).build();
-
-                HttpURLConnection urlConnection = null;
-
-                try {
-                  URL  trailerURL = new URL(base.toString());
-
-                urlConnection = (HttpURLConnection) trailerURL.openConnection();
-                    urlConnection.setRequestMethod("GET");
-                    urlConnection.connect();
-
-                } catch (IOException e) {
-                    Log.e("error", String.valueOf(e));
-                } finally {
-                    if (urlConnection != null) {
-                        urlConnection.disconnect();
-                        trailerLink = base.toString();
-                    }
-                }
-
-                TrailerObject tempTrailer = new TrailerObject(temp.getString("name"),trailerLink);
-
-                trailerObjects.add(tempTrailer);
-
-
-
-
-            }
-
-
-
-        }
-
-    }
     public class TrailerAdapter extends ArrayAdapter<TrailerObject> {
         public TrailerAdapter(MovieDetailActivityFragment context, ArrayList<TrailerObject> trailer) {
             super(getActivity(), 0, trailer);
@@ -431,6 +307,16 @@ public class MovieDetailActivityFragment extends Fragment{
                 = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    public void addList(ArrayList<TrailerObject> list){
+        adapter.clear();
+        String trailerName = "";
+        for(int i = 0; i < list.size(); ++i) {
+            trailerName = list.get(i).trailer_title;
+            adapter.add(trailerName);
+        }
+        adapter.notifyDataSetChanged();
+
     }
 
 

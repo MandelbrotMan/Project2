@@ -45,8 +45,10 @@ public class Main2ActivityFragment extends Fragment {
     //Global variables start with Capital letters
     ArrayList<MovieObject> MoviesListed = new ArrayList<MovieObject>();
     static ArrayList<MovieObject> FavoriteMovies = new ArrayList<MovieObject>();
+    ArrayList<TrailerObject> trailerObjects = new ArrayList<>();
 
     MovieDetailActivityFragment.OnMovieSelectedListener communicator;
+    int positionSelected;
 
     FragmentManager manager;
 
@@ -135,48 +137,16 @@ public class Main2ActivityFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
 
+                positionSelected = position;
 
 
-                //Prepare information to be sent to the next activity
-                Bundle moviePackage = new Bundle();
-                if (CurrentList == 0) {
-
-                    if (checkInList(MoviesListed.get(position).savedId, FavoriteMovies)) {
-                        moviePackage.putBoolean("favStatus", true);
-                    } else {
-                        moviePackage.putBoolean("favStatus", false);
-                    }
-                    communicator.updateData(MoviesListed.get(position).savedTitle,
-                            MoviesListed.get(position).savedDate,
-                            MoviesListed.get(position).savedRating,
-                            MoviesListed.get(position).savedPlot,
-                            MoviesListed.get(position).savedId,
-                            MoviesListed.get(position).savedURL, false);
-
-                } else if (CurrentList == 1) {
-
-                     // by default
-
-                    communicator.updateData(MoviesListed.get(position).savedTitle,
-                            MoviesListed.get(position).savedDate,
-                            MoviesListed.get(position).savedRating,
-                            MoviesListed.get(position).savedPlot,
-                            MoviesListed.get(position).savedId,
-                            MoviesListed.get(position).savedURL, true);
-
-
-                }
+                /*
                 boolean tabletSize = getResources().getBoolean(R.bool.has_two_panes);
                 if (!tabletSize) {
 
                 } else {
-                    communicator.updateData(MoviesListed.get(position).savedTitle,
-                            MoviesListed.get(position).savedDate,
-                            MoviesListed.get(position).savedRating,
-                            MoviesListed.get(position).savedPlot,
-                            MoviesListed.get(position).savedId,
-                            MoviesListed.get(position).savedURL, true);
-                }
+
+                }*/
 
 
 
@@ -500,6 +470,152 @@ public class Main2ActivityFragment extends Fragment {
                 = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private String getTrailerJsonURL(String trailerUrl) {
+        String JsonUrl = "";
+        HttpURLConnection urlConnection = null;
+        BufferedReader reader;
+
+        InputStream stream;
+        URL popularURL;
+
+
+        Uri base = Uri.parse("https://api.themoviedb.org").buildUpon().
+                appendPath("3").
+                appendPath("movie").
+                appendPath(trailerUrl).
+                appendPath("videos").
+                appendQueryParameter("api_key", "0109ddff503db8186924929b1814320e").
+                appendQueryParameter("language", "en").
+                appendQueryParameter("include_image)langauge", "en, us").build();
+
+
+        try {
+            popularURL = new URL(base.toString());
+
+            urlConnection = (HttpURLConnection) popularURL.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.connect();
+
+
+
+            InputStream inputStream = urlConnection.getInputStream();
+            StringBuffer buffer = new StringBuffer();
+            if (inputStream == null) {
+                return null;
+            }
+            reader = new BufferedReader(new InputStreamReader(inputStream));
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+
+                buffer.append(line + "\n");
+            }
+
+            if (buffer.length() == 0) {
+                return null;
+            }
+            JsonUrl = buffer.toString();
+
+
+        } catch (IOException e) {
+            Log.e("error", String.valueOf(e));
+            return null;
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+        }
+        return JsonUrl;
+
+    }
+
+    private void getTrailersJSON (String urlString)  throws JSONException {
+
+        JSONObject trailersObject = new JSONObject(urlString);
+        JSONArray trailerArray = trailersObject.getJSONArray("results");
+
+        for(int i = 0; i < trailerArray.length(); ++i){
+            JSONObject temp = trailerArray.getJSONObject(i);
+            String trailerLink = null;
+
+            Uri base = Uri.parse("https://youtube.com").buildUpon().
+                    appendPath("watch").
+                    appendQueryParameter("v", temp.getString("key")).build();
+
+            HttpURLConnection urlConnection = null;
+
+            try {
+                URL  trailerURL = new URL(base.toString());
+
+                urlConnection = (HttpURLConnection) trailerURL.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+            } catch (IOException e) {
+                Log.e("error", String.valueOf(e));
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                    trailerLink = base.toString();
+                }
+            }
+
+            TrailerObject tempTrailer = new TrailerObject(temp.getString("name"),trailerLink);
+
+            trailerObjects.add(tempTrailer);
+
+
+
+
+        }
+
+
+
+    }
+    private class imageTask extends AsyncTask<String, Void, Void> {
+        HttpURLConnection posterUrlConnection = null;
+
+
+        protected Void doInBackground(String... param){
+            String movieTrailersUrl = getTrailerJsonURL(param[0]);
+
+            try {
+                getTrailersJSON(movieTrailersUrl);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            return null;
+
+        }
+        protected void onPostExecute(){
+            if (CurrentList == 0) {
+                communicator.updateData(MoviesListed.get(positionSelected).savedTitle,
+                        MoviesListed.get(positionSelected).savedDate,
+                        MoviesListed.get(positionSelected).savedRating,
+                        MoviesListed.get(positionSelected).savedPlot,
+                        MoviesListed.get(positionSelected).savedId,
+                        MoviesListed.get(positionSelected).savedURL, false, trailerObjects);
+
+            } else if (CurrentList == 1) {
+                communicator.updateData(FavoriteMovies.get(positionSelected).savedTitle,
+                        FavoriteMovies.get(positionSelected).savedDate,
+                        FavoriteMovies.get(positionSelected).savedRating,
+                        FavoriteMovies.get(positionSelected).savedPlot,
+                        FavoriteMovies.get(positionSelected).savedId,
+                        FavoriteMovies.get(positionSelected).savedURL, true, trailerObjects);
+
+
+            }
+
+        }
+
+
+
+
     }
 
 
