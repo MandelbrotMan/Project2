@@ -139,11 +139,12 @@ public class Main2ActivityFragment extends Fragment {
 
                 positionSelected = position;
                 if(CurrentList == 0) {
+
                     new trailerTask().execute(MoviesListed.get(positionSelected).savedId);
                 }else {
                     new trailerTask().execute(FavoriteMovies.get(positionSelected).savedId);
                 }
-
+               
 
                 /*
                 boolean tabletSize = getResources().getBoolean(R.bool.has_two_panes);
@@ -579,12 +580,13 @@ public class Main2ActivityFragment extends Fragment {
 
 
     }
-    private class trailerTask extends AsyncTask<String, Void, Void> {
+    private class trailerTask extends AsyncTask<String, Void, ArrayList<TrailerObject>> {
         HttpURLConnection posterUrlConnection = null;
 
 
-        protected Void doInBackground(String... param){
+        protected ArrayList<TrailerObject> doInBackground(String... param){
             String movieTrailersUrl = getTrailerJsonURL(param[0]);
+
 
             try {
                 getTrailersJSON(movieTrailersUrl);
@@ -593,10 +595,12 @@ public class Main2ActivityFragment extends Fragment {
             }
 
 
+
             return null;
 
         }
-        protected void onPostExecute(){
+
+        protected void onPostExecute(ArrayList<TrailerObject> trailers){
             if (CurrentList == 0) {
                 communicator.updateData(MoviesListed.get(positionSelected).savedTitle,
                         MoviesListed.get(positionSelected).savedDate,
