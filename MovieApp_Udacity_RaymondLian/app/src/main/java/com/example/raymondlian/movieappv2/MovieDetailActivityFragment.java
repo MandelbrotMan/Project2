@@ -66,7 +66,7 @@ public class MovieDetailActivityFragment extends Fragment{
 
 
     ImageView PosterView;
-    ArrayAdapter<String> adapter;
+    TrailerAdapter adapter;
     ListView listView;
     TextView titleView;
     TextView dateView;
@@ -278,7 +278,7 @@ public class MovieDetailActivityFragment extends Fragment{
         }
     }
     public void addList(ArrayList<TrailerObject> list){
-        TrailerAdapter adapter = new TrailerAdapter(this, trailerObjects);
+        adapter = new TrailerAdapter(this, trailerObjects);
         listView.setAdapter(adapter);
 
         if(adapter != null) {
