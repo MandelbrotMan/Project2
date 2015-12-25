@@ -154,10 +154,11 @@ public class MovieDetailActivityFragment extends Fragment{
         dateView.setText(ReleaseDate);
         ratingView.setText(Rating);
         synopsisView.setText(Plot);
-        TrailerAdapter adapter = new TrailerAdapter(this, trailerObjects);
+
+
         Log.v("Size of trailers list: ", Integer.toString(trailerObjects.size()));
         listView = (ListView) view.findViewById(R.id.trailerListView);
-        listView.setAdapter(adapter);
+
 
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -276,6 +277,32 @@ public class MovieDetailActivityFragment extends Fragment{
                     + " must implement movie selected listener");
         }
     }
+    public void addList(ArrayList<TrailerObject> list){
+        TrailerAdapter adapter = new TrailerAdapter(this, trailerObjects);
+        listView.setAdapter(adapter);
+
+        if(adapter != null) {
+            adapter.clear();
+        }
+        trailerObjects.clear();
+        for(int i = 0; i < list.size(); ++i){
+                trailerObjects.add(list.get(i));
+        }
+
+
+
+
+        String trailerName = "";
+        for(int i = 0; i < trailerObjects.size(); ++i) {
+            trailerName = trailerObjects.get(i).trailer_title;
+            adapter.add(trailerObjects.get(i));
+
+        }
+        adapter.notifyDataSetChanged();
+
+
+
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////
 //Image tasks and async methods
@@ -308,16 +335,7 @@ public class MovieDetailActivityFragment extends Fragment{
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
-    public void addList(ArrayList<TrailerObject> list){
-        adapter.clear();
-        String trailerName = "";
-        for(int i = 0; i < list.size(); ++i) {
-            trailerName = list.get(i).trailer_title;
-            adapter.add(trailerName);
-        }
-        adapter.notifyDataSetChanged();
 
-    }
 
 
 
