@@ -141,8 +141,10 @@ public class Main2ActivityFragment extends Fragment {
                 if(CurrentList == 0) {
 
                     new trailerTask().execute(MoviesListed.get(positionSelected).savedId);
+                    Log.v("array: ", Integer.toString(trailerObjects.size()));
                 }else {
                     new trailerTask().execute(FavoriteMovies.get(positionSelected).savedId);
+                    Log.v("array: ", Integer.toString(trailerObjects.size()));
                 }
                
 
@@ -631,7 +633,6 @@ public class Main2ActivityFragment extends Fragment {
 
 
     //Holds all the movie contents Information
-
 
     private boolean checkInList( String id, ArrayList<MovieObject> objects){
         boolean status = false;

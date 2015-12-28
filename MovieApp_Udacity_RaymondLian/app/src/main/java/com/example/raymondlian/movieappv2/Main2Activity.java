@@ -95,6 +95,13 @@ public class Main2Activity extends Activity implements  MovieDetailActivityFragm
         Rating = ratingS;
         Plot = plotS;
         FavStatus = statusS;
+        if(!trailerObjects.isEmpty()) {
+            trailerObjects.clear();
+
+            for(int i = 0; i < list.size(); ++i){
+                trailerObjects.add(list.get(i));
+            }
+        }
 
 
 

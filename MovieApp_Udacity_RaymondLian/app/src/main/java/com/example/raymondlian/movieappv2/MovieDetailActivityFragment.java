@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -92,8 +91,19 @@ public class MovieDetailActivityFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        TrailerObject ex1 = new TrailerObject("xyz", "xvy");
+        TrailerObject ex2 = new TrailerObject("xyz", "xvy");
+        TrailerObject ex3 = new TrailerObject("xyz", "xvy");
+        trailerObjects.add(ex1);
+        trailerObjects.add(ex2);
+        trailerObjects.add(ex3);
 
         view=inflater.inflate(R.layout.fragment_movie_detail, container,false);
+        adapter = new TrailerAdapter(getContext(), trailerObjects);
+
+        listView = (ListView) view.findViewById(R.id.trailerListView);
+
+        listView.setAdapter(adapter);
         super.onCreate(savedInstanceState);
 
 
@@ -155,9 +165,6 @@ public class MovieDetailActivityFragment extends Fragment{
         ratingView.setText(Rating);
         synopsisView.setText(Plot);
 
-
-        Log.v("Size of trailers list: ", Integer.toString(trailerObjects.size()));
-        listView = (ListView) view.findViewById(R.id.trailerListView);
 
 
 
@@ -256,7 +263,7 @@ public class MovieDetailActivityFragment extends Fragment{
         Picasso.with(mContext).load(url).into(PosterView);
 
         addList(list);
-
+        Log.v("Size" , Integer.toString(list.size()));
 
 
     }
@@ -277,27 +284,30 @@ public class MovieDetailActivityFragment extends Fragment{
                     + " must implement movie selected listener");
         }
     }
-    public void addList(ArrayList<TrailerObject> list){
-        adapter = new TrailerAdapter(this, trailerObjects);
-        listView.setAdapter(adapter);
+    public void addList(ArrayList<TrailerObject> flist){
+        flist.clear();
+
+        //TrailerObject exa = new TrailerObject("ayz", "dvy");
+        //TrailerObject exb = new TrailerObject("byz", "evy");
+        TrailerObject ex3c = new TrailerObject("cyz", "fvy");
+        //flist.add(exa);
+        //flist.add(exb);
+        flist.add(ex3c);
+
 
         if(adapter != null) {
             adapter.clear();
         }
         trailerObjects.clear();
-        for(int i = 0; i < list.size(); ++i){
-                trailerObjects.add(list.get(i));
+
+        for(int i = 0; i < flist.size(); ++i){
+                trailerObjects.add(flist.get(i));
         }
-
-
-
-
-        String trailerName = "";
         for(int i = 0; i < trailerObjects.size(); ++i) {
-            trailerName = trailerObjects.get(i).trailer_title;
             adapter.add(trailerObjects.get(i));
 
         }
+        Log.v("Size of new list" , Integer.toString(trailerObjects.size()));
         adapter.notifyDataSetChanged();
 
 
@@ -308,7 +318,7 @@ public class MovieDetailActivityFragment extends Fragment{
 //Image tasks and async methods
 
     public class TrailerAdapter extends ArrayAdapter<TrailerObject> {
-        public TrailerAdapter(MovieDetailActivityFragment context, ArrayList<TrailerObject> trailer) {
+        public TrailerAdapter(Context context, ArrayList<TrailerObject> trailer) {
             super(getActivity(), 0, trailer);
         }
 
