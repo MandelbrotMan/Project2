@@ -27,33 +27,9 @@ public class MainActivity extends Activity implements  MovieDetailFragment.OnMov
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        boolean tabletSize = getResources().getBoolean(R.bool.has_two_panes);
-        if (!tabletSize) {
-            fragmentMain = new MainActivityFragment();
-            manager = getFragmentManager();
-
-            FragmentTransaction transaction = manager.beginTransaction();
-            transaction.add(R.id.fragment_container_main, fragmentMain, "Gridview");
-            transaction.commit();
-
-        } else {
-
-            MainActivityFragment fragmentMain = new MainActivityFragment();
-            manager = getFragmentManager();
-
-            FragmentTransaction transaction = manager.beginTransaction();
-            transaction.add(R.id.fragment_container_main, fragmentMain, "Gridview");
-
-
-            fragmentDetail = new MovieDetailFragment();
-            manager = getFragmentManager();
-            transaction.add(R.id.fragment_container_main, fragmentDetail, "Details");
-            transaction.commit();
-
-
+        if(findViewById(R.id.movie_detail_container) != null){
+            Log.v("This is a tablet view", "find out to inflate the main fragment");
         }
-
 
 
 
