@@ -8,7 +8,7 @@
     android:layout_width="0dp"
     android:layout_weight="1"
     android:layout_height="wrap_content"
-    tools:context="com.example.raymondlian.movieappv2.MovieDetailActivityFragment"
+    tools:context=".MovieDetailFragment"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 

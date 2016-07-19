@@ -11,6 +11,24 @@ buildscript {
         // in the individual module build.gradle files
     }
 }
+apply plugin: 'android-library'
+
+dependencies {
+    compile 'com.android.support:support-v4:13.0.0'
+}
+
+android {
+    buildToolsVersion "21"
+    compileSdkVersion 21
+
+    sourceSets {
+        main {
+            manifest.srcFile 'app/src/main/AndroidManifest.xml'
+        }
+
+        instrumentTest.setRoot('tests')
+    }
+}
 
 allprojects {
     repositories {

@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-import com.squareup.picasso.Picasso;
+import static com.squareup.picasso.Picasso.LoadedFrom.MEMORY;
 
 import org.json.JSONArray;
 import org.json.JSONException;
