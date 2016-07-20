@@ -4,11 +4,14 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+
+
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
 import java.util.ArrayList;
 
-public class MainActivity extends Activity implements  MovieDetailFragment.OnMovieSelectedListener{
+public class MainActivity extends ActionBarActivity implements  MovieDetailFragment.OnMovieSelectedListener{
 
     String ImageURLString = " "; //For posterpath
     String MovieIdString = " ";  //For pulling additional data of selected movie
@@ -16,6 +19,7 @@ public class MainActivity extends Activity implements  MovieDetailFragment.OnMov
     String Rating = " ";
     String ReleaseDate = " ";
     String Plot= " ";
+    private static final String DETAILFRAGMENT_TAG = "DFTAG";
     boolean FavStatus = false;
     FragmentManager manager;
     MainActivityFragment fragmentMain;
@@ -26,13 +30,14 @@ public class MainActivity extends Activity implements  MovieDetailFragment.OnMov
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        MovieDetailFragment fragment = new MovieDetailFragment();
+        if(findViewById(R.id.movie_detail_container) != null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.movie_detail_container, new MovieDetailFragment())
+                    .commit();
 
-        if(findViewById(R.id.movie_detail_container) != null){
-            Log.v("This is a tablet view", "find out to inflate the main fragment");
+
         }
-
-
-
 
 
     }
@@ -55,28 +60,6 @@ public class MainActivity extends Activity implements  MovieDetailFragment.OnMov
 
     @Override
     public void updateData(String titleS, String dateS, String ratingS, String plotS, String idS, String urlS, boolean statusS, ArrayList<TrailerObject> list){
-        Log.v("Number of trailers", Integer.toString(list.size()));
-        ImageURLString  = urlS;
-        MovieIdString = idS;
-        Title = titleS;
-        ReleaseDate = dateS;
-        Rating = ratingS;
-        Plot = plotS;
-        FavStatus = statusS;
-        if(!trailerObjects.isEmpty()) {
-            trailerObjects.clear();
-        }
-        for(int i = 0; i < list.size(); ++i){
-                trailerObjects.add(list.get(i));
-        }
-
-
-
-
-        MovieDetailFragment temp = (MovieDetailFragment) manager.findFragmentByTag("Details");
-
-        temp.update(Title, ReleaseDate, Rating, Plot, MovieIdString,ImageURLString,FavStatus, trailerObjects);
-
 
 
     }

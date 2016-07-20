@@ -1,7 +1,6 @@
 package com.example.raymondlian.movieappv2;
 
-import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -10,9 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -91,12 +87,7 @@ public class MovieDetailFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        TrailerObject ex1 = new TrailerObject("xyz", "xvy");
-        TrailerObject ex2 = new TrailerObject("xyz", "xvy");
-        TrailerObject ex3 = new TrailerObject("xyz", "xvy");
-        trailerObjects.add(ex1);
-        trailerObjects.add(ex2);
-        trailerObjects.add(ex3);
+
 
         view=inflater.inflate(R.layout.fragment_movie_detail, container,false);
         adapter = new TrailerAdapter(getActivity(), trailerObjects);
@@ -272,19 +263,7 @@ public class MovieDetailFragment extends Fragment{
         void updateData(String title, String date, String rating, String plot, String id, String url, boolean status, ArrayList<TrailerObject> list);
     }
 
-    @Override
-    public void onAttach(Context c) {
-        super.onAttach(c);
 
-        // This makes sure that the container activity has implemented
-        // the callback interface. If not, it throws an exception
-        try {
-           movieSelectedListener  = (OnMovieSelectedListener) c;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(c
-                    + " must implement movie selected listener");
-        }
-    }
     public void addList(ArrayList<TrailerObject> flist){
 
 

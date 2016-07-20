@@ -137,25 +137,8 @@ public class MainActivityFragment extends Fragment {
                                     int position, long id) {
 
                 positionSelected = position;
-
-                boolean tabletSize = getResources().getBoolean(R.bool.has_two_panes);
-                if (!tabletSize) {
-                MainActivity activity = new MainActivity();
-                    activity.switchToMovieDetail();
-
-
-                } else {
-                    //Interfacing and updates are preformed inside ther trailerTask.
-                    if(CurrentList == 0) {
-
-                       new trailerTask().execute(MoviesListed.get(positionSelected).savedId);
-                        Log.v("array: ", Integer.toString(trailerObjects.size()));
-                    }else {
-                        new trailerTask().execute(FavoriteMovies.get(positionSelected).savedId);
-
-                    }
-
-                }
+                Intent intent1 = new Intent(getActivity(), Detail_Activity.class);
+                startActivity(intent1);
 
 
 
