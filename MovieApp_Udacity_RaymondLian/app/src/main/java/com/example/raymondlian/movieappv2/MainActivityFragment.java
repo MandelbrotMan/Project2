@@ -587,31 +587,7 @@ public class MainActivityFragment extends Fragment {
 
         }
 
-        protected void onPostExecute(ArrayList<TrailerObject> trailers){
-            if (CurrentList == 0) {
-                communicator.updateData(MoviesListed.get(positionSelected).savedTitle,
-                        MoviesListed.get(positionSelected).savedDate,
-                        MoviesListed.get(positionSelected).savedRating,
-                        MoviesListed.get(positionSelected).savedPlot,
-                        MoviesListed.get(positionSelected).savedId,
-                        MoviesListed.get(positionSelected).savedURL, false, trailerObjects);
-                
-
-
-            } else if (CurrentList == 1) {
-                communicator.updateData(FavoriteMovies.get(positionSelected).savedTitle,
-                        FavoriteMovies.get(positionSelected).savedDate,
-                        FavoriteMovies.get(positionSelected).savedRating,
-                        FavoriteMovies.get(positionSelected).savedPlot,
-                        FavoriteMovies.get(positionSelected).savedId,
-                        FavoriteMovies.get(positionSelected).savedURL, true, trailerObjects);
-
-
-            }
-
-        }
-
-
+       
 
 
     }
