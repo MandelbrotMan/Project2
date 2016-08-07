@@ -41,12 +41,11 @@ public class MovieProvider extends ContentProvider {
         //This is an inner join which looks like
         //weather INNER JOIN location ON weather.location_id = location._id
         MovieQueryBuilder.setTables(
-                MovieContract.MovieEntry.TABLE_NAME + " INNER JOIN " +
-                        MovieContract.TrailerEntry.TABLE_NAME +
-                        " ON " + MovieContract.MovieEntry.TABLE_NAME +
-                        "." + MovieContract.MovieEntry.COLUMN_TRAILER_KEY +
-                        " = " + MovieContract.TrailerEntry.TABLE_NAME +
-                        "." + MovieContract.MovieEntry._ID);
+                MovieContract.MovieEntry.TABLE_NAME
+                        //"." + MovieContract.MovieEntry.COLUMN_TRAILER_KEY +
+                       // " = " + MovieContract.TrailerEntry.TABLE_NAME +
+                       // "." + MovieContract.MovieEntry._ID
+                       );
     }
 /*
     //location.location_setting = ?

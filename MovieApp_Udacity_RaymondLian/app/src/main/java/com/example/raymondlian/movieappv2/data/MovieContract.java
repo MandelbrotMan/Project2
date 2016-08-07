@@ -91,7 +91,7 @@ public class MovieContract {
         // Table name
         public static final String TABLE_NAME = "movie";
         // Column with the foreign key into the location table.
-        public static final String COLUMN_TRAILER_KEY = "trailer_key";
+        // public static final String COLUMN_TRAILER_KEY = "trailer_key";
 
         // The location setting string is what will be sent to openweathermap
         // as the location query.

@@ -2,8 +2,10 @@ package com.example.raymondlian.movieappv2;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -22,7 +24,9 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.raymondlian.movieappv2.data.MovieContract;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -60,6 +64,26 @@ public class MainActivityFragment extends Fragment {
 
     LinearLayout HeaderProgress;
     Bundle formMovieDetailPackage;
+
+    private static final String[] NOTIFY_MOVIE_PROJECTION = new String[] {
+            MovieContract.MovieEntry.COLUMN_TITLE,
+            MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
+            MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
+            MovieContract.MovieEntry.COLUMN_ID,
+            MovieContract.MovieEntry.COLUMN_SYNOPSIS,
+            MovieContract.MovieEntry.COLUMN_IMG_URL
+    };
+    private static int COLUMN_TITLE = 0;
+    private static int COLUMN_RELEASE_DATE = 1;
+    private static int COLUMN_VOTE_AVERAGE = 2;
+    private static int COLUMN_ID = 3;
+    private static int COLUMN_SYNOPSIS = 4;
+    private static int COLUMN_IMG_URL = 5;
+
+
+
+
+
 
     public MainActivityFragment() {
     }
@@ -202,12 +226,21 @@ public class MainActivityFragment extends Fragment {
             return true;
         }
         if (id == R.id.action_FavoriteMenu){
-            CurrentList = 1;
-            MoviesListed.clear();
-            LocalAdapter.restore(getActivity(), FavoriteMovies);
-            Gridview.setAdapter(null);
-            LocalAdapter.notifyDataSetChanged();
-            Gridview.setAdapter(LocalAdapter);
+            ContentValues test = new ContentValues();
+            test.put(MovieContract.MovieEntry.COLUMN_TITLE, MoviesListed.get(0).savedTitle);
+            test.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, MoviesListed.get(0).savedDate);
+            test.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, MoviesListed.get(0).savedRating);
+            test.put(MovieContract.MovieEntry.COLUMN_ID, MoviesListed.get(0).savedId);
+            test.put(MovieContract.MovieEntry.COLUMN_SYNOPSIS, MoviesListed.get(0).savedPlot);
+            test.put(MovieContract.MovieEntry.COLUMN_IMG_URL, MoviesListed.get(0).savedURL);
+            test.put(MovieContract.MovieEntry.COLUMN_CURRENT_LIST, "True");
+            test.put(MovieContract.MovieEntry.COLUMN_FAV_STAT, "False");
+            getActivity().getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, test);
+            Cursor testCursor = getActivity().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, NOTIFY_MOVIE_PROJECTION, null, null, null);
+            if(testCursor.moveToFirst()){
+                Toast.makeText(getActivity(), testCursor.getString(COLUMN_ID),
+                        Toast.LENGTH_LONG).show();
+            }
 
         }
 
@@ -587,7 +620,7 @@ public class MainActivityFragment extends Fragment {
 
         }
 
-       
+
 
 
     }
