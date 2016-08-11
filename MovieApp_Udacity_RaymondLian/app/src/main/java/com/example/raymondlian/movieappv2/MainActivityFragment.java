@@ -266,47 +266,84 @@ public class MainActivityFragment extends Fragment {
             }
 
 
-            String popularURL = getJsonURL(urls[0]);
-            String[] jsonArray = {};
-
-
-            if (isNetworkAvailable()) {
-                try {
-                    if (jsonArray == null) {
-                    }
-                    jsonArray = getJsonData(popularURL, 100);
-                    getBitMapURL(jsonArray);
-
-                } catch (JSONException e) {
-                } catch (IOException e) {
-
-                }
-            }
             return MoviesListed;
         }
 
         @Override
         protected void onPreExecute() {
             // SHOW THE SPINNER WHILE LOADING FEEDS
-           HeaderProgress.setVisibility(View.VISIBLE);
+            HeaderProgress.setVisibility(View.VISIBLE);
             //setProgressBarIndeterminateVisibility(true);
         }
 
 
         protected void onPostExecute(ArrayList<MovieObject> movies) {
-
+/*
             JsonAdapter.notifyDataSetChanged();
             Gridview.setAdapter(JsonAdapter);
             ListTitle.setText(listInfo);
             Context context = getActivity();
             HeaderProgress.setVisibility(View.GONE);
-
+*/
 
         }
 
-        public String getJsonURL(String sort) {
+
+        public class ImageAdapter extends BaseAdapter {
+            private Context mContext;
+            private ArrayList<MovieObject> loadList = new ArrayList<MovieObject>();
+
+            public ImageAdapter(Context c, ArrayList<MovieObject> toDisplay) {
+                loadList = toDisplay;
+                mContext = c;
+            }
+
+            public int getCount() {
+                return loadList.size();
+            }
+
+            public Object getItem(int position) {
+
+                return null;
+            }
+
+            public long getItemId(int position) {
+
+                return 0;
+            }
+
+            private void restore(Context rContext, ArrayList<MovieObject> rList) {
+                mContext = rContext;
+                loadList = rList;
+            }
+
+            // create a new ImageView for each item referenced by the Adapter
+            public View getView(int position, View convertView, ViewGroup parent) {
+                ImageView imageView;
+                if (convertView == null) {
+                    // if it's not recycled, initialize some attributes
+                    imageView = new ImageView(mContext);
+                    imageView.setLayoutParams(new GridView.LayoutParams(300, 425));
+                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    imageView.setPadding(4, 4, 4, 4);
+                } else {
+                    imageView = (ImageView) convertView;
+                }
 
 
+                Picasso.with(mContext).load(loadList.get(position).savedURL).into(imageView);
+
+
+                return imageView;
+            }
+
+
+            // references to our images
+
+        }
+
+
+        private String getTrailerJsonURL(String trailerUrl) {
             String JsonUrl = "";
             HttpURLConnection urlConnection = null;
             BufferedReader reader;
@@ -318,7 +355,8 @@ public class MainActivityFragment extends Fragment {
             Uri base = Uri.parse("https://api.themoviedb.org").buildUpon().
                     appendPath("3").
                     appendPath("movie").
-                    appendPath(sort).
+                    appendPath(trailerUrl).
+                    appendPath("videos").
                     appendQueryParameter("api_key", "0109ddff503db8186924929b1814320e").
                     appendQueryParameter("language", "en").
                     appendQueryParameter("include_image)langauge", "en, us").build();
@@ -330,7 +368,6 @@ public class MainActivityFragment extends Fragment {
                 urlConnection = (HttpURLConnection) popularURL.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
-
 
 
                 InputStream inputStream = urlConnection.getInputStream();
@@ -361,281 +398,73 @@ public class MainActivityFragment extends Fragment {
                 }
             }
             return JsonUrl;
+
         }
 
-        protected String[] getJsonData(String s, int top) throws JSONException {
-            ArrayList<String> imagePathArray = new ArrayList<>();
-            final String get_RESULTS = "results";
+        private void getTrailersJSON(String urlString) throws JSONException {
 
-            final String get_PATH = "poster_path";
-            final String get_AVERAGE = "vote_average";
-            final String get_SYNOPSIS = "overview";
-            final String get_RELEASE_DATE = "release_date";
-            final String get_TITLE = "title";
-            final String get_ID = "id";
+            JSONObject trailersObject = new JSONObject(urlString);
+            JSONArray trailerArray = trailersObject.getJSONArray("results");
 
+            for (int i = 0; i < trailerArray.length(); ++i) {
+                JSONObject temp = trailerArray.getJSONObject(i);
+                String trailerLink = null;
 
-            JSONObject popularJSON = new JSONObject(s);
+                Uri base = Uri.parse("https://youtube.com").buildUpon().
+                        appendPath("watch").
+                        appendQueryParameter("v", temp.getString("key")).build();
 
-            JSONArray movieArray = popularJSON.getJSONArray(get_RESULTS);
+                HttpURLConnection urlConnection = null;
 
-            //Extracting details of movies from json
-            for (int j = 0; j < movieArray.length(); j++) {
-                JSONObject singleMovie = movieArray.getJSONObject(j);
-                imagePathArray.add(singleMovie.getString(get_PATH).substring(1));
+                try {
+                    URL trailerURL = new URL(base.toString());
 
-                MovieObject temp = new MovieObject(singleMovie.getString(get_TITLE),
-                        singleMovie.getString(get_RELEASE_DATE),
-                        Integer.toString(singleMovie.getInt(get_AVERAGE)),
-                        singleMovie.getString(get_SYNOPSIS), Integer.toString(singleMovie.getInt(get_ID)));
-                MoviesListed.add(temp);
+                    urlConnection = (HttpURLConnection) trailerURL.openConnection();
+                    urlConnection.setRequestMethod("GET");
+                    urlConnection.connect();
+
+                } catch (IOException e) {
+                    Log.e("error", String.valueOf(e));
+                } finally {
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                        trailerLink = base.toString();
+                    }
+                }
+
+                TrailerObject tempTrailer = new TrailerObject(temp.getString("name"), trailerLink);
+
+                trailerObjects.add(tempTrailer);
+
 
             }
 
 
-            String[] convertedArray = new String[imagePathArray.size()];
-            convertedArray = imagePathArray.toArray(convertedArray);
-            return convertedArray;
         }
 
-        protected Void getBitMapURL(String[] paths) throws IOException {
+        private class trailerTask extends AsyncTask<String, Void, ArrayList<TrailerObject>> {
             HttpURLConnection posterUrlConnection = null;
 
 
+            protected ArrayList<TrailerObject> doInBackground(String... param) {
+                trailerObjects.clear(); //Ensure there are no trailers from previous tasks
+                String movieTrailersUrl = getTrailerJsonURL(param[0]); //Set up URL for pulling the JSON Data
 
-            for (int i = 0; i < paths.length; ++i) {
-                Uri builtUri = Uri.parse("http://image.tmdb.org").buildUpon()
-                        .appendPath("t")
-                        .appendPath("p")
-                        .appendPath("w500")
-                        .appendPath(paths[i]).build();
+
                 try {
-                    URL bitmapURL = new URL(builtUri.toString());
-
-
-                    posterUrlConnection = (HttpURLConnection) bitmapURL.openConnection();
-                    posterUrlConnection.setRequestMethod("GET");
-                    posterUrlConnection.connect();
-
-
-
-                    MoviesListed.get(i).savedURL = bitmapURL.toString();
-
-                } catch (IOException e) {
-                    return null;
-                } finally {
-                    if (posterUrlConnection != null) {
-                        posterUrlConnection.disconnect();
-                    }
-
+                    getTrailersJSON(movieTrailersUrl); // Fill up the trailerObjects list with trailers
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            }
-            return null;
-
-        }
 
 
-    }
-
-    public class ImageAdapter extends BaseAdapter {
-        private Context mContext;
-        private ArrayList<MovieObject> loadList = new ArrayList<MovieObject>();
-
-        public ImageAdapter(Context c, ArrayList<MovieObject> toDisplay) {
-            loadList = toDisplay;
-            mContext = c;
-        }
-
-        public int getCount() {
-            return loadList.size();
-        }
-
-        public Object getItem(int position) {
-
-            return null;
-        }
-
-        public long getItemId(int position) {
-
-            return 0;
-        }
-        private void restore(Context rContext, ArrayList<MovieObject> rList){
-            mContext = rContext;
-            loadList = rList;
-        }
-        // create a new ImageView for each item referenced by the Adapter
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ImageView imageView;
-            if (convertView == null) {
-                // if it's not recycled, initialize some attributes
-                imageView = new ImageView(mContext);
-                imageView.setLayoutParams(new GridView.LayoutParams(300, 425));
-                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                imageView.setPadding(4, 4, 4, 4);
-            } else {
-                imageView = (ImageView) convertView;
-            }
-
-
-            Picasso.with(mContext).load(loadList.get(position).savedURL).into(imageView);
-
-
-            return imageView;
-        }
-
-
-        // references to our images
-
-    }
-
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
-    private String getTrailerJsonURL(String trailerUrl) {
-        String JsonUrl = "";
-        HttpURLConnection urlConnection = null;
-        BufferedReader reader;
-
-        InputStream stream;
-        URL popularURL;
-
-
-        Uri base = Uri.parse("https://api.themoviedb.org").buildUpon().
-                appendPath("3").
-                appendPath("movie").
-                appendPath(trailerUrl).
-                appendPath("videos").
-                appendQueryParameter("api_key", "0109ddff503db8186924929b1814320e").
-                appendQueryParameter("language", "en").
-                appendQueryParameter("include_image)langauge", "en, us").build();
-
-
-        try {
-            popularURL = new URL(base.toString());
-
-            urlConnection = (HttpURLConnection) popularURL.openConnection();
-            urlConnection.setRequestMethod("GET");
-            urlConnection.connect();
-
-
-
-            InputStream inputStream = urlConnection.getInputStream();
-            StringBuffer buffer = new StringBuffer();
-            if (inputStream == null) {
                 return null;
+
             }
-            reader = new BufferedReader(new InputStreamReader(inputStream));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-
-                buffer.append(line + "\n");
-            }
-
-            if (buffer.length() == 0) {
-                return null;
-            }
-            JsonUrl = buffer.toString();
-
-
-        } catch (IOException e) {
-            Log.e("error", String.valueOf(e));
-            return null;
-        } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-            }
-        }
-        return JsonUrl;
-
-    }
-
-    private void getTrailersJSON (String urlString)  throws JSONException {
-
-        JSONObject trailersObject = new JSONObject(urlString);
-        JSONArray trailerArray = trailersObject.getJSONArray("results");
-
-        for(int i = 0; i < trailerArray.length(); ++i){
-            JSONObject temp = trailerArray.getJSONObject(i);
-            String trailerLink = null;
-
-            Uri base = Uri.parse("https://youtube.com").buildUpon().
-                    appendPath("watch").
-                    appendQueryParameter("v", temp.getString("key")).build();
-
-            HttpURLConnection urlConnection = null;
-
-            try {
-                URL  trailerURL = new URL(base.toString());
-
-                urlConnection = (HttpURLConnection) trailerURL.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-            } catch (IOException e) {
-                Log.e("error", String.valueOf(e));
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                    trailerLink = base.toString();
-                }
-            }
-
-            TrailerObject tempTrailer = new TrailerObject(temp.getString("name"),trailerLink);
-
-            trailerObjects.add(tempTrailer);
-
-
 
 
         }
-
-
-
-    }
-    private class trailerTask extends AsyncTask<String, Void, ArrayList<TrailerObject>> {
-        HttpURLConnection posterUrlConnection = null;
-
-
-
-        protected ArrayList<TrailerObject> doInBackground(String... param){
-            trailerObjects.clear(); //Ensure there are no trailers from previous tasks
-            String movieTrailersUrl = getTrailerJsonURL(param[0]); //Set up URL for pulling the JSON Data
-
-
-            try {
-                getTrailersJSON(movieTrailersUrl); // Fill up the trailerObjects list with trailers
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-
-
-            return null;
-
-        }
-
-
-
-
     }
 
 
-    //Holds all the movie contents Information
-    private boolean checkInList( String id, ArrayList<MovieObject> objects){
-        boolean status = false;
-        for(int i = 0; i < objects.size(); ++i){
-            if(id.equals(objects.get(i).savedId)){
-                Log.v("Favorite Id list:", objects.get(i).savedId);
-                status = true;
-            }
-        }
-        return  status;
-
-    }
 }
