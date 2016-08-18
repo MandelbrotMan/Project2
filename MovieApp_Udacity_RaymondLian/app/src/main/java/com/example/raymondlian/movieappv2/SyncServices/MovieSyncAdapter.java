@@ -49,16 +49,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
 
 
         if (isNetworkAvailable()) {
-            try {
-                if (jsonArray == null) {
-                }
-                jsonArray = getJsonData(popularURL, 100);
-                getBitMapURL(jsonArray);
 
-            } catch (JSONException e) {
-            } catch (IOException e) {
-
-            }
         }
 
 
@@ -174,7 +165,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
             JSONObject singleMovie = movieArray.getJSONObject(j);
             imagePathArray.add(singleMovie.getString(get_PATH).substring(1));
 
-
+/*
             ContentValues value = new ContentValues();
             test.put(MovieContract.MovieEntry.COLUMN_TITLE, MoviesListed.get(0).savedTitle);
             test.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, MoviesListed.get(0).savedDate);
@@ -188,14 +179,14 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
                     singleMovie.getString(get_RELEASE_DATE),
                     Integer.toString(singleMovie.getInt(get_AVERAGE)),
                     singleMovie.getString(get_SYNOPSIS), Integer.toString(singleMovie.getInt(get_ID)));
-
+*/
 
         }
 
 
         String[] convertedArray = new String[imagePathArray.size()];
         convertedArray = imagePathArray.toArray(convertedArray);
-        return convertedArray;
+       // return convertedArray;
     }
 
     private boolean isNetworkAvailable() {
@@ -213,4 +204,4 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
 
 
 
-}
+

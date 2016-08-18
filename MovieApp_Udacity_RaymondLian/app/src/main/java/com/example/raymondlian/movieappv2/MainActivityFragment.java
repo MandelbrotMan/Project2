@@ -56,8 +56,8 @@ public class MainActivityFragment extends Fragment {
     FragmentManager manager;
 
     GridView Gridview;
-    ImageAdapter JsonAdapter;
-    ImageAdapter LocalAdapter;
+    //ImageAdapter JsonAdapter;
+   // ImageAdapter LocalAdapter;
     TextView ListTitle;
     View root;
     static int CurrentList = 0; //0 if its MoviesListed, 1 if FavoriteMovies --used for item selection
@@ -99,29 +99,12 @@ public class MainActivityFragment extends Fragment {
         Gridview = (GridView) root.findViewById(R.id.gridview);
         ListTitle = (TextView) root.findViewById(R.id.textView);
 
-        JsonAdapter = new ImageAdapter(getActivity(), MoviesListed);
-        LocalAdapter = new ImageAdapter(getActivity(), FavoriteMovies);
 
         Intent intent = getActivity().getIntent();
         formMovieDetailPackage = intent.getExtras();
 
 
 
-        if(formMovieDetailPackage != null){
-            if(!checkInList(formMovieDetailPackage.getString("movieIdString"), FavoriteMovies)){
-                MovieObject newFavorite = new MovieObject(
-                        formMovieDetailPackage.getString("title"),
-                        formMovieDetailPackage.getString("releaseDate"),
-                        formMovieDetailPackage.getString("rating"),
-                        formMovieDetailPackage.getString("plot"),
-                        formMovieDetailPackage.getString("movieIdString"),
-                        formMovieDetailPackage.getString("imageURLString"));
-                FavoriteMovies.add(newFavorite);
-
-            }
-
-
-        }
 
 
 
@@ -132,30 +115,7 @@ public class MainActivityFragment extends Fragment {
             new DownloadImageTask((GridView) root.findViewById(R.id.gridview)).execute("popular");
 
 
-        } else {
-            if(!isNetworkAvailable()){
-                ListTitle.setText("No Network Connection");
-            }
-
-            MoviesListed = savedInstanceState.getParcelableArrayList("movies");
-            FavoriteMovies = savedInstanceState.getParcelableArrayList("favorites");
-            Context context = getActivity().getApplicationContext();
-            if(CurrentList == 0) {
-                JsonAdapter.restore(getActivity(), MoviesListed);
-                JsonAdapter.notifyDataSetChanged();
-                Gridview.setAdapter(JsonAdapter);
-
-            }else if (CurrentList == 1) {
-                LocalAdapter.restore(getActivity(), FavoriteMovies);
-                LocalAdapter.notifyDataSetChanged();
-                Gridview.setAdapter(LocalAdapter);
-            }
-
-
-
         }
-
-
         Gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
