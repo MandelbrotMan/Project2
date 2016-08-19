@@ -73,12 +73,12 @@ public class MainActivityFragment extends Fragment {
             MovieContract.MovieEntry.COLUMN_SYNOPSIS,
             MovieContract.MovieEntry.COLUMN_IMG_URL
     };
-    private static int COLUMN_TITLE = 0;
-    private static int COLUMN_RELEASE_DATE = 1;
-    private static int COLUMN_VOTE_AVERAGE = 2;
-    private static int COLUMN_ID = 3;
-    private static int COLUMN_SYNOPSIS = 4;
-    private static int COLUMN_IMG_URL = 5;
+    static final int COLUMN_TITLE = 0;
+    static final int COLUMN_RELEASE_DATE = 1;
+    static final int COLUMN_VOTE_AVERAGE = 2;
+    static final int COLUMN_ID = 3;
+    static final int COLUMN_SYNOPSIS = 4;
+    static final int COLUMN_IMG_URL = 5;
 
 
 
@@ -249,58 +249,7 @@ public class MainActivityFragment extends Fragment {
         }
 
 
-        public class ImageAdapter extends BaseAdapter {
-            private Context mContext;
-            private ArrayList<MovieObject> loadList = new ArrayList<MovieObject>();
 
-            public ImageAdapter(Context c, ArrayList<MovieObject> toDisplay) {
-                loadList = toDisplay;
-                mContext = c;
-            }
-
-            public int getCount() {
-                return loadList.size();
-            }
-
-            public Object getItem(int position) {
-
-                return null;
-            }
-
-            public long getItemId(int position) {
-
-                return 0;
-            }
-
-            private void restore(Context rContext, ArrayList<MovieObject> rList) {
-                mContext = rContext;
-                loadList = rList;
-            }
-
-            // create a new ImageView for each item referenced by the Adapter
-            public View getView(int position, View convertView, ViewGroup parent) {
-                ImageView imageView;
-                if (convertView == null) {
-                    // if it's not recycled, initialize some attributes
-                    imageView = new ImageView(mContext);
-                    imageView.setLayoutParams(new GridView.LayoutParams(300, 425));
-                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                    imageView.setPadding(4, 4, 4, 4);
-                } else {
-                    imageView = (ImageView) convertView;
-                }
-
-
-                Picasso.with(mContext).load(loadList.get(position).savedURL).into(imageView);
-
-
-                return imageView;
-            }
-
-
-            // references to our images
-
-        }
 
 
         private String getTrailerJsonURL(String trailerUrl) {
