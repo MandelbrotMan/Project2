@@ -20,10 +20,7 @@ public class MovieAdapter extends CursorAdapter {
     }
 
     //To determine which view to inflate and which data belongs to which view
-    @Override
-    public int getItemViewType(int position){
-        return (position == 0) ? PHONE_VIEW_TYPE : TABLET_VIEW_TYPE;
-    }
+
     @Override
     public int getViewTypeCount(){
         return 2;
@@ -32,10 +29,9 @@ public class MovieAdapter extends CursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        int viewType = getItemViewType(cursor.getPosition());
-        View view;
+        View view = null;
         int layoutId = -1;
-        if(viewType == PHONE_VIEW_TYPE && mTwoPane == false) {
+        if(mTwoPane == false) {
             layoutId = R.layout.movie_image_phone;
         }
         else {
@@ -80,7 +76,7 @@ public class MovieAdapter extends CursorAdapter {
         }
 
     }
-    public void setUseTodayLayout(boolean useTodayLayout) {
+    public void setUseTalbletLayout(boolean useTodayLayout) {
         mTwoPane = useTodayLayout;
 
     }

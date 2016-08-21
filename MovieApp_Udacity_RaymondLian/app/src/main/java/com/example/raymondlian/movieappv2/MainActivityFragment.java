@@ -3,11 +3,8 @@ package com.example.raymondlian.movieappv2;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,15 +16,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.raymondlian.movieappv2.data.MovieContract;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,11 +49,12 @@ public class MainActivityFragment extends Fragment {
 
     FragmentManager manager;
 
-    GridView Gridview;
-    //ImageAdapter JsonAdapter;
-   // ImageAdapter LocalAdapter;
-    TextView ListTitle;
-    View root;
+    MovieAdapter mPosterAdapter;
+    GridView mPosterGridview;
+    TextView mListTitle;
+
+    View mRoot;
+    private boolean isTablet = false;
     static int CurrentList = 0; //0 if its MoviesListed, 1 if FavoriteMovies --used for item selection
 
     LinearLayout HeaderProgress;
@@ -91,13 +86,15 @@ public class MainActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        root = inflater.inflate(R.layout.fragment_main_gridview, container, false);
+        mRoot = inflater.inflate(R.layout.fragment_main_gridview, container, false);
+        mPosterAdapter = new MovieAdapter(getActivity(), null, 0);
+        mPosterAdapter.setUseTalbletLayout(isTablet);
 
         getActivity().setTitle("Blue Ray Movies");
-        HeaderProgress = (LinearLayout) root.findViewById(R.id.ProgressBarLayout);
+        HeaderProgress = (LinearLayout) mRoot.findViewById(R.id.ProgressBarLayout);
 
-        Gridview = (GridView) root.findViewById(R.id.gridview);
-        ListTitle = (TextView) root.findViewById(R.id.textView);
+        mPosterGridview = (GridView) mRoot.findViewById(R.id.gridview);
+        mListTitle = (TextView) mRoot.findViewById(R.id.textView);
 
 
         Intent intent = getActivity().getIntent();
@@ -112,11 +109,11 @@ public class MainActivityFragment extends Fragment {
 
         //For preserving screen data during screen rotation
         if (savedInstanceState == null || !savedInstanceState.containsKey("movies")) {
-            new DownloadImageTask((GridView) root.findViewById(R.id.gridview)).execute("popular");
+            new DownloadImageTask((GridView) mRoot.findViewById(R.id.gridview)).execute("popular");
 
 
         }
-        Gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mPosterGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
 
@@ -125,13 +122,12 @@ public class MainActivityFragment extends Fragment {
                 startActivity(intent1);
 
 
-
             }
         });
 
 
         setHasOptionsMenu(true);
-        return root;
+        return mRoot;
 
     }
     @Override
@@ -373,6 +369,9 @@ public class MainActivityFragment extends Fragment {
 
 
         }
+    }
+    public void setUILayout(boolean type){
+
     }
 
 

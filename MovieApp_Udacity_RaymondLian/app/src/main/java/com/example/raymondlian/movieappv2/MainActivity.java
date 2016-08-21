@@ -13,18 +13,13 @@ import java.util.ArrayList;
 
 public class MainActivity extends ActionBarActivity implements  MovieDetailFragment.OnMovieSelectedListener{
 
-    String ImageURLString = " "; //For posterpath
-    String MovieIdString = " ";  //For pulling additional data of selected movie
-    String Title = " ";
-    String Rating = " ";
-    String ReleaseDate = " ";
-    String Plot= " ";
+    private boolean mTwoPane;
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
     boolean FavStatus = false;
     FragmentManager manager;
     MainActivityFragment fragmentMain;
     MovieDetailFragment fragmentDetail;
-    ArrayList<TrailerObject> trailerObjects = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,27 +30,16 @@ public class MainActivity extends ActionBarActivity implements  MovieDetailFragm
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.movie_detail_container, new MovieDetailFragment())
                     .commit();
+            mTwoPane = true;
 
 
+        }else{
+            mTwoPane = false;
         }
 
 
     }
-    public void switchToMovieDetail(){
-        Bundle moviePackage = new Bundle();
-        moviePackage.putString("title", Title);
-        moviePackage.putString("image", ImageURLString);
-        moviePackage.putString("release_date", ReleaseDate);
-        moviePackage.putString("vote_average", Rating);
-        moviePackage.putString("synopsis", Plot);
-        moviePackage.putString("id", MovieIdString);
-        moviePackage.putBoolean("favStatus", FavStatus);
 
-
-
-
-
-    }
 
 
     @Override
