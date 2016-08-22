@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
+import com.example.raymondlian.movieappv2.SyncServices.MovieSyncAdapter;
+
 import java.util.ArrayList;
 
 public class MainActivity extends ActionBarActivity implements  MovieDetailFragment.OnMovieSelectedListener{
@@ -36,6 +38,7 @@ public class MainActivity extends ActionBarActivity implements  MovieDetailFragm
         }else{
             mTwoPane = false;
         }
+
 
 
     }

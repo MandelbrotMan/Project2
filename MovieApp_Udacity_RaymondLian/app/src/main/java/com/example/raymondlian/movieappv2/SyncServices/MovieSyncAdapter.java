@@ -3,12 +3,15 @@ package com.example.raymondlian.movieappv2.SyncServices;
 import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -49,7 +52,11 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
 
 
         if (isNetworkAvailable()) {
-
+            try {
+                getJsonData(popularURL);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
 
@@ -144,7 +151,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
 
             }
     }
-    protected void getJsonData(String s, int top) throws JSONException {
+    protected void getJsonData(String s) throws JSONException {
         ArrayList<String> imagePathArray = new ArrayList<>();
         final String get_RESULTS = "results";
 
@@ -184,6 +191,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
 
         }
         ContentValues values[] = cVVector.toArray(new ContentValues[cVVector.size()]);
+        Log.v("The sync was succesful:", Integer.toString(cVVector.size()));
 
         getContext().getContentResolver().bulkInsert(MovieContract.MovieEntry.CONTENT_URI,values);
     }
@@ -193,6 +201,30 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
                 = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    public static void syncImmediately(Context context){
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        ContentResolver.requestSync(null, context.getString(R.string.content_authority), bundle);
+    }
+    public static void initialize(){
+
+    }
+    public static void configurePeriodicSync(Context context, int syncInterval, int flexTime) {
+
+        String authority = context.getString(R.string.content_authority);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            // we can enable inexact timers in our periodic sync
+            SyncRequest request = new SyncRequest.Builder().
+                    syncPeriodic(syncInterval, flexTime).
+                    setSyncAdapter(null, authority).
+                    setExtras(new Bundle()).build();
+            ContentResolver.requestSync(request);
+        } else {
+            ContentResolver.addPeriodicSync(null,
+                    null, new Bundle(), syncInterval);
+        }
     }
 
 

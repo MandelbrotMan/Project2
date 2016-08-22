@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.raymondlian.movieappv2.SyncServices.MovieSyncAdapter;
 import com.example.raymondlian.movieappv2.data.MovieContract;
 
 import org.json.JSONArray;
@@ -95,6 +96,7 @@ public class MainActivityFragment extends Fragment {
 
         mPosterGridview = (GridView) mRoot.findViewById(R.id.gridview);
         mListTitle = (TextView) mRoot.findViewById(R.id.textView);
+        mPosterGridview.setAdapter(mPosterAdapter);
 
 
         Intent intent = getActivity().getIntent();
@@ -109,7 +111,7 @@ public class MainActivityFragment extends Fragment {
 
         //For preserving screen data during screen rotation
         if (savedInstanceState == null || !savedInstanceState.containsKey("movies")) {
-            new DownloadImageTask((GridView) mRoot.findViewById(R.id.gridview)).execute("popular");
+          //  new DownloadImageTask((GridView) mRoot.findViewById(R.id.gridview)).execute("popular");
 
 
         }
@@ -124,6 +126,7 @@ public class MainActivityFragment extends Fragment {
 
             }
         });
+        Log.v("Test for log", "");
 
 
         setHasOptionsMenu(true);
@@ -167,36 +170,19 @@ public class MainActivityFragment extends Fragment {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_popularityMenu
                 ) {
-            Gridview.setAdapter(null);
 
+            MovieSyncAdapter.syncImmediately(getActivity());
+            Log.v("Sync was called", "");
 
-           new DownloadImageTask((GridView) getActivity().findViewById(R.id.gridview)).execute("popular");
-            return true;
         }
         if (id == R.id.action_ratingMenu
                 ) {
-            Gridview.setAdapter(null);
-            new DownloadImageTask((GridView) getActivity().findViewById(R.id.gridview)).execute("top_rated");
 
 
-            return true;
+
         }
         if (id == R.id.action_FavoriteMenu){
-            ContentValues test = new ContentValues();
-            test.put(MovieContract.MovieEntry.COLUMN_TITLE, MoviesListed.get(0).savedTitle);
-            test.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, MoviesListed.get(0).savedDate);
-            test.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, MoviesListed.get(0).savedRating);
-            test.put(MovieContract.MovieEntry.COLUMN_ID, MoviesListed.get(0).savedId);
-            test.put(MovieContract.MovieEntry.COLUMN_SYNOPSIS, MoviesListed.get(0).savedPlot);
-            test.put(MovieContract.MovieEntry.COLUMN_IMG_URL, MoviesListed.get(0).savedURL);
-            test.put(MovieContract.MovieEntry.COLUMN_CURRENT_LIST, "True");
-            test.put(MovieContract.MovieEntry.COLUMN_FAV_STAT, "False");
-            getActivity().getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, test);
-            Cursor testCursor = getActivity().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, NOTIFY_MOVIE_PROJECTION, null, null, null);
-            if(testCursor.moveToFirst()){
-                Toast.makeText(getActivity(), testCursor.getString(COLUMN_ID),
-                        Toast.LENGTH_LONG).show();
-            }
+
 
         }
 
@@ -228,7 +214,7 @@ public class MainActivityFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             // SHOW THE SPINNER WHILE LOADING FEEDS
-            HeaderProgress.setVisibility(View.VISIBLE);
+           // HeaderProgress.setVisibility(View.VISIBLE);
             //setProgressBarIndeterminateVisibility(true);
         }
 
