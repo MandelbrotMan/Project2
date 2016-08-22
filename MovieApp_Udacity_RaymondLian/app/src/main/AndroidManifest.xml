@@ -8,6 +8,8 @@
         android:name="android.permission.READ_SYNC_SETTINGS"/>
     <uses-permission
         android:name="android.permission.WRITE_SYNC_SETTINGS"/>
+    <uses-permission
+        android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
 
     <application
         android:allowBackup="true"
@@ -38,6 +40,26 @@
             android:enabled="true"
             android:syncable="true"
             android:permission="License"></provider>
+        <service
+            android:name=".SyncServices.MovieSyncService"
+            android:exported="true"
+            >
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+        <!-- SyncAdapter's dummy authentication service -->
+        <service android:name=".SyncServices.MovieAuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
 
 
     </application>

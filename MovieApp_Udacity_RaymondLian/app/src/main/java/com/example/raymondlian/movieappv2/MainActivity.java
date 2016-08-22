@@ -38,6 +38,7 @@ public class MainActivity extends ActionBarActivity implements  MovieDetailFragm
         }else{
             mTwoPane = false;
         }
+        MovieSyncAdapter.initializeSyncAdapter(this);
 
 
 

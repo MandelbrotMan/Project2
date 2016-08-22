@@ -126,8 +126,6 @@ public class MainActivityFragment extends Fragment {
 
             }
         });
-        Log.v("Test for log", "");
-
 
         setHasOptionsMenu(true);
         return mRoot;
@@ -172,7 +170,9 @@ public class MainActivityFragment extends Fragment {
                 ) {
 
             MovieSyncAdapter.syncImmediately(getActivity());
-            Log.v("Sync was called", "");
+            MovieSyncAdapter.testAdapter();
+
+
 
         }
         if (id == R.id.action_ratingMenu

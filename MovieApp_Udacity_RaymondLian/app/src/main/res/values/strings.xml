@@ -20,5 +20,6 @@
     <string name="content_authority">com.example.raymondlian.movieappv2</string>
 
     <string name="QueryType">"Query This"</string>
+    <string name="sync_account_type">movieappv2.example.com</string>
 
 </resources>
