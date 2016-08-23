@@ -46,6 +46,7 @@ public class MovieProvider extends ContentProvider {
                        // " = " + MovieContract.TrailerEntry.TABLE_NAME +
                        // "." + MovieContract.MovieEntry._ID
                        );
+
     }
 /*
     //location.location_setting = ?
@@ -85,7 +86,7 @@ public class MovieProvider extends ContentProvider {
 
         // For each type of URI you want to add, create a corresponding code.
         matcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIE);
-        matcher.addURI(authority, MovieContract.PATH_TRAILER, TRAILER);
+        matcher.addURI(authority, MovieContract.PATH_FAVORITE, TRAILER);
         return matcher;
     }
 

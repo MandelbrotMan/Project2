@@ -41,19 +41,19 @@ public class MovieContract {
     // as the ContentProvider hasn't been given any information on what to do with "givemeroot".
     // At least, let's hope not.  Don't be that dev, reader.  Don't be that dev.
     public static final String PATH_MOVIE = "movie";
-    public static final String PATH_TRAILER = "trailer";
+    public static final String PATH_FAVORITE = "trailer";
 
 
 
     public static final class TrailerEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI =
-                BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRAILER).build();
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_FAVORITE).build();
 
         public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TRAILER;
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_FAVORITE;
         public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TRAILER;
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_FAVORITE;
 
         // Table name
         public static final String TABLE_NAME = "trailer";
@@ -90,15 +90,12 @@ public class MovieContract {
 
         // Table name
         public static final String TABLE_NAME = "movie";
-        // Column with the foreign key into the location table.
-        // public static final String COLUMN_TRAILER_KEY = "trailer_key";
 
-        // The location setting string is what will be sent to openweathermap
-        // as the location query.
+
+
         public static final String COLUMN_TITLE = "title";
 
-        // Human readable location string, provided by the API.  Because for styling,
-        // "Mountain View" is more recognizable than 94043.
+
         public static final String COLUMN_IMG_URL = "image_url";
 
         // In order to uniquely pinpoint the location on the map when we launch the
@@ -110,7 +107,7 @@ public class MovieContract {
         public static final String COLUMN_ID = "id";
 
         public static final String COLUMN_FAV_STAT = "favorite_status";
-        public static final String COLUMN_CURRENT_LIST = "current_list";
+        public static final String COLUMN_LIST_TYPE = "list_type";
 
 
 

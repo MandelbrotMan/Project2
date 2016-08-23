@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.example.raymondlian.movieappv2.MovieObject;
 import com.example.raymondlian.movieappv2.R;
+import com.example.raymondlian.movieappv2.TrailerObject;
 import com.example.raymondlian.movieappv2.data.MovieContract;
 
 import org.json.JSONArray;
@@ -39,6 +40,8 @@ import java.util.Vector;
  */
 public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
     static Context mContext;
+    private static String SEARCH_POPULAR = "popular";
+    private static String SEARCH_TOP_RATED = "top_rated";
     public static final int SYNC_INTERVAL = 60 * 60 * 24; //everyday
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
     private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
@@ -53,20 +56,30 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         String queryType = extras.getString(getContext().getString(R.string.QueryType));
 
-        Log.v("Sync was called", "Successfully");
-        String popularURL = getJsonURL(queryType);
-/*
+
+        String popularURL = getJsonURL(SEARCH_POPULAR);
+        String topRatedURL = getJsonURL(SEARCH_TOP_RATED);
+
         if (isNetworkAvailable()) {
             try {
-              //  getJsonData(popularURL);
+               getJsonData(popularURL, SEARCH_POPULAR);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }try {
+                getJsonData(topRatedURL, SEARCH_TOP_RATED);
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
         }
-*/
+
 
     }
+    /*
+    Pulling movie objects from db
+     */
     public String getJsonURL(String sort) {
 
 
@@ -157,7 +170,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
 
             }
     }
-    protected void getJsonData(String s) throws JSONException {
+    protected void getJsonData(String url, String searchType) throws JSONException {
         ArrayList<String> imagePathArray = new ArrayList<>();
         final String get_RESULTS = "results";
 
@@ -169,7 +182,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
         final String get_ID = "id";
 
 
-        JSONObject popularJSON = new JSONObject(s);
+        JSONObject popularJSON = new JSONObject(url);
 
         JSONArray movieArray = popularJSON.getJSONArray(get_RESULTS);
         Vector<ContentValues> cVVector = new Vector<ContentValues>(movieArray.length());
@@ -191,15 +204,130 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
             value.put(MovieContract.MovieEntry.COLUMN_ID, Integer.toString(singleMovie.getInt(get_ID)));
             value.put(MovieContract.MovieEntry.COLUMN_SYNOPSIS, singleMovie.getString(get_SYNOPSIS));
             value.put(MovieContract.MovieEntry.COLUMN_IMG_URL, urlBitmap);
-            value.put(MovieContract.MovieEntry.COLUMN_CURRENT_LIST, "True");
+            value.put(MovieContract.MovieEntry.COLUMN_LIST_TYPE, searchType);
             value.put(MovieContract.MovieEntry.COLUMN_FAV_STAT, "False");
             cVVector.add(value);
 
         }
         ContentValues values[] = cVVector.toArray(new ContentValues[cVVector.size()]);
+        int count = 0;
+        count = cVVector.size();
+        Log.v("Size of database ", Integer.toString(count));
 
         getContext().getContentResolver().bulkInsert(MovieContract.MovieEntry.CONTENT_URI,values);
     }
+    private String getTrailerJsonURL(String trailerUrl) {
+        String JsonUrl = "";
+        HttpURLConnection urlConnection = null;
+        BufferedReader reader;
+
+        InputStream stream;
+        URL popularURL;
+
+
+        Uri base = Uri.parse("https://api.themoviedb.org").buildUpon().
+                appendPath("3").
+                appendPath("movie").
+                appendPath(trailerUrl).
+                appendPath("videos").
+                appendQueryParameter("api_key", "0109ddff503db8186924929b1814320e").
+                appendQueryParameter("language", "en").
+                appendQueryParameter("include_image)langauge", "en, us").build();
+
+
+        try {
+            popularURL = new URL(base.toString());
+
+            urlConnection = (HttpURLConnection) popularURL.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.connect();
+
+
+            InputStream inputStream = urlConnection.getInputStream();
+            StringBuffer buffer = new StringBuffer();
+            if (inputStream == null) {
+                return null;
+            }
+            reader = new BufferedReader(new InputStreamReader(inputStream));
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+
+                buffer.append(line + "\n");
+            }
+
+            if (buffer.length() == 0) {
+                return null;
+            }
+            JsonUrl = buffer.toString();
+
+
+        } catch (IOException e) {
+            Log.e("error", String.valueOf(e));
+            return null;
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+        }
+        return JsonUrl;
+
+    }
+    private void getTrailersJSON(String urlString) throws JSONException {
+
+        JSONObject trailersObject = new JSONObject(urlString);
+        JSONArray trailerArray = trailersObject.getJSONArray("results");
+
+        for (int i = 0; i < trailerArray.length(); ++i) {
+            JSONObject temp = trailerArray.getJSONObject(i);
+            String trailerLink = null;
+
+            Uri base = Uri.parse("https://youtube.com").buildUpon().
+                    appendPath("watch").
+                    appendQueryParameter("v", temp.getString("key")).build();
+
+            HttpURLConnection urlConnection = null;
+
+            try {
+                URL trailerURL = new URL(base.toString());
+
+                urlConnection = (HttpURLConnection) trailerURL.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+            } catch (IOException e) {
+                Log.e("error", String.valueOf(e));
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                    trailerLink = base.toString();
+                }
+            }
+
+            TrailerObject tempTrailer = new TrailerObject(temp.getString("name"), trailerLink);
+
+            //trailerObjects.add(tempTrailer);
+
+
+        }
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
@@ -207,11 +335,12 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
-    public static void testAdapter(){
 
-        Log.v("Adapter was created", "Successfully");
 
-    }
+
+    /*
+    Sync Related functions
+     */
     public static void syncImmediately(Context context){
         Bundle bundle = new Bundle();
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);

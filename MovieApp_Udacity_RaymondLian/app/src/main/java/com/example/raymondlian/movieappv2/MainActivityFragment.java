@@ -151,8 +151,6 @@ public class MainActivityFragment extends Fragment {
     }
     @Override
     public void onSaveInstanceState(Bundle bundle) {
-        bundle.putParcelableArrayList("movies", MoviesListed);
-        bundle.putParcelableArrayList("favorites", FavoriteMovies);
         super.onSaveInstanceState(bundle);
     }
 
@@ -170,7 +168,7 @@ public class MainActivityFragment extends Fragment {
                 ) {
 
             MovieSyncAdapter.syncImmediately(getActivity());
-            MovieSyncAdapter.testAdapter();
+
 
 
 
@@ -234,105 +232,9 @@ public class MainActivityFragment extends Fragment {
 
 
 
-        private String getTrailerJsonURL(String trailerUrl) {
-            String JsonUrl = "";
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader;
-
-            InputStream stream;
-            URL popularURL;
 
 
-            Uri base = Uri.parse("https://api.themoviedb.org").buildUpon().
-                    appendPath("3").
-                    appendPath("movie").
-                    appendPath(trailerUrl).
-                    appendPath("videos").
-                    appendQueryParameter("api_key", "0109ddff503db8186924929b1814320e").
-                    appendQueryParameter("language", "en").
-                    appendQueryParameter("include_image)langauge", "en, us").build();
-
-
-            try {
-                popularURL = new URL(base.toString());
-
-                urlConnection = (HttpURLConnection) popularURL.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    return null;
-                }
-                JsonUrl = buffer.toString();
-
-
-            } catch (IOException e) {
-                Log.e("error", String.valueOf(e));
-                return null;
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-            }
-            return JsonUrl;
-
-        }
-
-        private void getTrailersJSON(String urlString) throws JSONException {
-
-            JSONObject trailersObject = new JSONObject(urlString);
-            JSONArray trailerArray = trailersObject.getJSONArray("results");
-
-            for (int i = 0; i < trailerArray.length(); ++i) {
-                JSONObject temp = trailerArray.getJSONObject(i);
-                String trailerLink = null;
-
-                Uri base = Uri.parse("https://youtube.com").buildUpon().
-                        appendPath("watch").
-                        appendQueryParameter("v", temp.getString("key")).build();
-
-                HttpURLConnection urlConnection = null;
-
-                try {
-                    URL trailerURL = new URL(base.toString());
-
-                    urlConnection = (HttpURLConnection) trailerURL.openConnection();
-                    urlConnection.setRequestMethod("GET");
-                    urlConnection.connect();
-
-                } catch (IOException e) {
-                    Log.e("error", String.valueOf(e));
-                } finally {
-                    if (urlConnection != null) {
-                        urlConnection.disconnect();
-                        trailerLink = base.toString();
-                    }
-                }
-
-                TrailerObject tempTrailer = new TrailerObject(temp.getString("name"), trailerLink);
-
-                trailerObjects.add(tempTrailer);
-
-
-            }
-
-
-        }
-
+        /*
         private class trailerTask extends AsyncTask<String, Void, ArrayList<TrailerObject>> {
             HttpURLConnection posterUrlConnection = null;
 
@@ -355,6 +257,7 @@ public class MainActivityFragment extends Fragment {
 
 
         }
+        */
     }
     public void setUILayout(boolean type){
 
