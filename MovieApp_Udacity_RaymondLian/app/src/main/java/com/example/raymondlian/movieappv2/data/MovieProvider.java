@@ -46,6 +46,12 @@ public class MovieProvider extends ContentProvider {
                        // " = " + MovieContract.TrailerEntry.TABLE_NAME +
                        // "." + MovieContract.MovieEntry._ID
                        );
+        MovieQueryBuilder.setTables(
+                MovieContract.TrailerEntry.TABLE_NAME
+                //"." + MovieContract.MovieEntry.COLUMN_TRAILER_KEY +
+                // " = " + MovieContract.TrailerEntry.TABLE_NAME +
+                // "." + MovieContract.MovieEntry._ID
+        );
 
     }
 /*
@@ -74,7 +80,7 @@ public class MovieProvider extends ContentProvider {
         and LOCATION integer constants defined above.  You can test this by uncommenting the
         testUriMatcher test within TestUriMatcher.
      */
-    static UriMatcher buildUriMatcher() {
+    public static UriMatcher buildUriMatcher() {
         // I know what you're thinking.  Why create a UriMatcher when you can use regular
         // expressions instead?  Because you're not crazy, that's why.
 
@@ -86,7 +92,7 @@ public class MovieProvider extends ContentProvider {
 
         // For each type of URI you want to add, create a corresponding code.
         matcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIE);
-        matcher.addURI(authority, MovieContract.PATH_FAVORITE, TRAILER);
+        matcher.addURI(authority, MovieContract.PATH_TRAILER, TRAILER);
         return matcher;
     }
 

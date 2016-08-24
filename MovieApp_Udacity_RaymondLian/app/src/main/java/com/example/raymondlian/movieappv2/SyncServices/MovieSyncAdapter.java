@@ -215,6 +215,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
         Log.v("Size of database ", Integer.toString(count));
 
         getContext().getContentResolver().bulkInsert(MovieContract.MovieEntry.CONTENT_URI,values);
+
     }
     private String getTrailerJsonURL(String trailerUrl) {
         String JsonUrl = "";

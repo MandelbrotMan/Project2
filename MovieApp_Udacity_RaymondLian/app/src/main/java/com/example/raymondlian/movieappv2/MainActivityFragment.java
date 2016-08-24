@@ -2,8 +2,10 @@ package com.example.raymondlian.movieappv2;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 
 import com.example.raymondlian.movieappv2.SyncServices.MovieSyncAdapter;
 import com.example.raymondlian.movieappv2.data.MovieContract;
+import com.example.raymondlian.movieappv2.data.MovieProvider;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -75,6 +78,14 @@ public class MainActivityFragment extends Fragment {
     static final int COLUMN_ID = 3;
     static final int COLUMN_SYNOPSIS = 4;
     static final int COLUMN_IMG_URL = 5;
+
+    private static  final String [] NOTIFY_TRAILER_PROJECTION = new String[]{
+            MovieContract.TrailerEntry.COLUMN_TITLE, MovieContract.TrailerEntry.COLUMN_LINK_URL,
+            MovieContract.TrailerEntry.COLUMN_MOVIE_ID};
+
+    static final int COLUMN_T_TITLE = 0;
+    static final int COLUMN_T_URL = 1;
+    static final int COLUMN_T_ID = 2;
 
 
 
@@ -168,6 +179,8 @@ public class MainActivityFragment extends Fragment {
                 ) {
 
             MovieSyncAdapter.syncImmediately(getActivity());
+            //Cursor swapThis = getActivity().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,);
+            //mPosterAdapter.swapCursor(swapThis);
 
 
 
@@ -176,7 +189,19 @@ public class MainActivityFragment extends Fragment {
         if (id == R.id.action_ratingMenu
                 ) {
 
-
+            ContentValues value = new ContentValues();
+            value.put(MovieContract.TrailerEntry.COLUMN_MOVIE_ID, "Test title");
+            value.put(MovieContract.TrailerEntry.COLUMN_LINK_URL,  "test id");
+            value.put(MovieContract.TrailerEntry.COLUMN_TITLE, "test url");
+            getActivity().getContentResolver().insert(MovieContract.TrailerEntry.CONTENT_URI, value);
+            /*
+            Cursor tempCursor = getActivity().getContentResolver().query(MovieContract.TrailerEntry.CONTENT_URI, null,null,null,null);
+            if(tempCursor.moveToFirst()){
+                Log.v("Insert was successful ", tempCursor.getString(COLUMN_ID));
+            }*/
+            UriMatcher sUriMatcher = MovieProvider.buildUriMatcher();
+            //Log.v("Integer value of table trailers", Integer.toString(sUriMatcher.match(MovieContract.TrailerEntry.CONTENT_URI)));
+            //Trailer table value returned as 300.
 
         }
         if (id == R.id.action_FavoriteMenu){
@@ -186,47 +211,7 @@ public class MainActivityFragment extends Fragment {
 
         return super.onOptionsItemSelected(item);
     }
-    private class DownloadImageTask extends AsyncTask<String, Void, ArrayList<MovieObject>> {
-        GridView bmImage;
-        String listInfo = "";
 
-        public DownloadImageTask(GridView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected ArrayList<MovieObject> doInBackground(String... urls) {
-            //Clear to prevent multiple copies in arrays
-            MoviesListed.clear();
-            CurrentList = 0;
-
-            if (urls[0] == "popular") {
-                listInfo = "Most Popular";
-            } else if (urls[0] == "top_rated") {
-                listInfo = "Top Rated";
-            }
-
-
-            return MoviesListed;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            // SHOW THE SPINNER WHILE LOADING FEEDS
-           // HeaderProgress.setVisibility(View.VISIBLE);
-            //setProgressBarIndeterminateVisibility(true);
-        }
-
-
-        protected void onPostExecute(ArrayList<MovieObject> movies) {
-/*
-            JsonAdapter.notifyDataSetChanged();
-            Gridview.setAdapter(JsonAdapter);
-            ListTitle.setText(listInfo);
-            Context context = getActivity();
-            HeaderProgress.setVisibility(View.GONE);
-*/
-
-        }
 
 
 
@@ -258,7 +243,7 @@ public class MainActivityFragment extends Fragment {
 
         }
         */
-    }
+
     public void setUILayout(boolean type){
 
     }
