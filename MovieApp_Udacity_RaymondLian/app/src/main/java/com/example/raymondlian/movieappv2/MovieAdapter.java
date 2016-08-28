@@ -56,8 +56,6 @@ public class MovieAdapter extends CursorAdapter {
         // we'll keep the UI functional with a simple (and slow!) binding.
         ViewHolder viewHeld = (ViewHolder) view.getTag();
 
-        int weatherId = cursor.getInt(MainActivityFragment.COLUMN_ID);
-
             Picasso.with(mContext).load(cursor.getString(MainActivityFragment.COLUMN_IMG_URL)).into(viewHeld.posterView);
 
 

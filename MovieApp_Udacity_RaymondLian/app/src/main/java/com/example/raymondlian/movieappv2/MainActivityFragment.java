@@ -2,9 +2,12 @@ package com.example.raymondlian.movieappv2;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.LoaderManager;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
@@ -20,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +46,7 @@ import java.util.ArrayList;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     //Global variables start with Capital letters
     ArrayList<MovieObject> MoviesListed = new ArrayList<MovieObject>();
     static ArrayList<MovieObject> FavoriteMovies = new ArrayList<MovieObject>();
@@ -56,6 +60,7 @@ public class MainActivityFragment extends Fragment {
     MovieAdapter mPosterAdapter;
     GridView mPosterGridview;
     TextView mListTitle;
+    private int mPosition = mPosterGridview.INVALID_POSITION;
 
     View mRoot;
     private boolean isTablet = false;
@@ -65,10 +70,11 @@ public class MainActivityFragment extends Fragment {
     Bundle formMovieDetailPackage;
 
     private static final String[] NOTIFY_MOVIE_PROJECTION = new String[] {
+            MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
             MovieContract.MovieEntry.COLUMN_TITLE,
             MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
             MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
-            MovieContract.MovieEntry.COLUMN_ID,
+            MovieContract.MovieEntry.COLUMN_MOVIE_ID,
             MovieContract.MovieEntry.COLUMN_SYNOPSIS,
             MovieContract.MovieEntry.COLUMN_IMG_URL
     };
@@ -99,6 +105,7 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mRoot = inflater.inflate(R.layout.fragment_main_gridview, container, false);
+        Cursor tempCursor = getActivity().getContentResolver().query(MovieContract.TrailerEntry.CONTENT_URI, null,null,null,null);
         mPosterAdapter = new MovieAdapter(getActivity(), null, 0);
         mPosterAdapter.setUseTalbletLayout(isTablet);
 
@@ -146,6 +153,7 @@ public class MainActivityFragment extends Fragment {
     public  void onActivityCreated(Bundle saveInstanceState){
         super.onActivityCreated(saveInstanceState);
         communicator = (MovieDetailFragment.OnMovieSelectedListener) getActivity();
+        getLoaderManager().initLoader(0, null, this);
     }
 
 
@@ -179,8 +187,8 @@ public class MainActivityFragment extends Fragment {
                 ) {
 
             MovieSyncAdapter.syncImmediately(getActivity());
-            //Cursor swapThis = getActivity().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,);
-            //mPosterAdapter.swapCursor(swapThis);
+            Cursor swapThis = getActivity().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,null,null,null,null);
+            mPosterAdapter.swapCursor(swapThis);
 
 
 
@@ -194,14 +202,12 @@ public class MainActivityFragment extends Fragment {
             value.put(MovieContract.TrailerEntry.COLUMN_LINK_URL,  "test id");
             value.put(MovieContract.TrailerEntry.COLUMN_TITLE, "test url");
             getActivity().getContentResolver().insert(MovieContract.TrailerEntry.CONTENT_URI, value);
-            /*
+
             Cursor tempCursor = getActivity().getContentResolver().query(MovieContract.TrailerEntry.CONTENT_URI, null,null,null,null);
             if(tempCursor.moveToFirst()){
-                Log.v("Insert was successful ", tempCursor.getString(COLUMN_ID));
-            }*/
+                Log.v("Insert was successful ", tempCursor.getString(COLUMN_T_ID));
+            }
             UriMatcher sUriMatcher = MovieProvider.buildUriMatcher();
-            //Log.v("Integer value of table trailers", Integer.toString(sUriMatcher.match(MovieContract.TrailerEntry.CONTENT_URI)));
-            //Trailer table value returned as 300.
 
         }
         if (id == R.id.action_FavoriteMenu){
@@ -249,4 +255,32 @@ public class MainActivityFragment extends Fragment {
     }
 
 
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        
+        return new CursorLoader(getActivity(),
+                MovieContract.MovieEntry.CONTENT_URI,
+                NOTIFY_MOVIE_PROJECTION,
+                null,
+                null,
+                null);
+
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+       // mPosterAdapter.swapCursor(data);
+        if (mPosition != ListView.INVALID_POSITION) {
+            // If we don't need to restart the loader, and there's a desired position to restore
+            // to, do so now.
+            mPosterGridview.smoothScrollToPosition(mPosition);
+        }
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
 }

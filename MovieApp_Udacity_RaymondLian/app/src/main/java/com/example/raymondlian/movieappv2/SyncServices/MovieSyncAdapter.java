@@ -201,7 +201,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
             value.put(MovieContract.MovieEntry.COLUMN_TITLE, singleMovie.getString(get_TITLE));
             value.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE,  singleMovie.getString(get_RELEASE_DATE));
             value.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, Integer.toString(singleMovie.getInt(get_AVERAGE)));
-            value.put(MovieContract.MovieEntry.COLUMN_ID, Integer.toString(singleMovie.getInt(get_ID)));
+            value.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, Integer.toString(singleMovie.getInt(get_ID)));
             value.put(MovieContract.MovieEntry.COLUMN_SYNOPSIS, singleMovie.getString(get_SYNOPSIS));
             value.put(MovieContract.MovieEntry.COLUMN_IMG_URL, urlBitmap);
             value.put(MovieContract.MovieEntry.COLUMN_LIST_TYPE, searchType);
@@ -213,8 +213,9 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
         int count = 0;
         count = cVVector.size();
         Log.v("Size of database ", Integer.toString(count));
-
+        getContext().getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI,null,null);
         getContext().getContentResolver().bulkInsert(MovieContract.MovieEntry.CONTENT_URI,values);
+
 
     }
     private String getTrailerJsonURL(String trailerUrl) {

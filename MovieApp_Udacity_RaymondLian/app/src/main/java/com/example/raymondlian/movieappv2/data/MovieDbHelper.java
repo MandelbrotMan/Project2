@@ -42,6 +42,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         // location setting, the city name, and the latitude and longitude
 
         final String SQL_CREATE_TRAILER_TABLE = "CREATE TABLE " + TrailerEntry.TABLE_NAME + " (" +
+                TrailerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                TrailerEntry.COLUMN_MOVIE_ID + " TEXT NOT NULL, " +
                TrailerEntry.COLUMN_LINK_URL + " TEXT NOT NULL, " +
                TrailerEntry.COLUMN_TITLE + " TEXT  NOT NULL " +
@@ -53,12 +54,12 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 // forecasting, it's reasonable to assume the user will want information
                 // for a certain date and all dates *following*, so the forecast data
                 // should be sorted accordingly.
-              //  MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                 MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
 
                 // the ID of the location entry associated with this weather data
                 MovieEntry.COLUMN_LIST_TYPE + " TEXT NOT NULL, " +
                 MovieEntry.COLUMN_FAV_STAT + " TEXT NOT NULL, " +
-                MovieEntry.COLUMN_ID + " TEXT NOT NULL, " +
+                MovieEntry.COLUMN_MOVIE_ID + " TEXT NOT NULL, " +
                 MovieEntry.COLUMN_IMG_URL + " TEXT NOT NULL," +
 
                 MovieEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +

@@ -104,7 +104,7 @@ public class MovieContract {
         public static final String COLUMN_VOTE_AVERAGE = "vote_average";
 
         public static final String COLUMN_SYNOPSIS = "synopsis";
-        public static final String COLUMN_ID = "id";
+        public static final String COLUMN_MOVIE_ID = "movie_id";
 
         public static final String COLUMN_FAV_STAT = "favorite_status";
         public static final String COLUMN_LIST_TYPE = "list_type";
@@ -114,6 +114,7 @@ public class MovieContract {
         public static Uri buildMovieUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
+
     }
 
 
