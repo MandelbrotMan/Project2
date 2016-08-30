@@ -112,7 +112,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         mPosterAdapter.setUseTalbletLayout(isTablet);
 
         getActivity().setTitle("Blue Ray Movies");
-        HeaderProgress = (LinearLayout) mRoot.findViewById(R.id.ProgressBarLayout);
 
         mPosterGridview = (GridView) mRoot.findViewById(R.id.gridview);
         mListTitle = (TextView) mRoot.findViewById(R.id.textView);

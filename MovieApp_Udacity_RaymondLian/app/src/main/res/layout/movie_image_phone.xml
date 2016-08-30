@@ -4,8 +4,8 @@
     android:layout_height="wrap_content">
     <ImageView
         android:id="@+id/movie_imageview"
-        android:layout_width="325dp"
-        android:layout_height="400dp" />
+        android:layout_width="125dp"
+        android:layout_height="200dp" />
 
 
 </LinearLayout>

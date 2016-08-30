@@ -171,9 +171,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
             }
     }
     protected void getJsonData(String url, String searchType) throws JSONException {
-        ArrayList<String> imagePathArray = new ArrayList<>();
         final String get_RESULTS = "results";
-
         final String get_PATH = "poster_path";
         final String get_AVERAGE = "vote_average";
         final String get_SYNOPSIS = "overview";
@@ -189,13 +187,14 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
         //Extracting details of movies from json
         for (int j = 0; j < movieArray.length(); j++) {
             JSONObject singleMovie = movieArray.getJSONObject(j);
-            imagePathArray.add(singleMovie.getString(get_PATH).substring(1));
             String urlBitmap = null;
             try {
-                urlBitmap = getBitMapURL(Integer.toString(singleMovie.getInt(get_ID)));
+                urlBitmap = getBitMapURL(singleMovie.getString(get_PATH).substring(1));
+
             }catch (IOException e){
 
             }
+
 
             ContentValues value = new ContentValues();
             value.put(MovieContract.MovieEntry.COLUMN_TITLE, singleMovie.getString(get_TITLE));
