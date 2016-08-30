@@ -146,6 +146,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             }
         });
 
+
         setHasOptionsMenu(true);
         return mRoot;
 
@@ -252,7 +253,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         */
 
     public void setUILayout(boolean type){
-
+        mPosterAdapter.setUseTalbletLayout(type);
     }
 
 

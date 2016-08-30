@@ -28,6 +28,7 @@ public class MainActivity extends ActionBarActivity implements  MovieDetailFragm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         MovieDetailFragment fragment = new MovieDetailFragment();
+
         if(findViewById(R.id.movie_detail_container) != null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.movie_detail_container, new MovieDetailFragment())
@@ -35,14 +36,18 @@ public class MainActivity extends ActionBarActivity implements  MovieDetailFragm
             mTwoPane = true;
 
 
+
+
         }else{
             mTwoPane = false;
         }
+        MainActivityFragment mainFragment =  ((MainActivityFragment)getFragmentManager()
+                .findFragmentById(R.id.fragment_main));
+        mainFragment.setUILayout(mTwoPane);
         MovieSyncAdapter.initializeSyncAdapter(this);
 
-
-
     }
+
 
 
 

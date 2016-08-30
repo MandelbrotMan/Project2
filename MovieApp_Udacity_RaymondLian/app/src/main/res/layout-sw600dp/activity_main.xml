@@ -7,7 +7,7 @@
     android:divider="?android:attr/dividerHorizontal"
     >
     <fragment
-        android:id="@+id/fragment_container_main"
+        android:id="@+id/fragment_main"
         android:name="com.example.raymondlian.movieappv2.MainActivityFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
