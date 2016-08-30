@@ -78,20 +78,22 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             MovieContract.MovieEntry.COLUMN_SYNOPSIS,
             MovieContract.MovieEntry.COLUMN_IMG_URL
     };
-    static final int COLUMN_TITLE = 0;
-    static final int COLUMN_RELEASE_DATE = 1;
-    static final int COLUMN_VOTE_AVERAGE = 2;
-    static final int COLUMN_ID = 3;
-    static final int COLUMN_SYNOPSIS = 4;
-    static final int COLUMN_IMG_URL = 5;
+    static final int COLUMN_ID = 0;
+    static final int COLUMN_TITLE = 1;
+    static final int COLUMN_RELEASE_DATE = 2;
+    static final int COLUMN_VOTE_AVERAGE = 3;
+    static final int COLUMN_ID_MOVIE = 4;
+    static final int COLUMN_SYNOPSIS = 5;
+    static final int COLUMN_IMG_URL = 6;
 
     private static  final String [] NOTIFY_TRAILER_PROJECTION = new String[]{
             MovieContract.TrailerEntry.COLUMN_TITLE, MovieContract.TrailerEntry.COLUMN_LINK_URL,
             MovieContract.TrailerEntry.COLUMN_MOVIE_ID};
 
-    static final int COLUMN_T_TITLE = 0;
-    static final int COLUMN_T_URL = 1;
-    static final int COLUMN_T_ID = 2;
+    static final int COLUMN_T_ID = 0;
+    static final int COLUMN_T_TITLE = 1;
+    static final int COLUMN_T_URL = 2;
+    static final int COLUMN_T_ID_TRAILERS = 3;
 
 
 
@@ -105,7 +107,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mRoot = inflater.inflate(R.layout.fragment_main_gridview, container, false);
-        Cursor tempCursor = getActivity().getContentResolver().query(MovieContract.TrailerEntry.CONTENT_URI, null,null,null,null);
+
         mPosterAdapter = new MovieAdapter(getActivity(), null, 0);
         mPosterAdapter.setUseTalbletLayout(isTablet);
 
@@ -270,7 +272,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-       // mPosterAdapter.swapCursor(data);
+        mPosterAdapter.swapCursor(data);
         if (mPosition != ListView.INVALID_POSITION) {
             // If we don't need to restart the loader, and there's a desired position to restore
             // to, do so now.
