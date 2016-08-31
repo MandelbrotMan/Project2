@@ -15,11 +15,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.example.raymondlian.movieappv2.MovieObject;
 import com.example.raymondlian.movieappv2.R;
-import com.example.raymondlian.movieappv2.TrailerObject;
 import com.example.raymondlian.movieappv2.data.MovieContract;
 
 import org.json.JSONArray;
@@ -32,7 +29,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Vector;
 
 /**
@@ -200,7 +196,13 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
             value.put(MovieContract.MovieEntry.COLUMN_TITLE, singleMovie.getString(get_TITLE));
             value.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE,  singleMovie.getString(get_RELEASE_DATE));
             value.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, Integer.toString(singleMovie.getInt(get_AVERAGE)));
-            value.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, Integer.toString(singleMovie.getInt(get_ID)));
+
+            //Getting trailers is performed in this stage
+            String id = Integer.toString(singleMovie.getInt(get_ID));
+            value.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, id);
+            getTrailersJSON( getTrailerJsonURL(id), id);
+
+
             value.put(MovieContract.MovieEntry.COLUMN_SYNOPSIS, singleMovie.getString(get_SYNOPSIS));
             value.put(MovieContract.MovieEntry.COLUMN_IMG_URL, urlBitmap);
             value.put(MovieContract.MovieEntry.COLUMN_LIST_TYPE, searchType);
@@ -211,13 +213,12 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
         ContentValues values[] = cVVector.toArray(new ContentValues[cVVector.size()]);
         int count = 0;
         count = cVVector.size();
-        Log.v("Size of database ", Integer.toString(count));
         getContext().getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI,null,null);
         getContext().getContentResolver().bulkInsert(MovieContract.MovieEntry.CONTENT_URI,values);
 
 
     }
-    private String getTrailerJsonURL(String trailerUrl) {
+    private String getTrailerJsonURL(String trailerId) {
         String JsonUrl = "";
         HttpURLConnection urlConnection = null;
         BufferedReader reader;
@@ -229,7 +230,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
         Uri base = Uri.parse("https://api.themoviedb.org").buildUpon().
                 appendPath("3").
                 appendPath("movie").
-                appendPath(trailerUrl).
+                appendPath(trailerId).
                 appendPath("videos").
                 appendQueryParameter("api_key", "0109ddff503db8186924929b1814320e").
                 appendQueryParameter("language", "en").
@@ -274,10 +275,11 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
         return JsonUrl;
 
     }
-    private void getTrailersJSON(String urlString) throws JSONException {
+    private void getTrailersJSON(String urlString, String id) throws JSONException {
 
         JSONObject trailersObject = new JSONObject(urlString);
         JSONArray trailerArray = trailersObject.getJSONArray("results");
+        Vector<ContentValues> cVVector = new Vector<ContentValues>(trailerArray.length());
 
         for (int i = 0; i < trailerArray.length(); ++i) {
             JSONObject temp = trailerArray.getJSONObject(i);
@@ -304,13 +306,16 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
                     trailerLink = base.toString();
                 }
             }
-
-            TrailerObject tempTrailer = new TrailerObject(temp.getString("name"), trailerLink);
-
-            //trailerObjects.add(tempTrailer);
+            ContentValues trailer = new ContentValues();
+            trailer.put(MovieContract.TrailerEntry.COLUMN_MOVIE_ID, id);
+            trailer.put(MovieContract.TrailerEntry.COLUMN_TITLE, temp.getString("name"));
+            trailer.put(MovieContract.TrailerEntry.COLUMN_LINK_URL, trailerLink);
+            cVVector.add(trailer);
 
 
         }
+        ContentValues values[] = cVVector.toArray(new ContentValues[cVVector.size()]);
+        getContext().getContentResolver().bulkInsert(MovieContract.TrailerEntry.CONTENT_URI, values);
 
 
     }

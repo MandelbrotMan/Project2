@@ -51,7 +51,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     //Global variables start with Capital letters
     ArrayList<MovieObject> MoviesListed = new ArrayList<MovieObject>();
     static ArrayList<MovieObject> FavoriteMovies = new ArrayList<MovieObject>();
-    ArrayList<TrailerObject> trailerObjects = new ArrayList<>();
+
 
 
     FragmentManager manager;

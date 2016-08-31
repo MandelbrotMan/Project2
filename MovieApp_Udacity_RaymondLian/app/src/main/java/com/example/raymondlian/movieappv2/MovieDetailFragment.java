@@ -1,5 +1,9 @@
 package com.example.raymondlian.movieappv2;
 
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
+import android.database.Cursor;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.raymondlian.movieappv2.data.MovieContract;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -36,7 +41,7 @@ import android.view.KeyEvent;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MovieDetailFragment extends Fragment{
+public class MovieDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
   // used to communicate between fragment and main activity
 
 
@@ -59,7 +64,6 @@ public class MovieDetailFragment extends Fragment{
 
 
     ImageView PosterView;
-    TrailerAdapter adapter;
     ListView listView;
     TextView titleView;
     TextView dateView;
@@ -70,7 +74,20 @@ public class MovieDetailFragment extends Fragment{
     Context mContext = getActivity();
     View view;
 
-    ArrayList<TrailerObject> trailerObjects = new ArrayList<>();
+    TrailerAdapter mAdapter;
+
+    private static final String[] TRAILER_PROJECTION = new String[] {
+            MovieContract.TrailerEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
+            MovieContract.TrailerEntry.COLUMN_TITLE,
+            MovieContract.TrailerEntry.COLUMN_MOVIE_ID,
+            MovieContract.TrailerEntry.COLUMN_LINK_URL};
+
+
+    static final int COLUMN_ID = 0;
+    static final int COLUMN_TITLE = 1;
+    static final int COLUMN_MOVIE_ID = 2;
+    static final int COLUMN_LINK_URL = 3;
+
 
 
 
@@ -85,14 +102,14 @@ public class MovieDetailFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        mAdapter = new TrailerAdapter(getActivity(), null, 0);
 
         view=inflater.inflate(R.layout.fragment_movie_detail, container,false);
-        adapter = new TrailerAdapter(getActivity(), trailerObjects);
+
 
         listView = (ListView) view.findViewById(R.id.trailerListView);
 
-        listView.setAdapter(adapter);
+        listView.setAdapter(mAdapter);
         super.onCreate(savedInstanceState);
 
 
@@ -160,7 +177,6 @@ public class MovieDetailFragment extends Fragment{
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(trailerObjects.get(position).trailer_url));
                 startActivity(intent);
 
             }
@@ -232,46 +248,32 @@ public class MovieDetailFragment extends Fragment{
 
 
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-    public void addList(ArrayList<TrailerObject> flist){
-
-        for(int i = 0; i < flist.size(); ++i){
-                trailerObjects.add(flist.get(i));
-            adapter.notifyDataSetChanged();
-        }
-        for(int i = 0; i < trailerObjects.size(); ++i) {
-            adapter.add(trailerObjects.get(i));
-
-        }
-
-
+        return new CursorLoader(getActivity(),
+                MovieContract.TrailerEntry.CONTENT_URI,
+                TRAILER_PROJECTION,
+                null,
+                null,
+                null);
 
     }
 
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mAdapter.swapCursor(data);
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
     ////////////////////////////////////////////////////////////////////////////////////////////
 //Image tasks and async methods
 
-    public class TrailerAdapter extends ArrayAdapter<TrailerObject> {
-        public TrailerAdapter(Context context, ArrayList<TrailerObject> trailer) {
-            super(context, 0, trailer);
-        }
 
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            // Get the data item for this position
-            TrailerObject item = getItem(position);
-            // Check if an existing view is being reused, otherwise inflate the view
-            if (convertView == null) {
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.trailer_item, parent, false);
-            }
-            // Lookup view for data population
-            TextView Name = (TextView) convertView.findViewById(R.id.list_item_trailer_textview);
-            // Populate the data into the template view using the data object
-            Name.setText((CharSequence) item.trailer_title);
-            // Return the completed view to render on screen
-            return convertView;
-        }
-    }
 
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
