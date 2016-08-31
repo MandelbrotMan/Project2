@@ -43,10 +43,11 @@ import android.view.KeyEvent;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MovieDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class MovieDetailFragment extends Fragment {
   // used to communicate between fragment and main activity
 
-
+    ArrayList<String> test = new ArrayList<String>();
+    ArrayAdapter<String> adapter;
 
     //To be sent back if selected as favorite
    public static String mImageURLString = "image"; //For posterpath
@@ -105,13 +106,14 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view=inflater.inflate(R.layout.fragment_movie_detail, container,false);
+        Cursor cursor = getActivity().getContentResolver().query(MovieContract.TrailerEntry.CONTENT_URI,TRAILER_PROJECTION,null,null, null);
+        mAdapter = new TrailerAdapter(getActivity(), cursor, 0);
+        test.add("hello");
+        test.add("good bye");
+        test.add("Other people");
 
-        mAdapter = new TrailerAdapter(getActivity(), null, 0);
-        ArrayList<String> myStringArray = new ArrayList<String>();
-
-        ArrayAdapter adapter = new ArrayAdapter(this, R.id.list_item_trailer_textview, myStringArray)
         listView = (ListView) view.findViewById(R.id.trailerListView);
-        Adapter adapter = new Adapter()
+
 
         listView.setAdapter(mAdapter);
 
@@ -185,12 +187,6 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
             @Override
             public void onClick(View v) {
 
-                if(cursor.moveToNext()){
-                    mAdapter.swapCursor(cursor);
-
-                }else{
-                    Log.v("Trailer is empty", "no entry");
-                }
             }
 
         });
@@ -231,30 +227,8 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-
-        return new CursorLoader(getActivity(),
-                MovieContract.TrailerEntry.CONTENT_URI,
-                TRAILER_PROJECTION,
-                null,
-                null,
-                null);
 
 
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mAdapter.swapCursor(data);
-        Log.v("TrailerAdapter called ", "on load finished");
-
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
-    }
 
 
 
