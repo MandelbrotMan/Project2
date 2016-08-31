@@ -3,6 +3,7 @@ package com.example.raymondlian.movieappv2;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 
 
@@ -21,6 +22,8 @@ public class MainActivity extends ActionBarActivity implements  MainActivityFrag
     FragmentManager manager;
     MainActivityFragment fragmentMain;
     MovieDetailFragment fragmentDetail;
+
+
 
 
     @Override
@@ -52,6 +55,22 @@ public class MainActivity extends ActionBarActivity implements  MainActivityFrag
     @Override
     public void onItemSelected(String moviePosterURL, String title, String releaseDate, String voteAvg, String synopsis, String favStatus) {
         Bundle toDetails = new Bundle();
-        toDetails.putParcelable();
+        toDetails.putString(MovieDetailFragment.mPlot, synopsis);
+        toDetails.putString(MovieDetailFragment.mTitle, title);
+        toDetails.putString(MovieDetailFragment.mReleaseDate, releaseDate);
+        toDetails.putString(MovieDetailFragment.mRating, voteAvg);
+        toDetails.putString(MovieDetailFragment.mImageURLString, moviePosterURL);
+        if(mTwoPane) {
+
+            MovieDetailFragment fragment = new MovieDetailFragment();
+            fragment.setArguments(toDetails);
+            getSupportFragmentManager().beginTransaction().
+                    replace(R.id.movie_detail_container, fragment, DETAILFRAGMENT_TAG).commit();
+        }else{
+            Intent intent = new Intent(this, MovieDetailFragment.class);
+            intent.putExtras(toDetails);
+            startActivity(intent);
+
+        }
     }
 }

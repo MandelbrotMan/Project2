@@ -53,7 +53,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     static ArrayList<MovieObject> FavoriteMovies = new ArrayList<MovieObject>();
     ArrayList<TrailerObject> trailerObjects = new ArrayList<>();
 
-    MovieDetailFragment.OnMovieSelectedListener communicator;
 
     FragmentManager manager;
 
@@ -158,7 +157,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                     //(String moviePosterURL, String title, String releaseDate, String voteAvg, String synopsis)
                     mCallback.onItemSelected(cursor.getString(COLUMN_IMG_URL),cursor.getString(COLUMN_TITLE),
                             cursor.getString(COLUMN_RELEASE_DATE),cursor.getString(COLUMN_VOTE_AVERAGE),
-                            cursor.getString(COLUMN_SYNOPSIS), cursor.getString(CO));
+                            cursor.getString(COLUMN_SYNOPSIS), cursor.getString(COLUMN_FAV_STAT));
                     mPosition = position;
                 }
             }
@@ -172,7 +171,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public  void onActivityCreated(Bundle saveInstanceState){
         super.onActivityCreated(saveInstanceState);
-        communicator = (MovieDetailFragment.OnMovieSelectedListener) getActivity();
         getLoaderManager().initLoader(0, null, this);
     }
     @Override

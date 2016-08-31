@@ -38,18 +38,17 @@ import android.view.KeyEvent;
  */
 public class MovieDetailFragment extends Fragment{
   // used to communicate between fragment and main activity
-    OnMovieSelectedListener movieSelectedListener;
 
 
 
     //To be sent back if selected as favorite
-    String ImageURLString = "image"; //For posterpath
-    String MovieIdString = "id";  //For pulling additional data of selected movie
-    String Title = "title";
-    String Rating = "vote_average";
-    String ReleaseDate = "release_date";
-    String Plot = "synopsis";;
-   String FavStatus = "true";
+   public static String mImageURLString = "image"; //For posterpath
+   public static String mMovieIdString = "id";  //For pulling additional data of selected movie
+   public static String mTitle = "title";
+   public static String mRating = "vote_average";
+   public static String mReleaseDate = "release_date";
+   public static String mPlot = "synopsis";;
+   public static String mFavStatus = "true";
 
 
     //Used to send back MovieObject if Selected as favorite
@@ -108,31 +107,42 @@ public class MovieDetailFragment extends Fragment{
         synopsisView = (TextView) view.findViewById(R.id.synopsisText);
         PosterView = (ImageView) view.findViewById(R.id.posterImageView);
 
+
+
+
+
+
+
         //When the fragment is opened. Used in phone. Initializes the variables for UI
         if(savedInstanceState == null) {
             if(recievedPackage != null) {
-
+                //Assigns values attained to UI
+                titleView.setText(recievedPackage.getString(mTitle));
+                dateView.setText(recievedPackage.getString(mReleaseDate));
+                ratingView.setText(recievedPackage.getString(mRating));
+                synopsisView.setText(recievedPackage.getString(mPlot));
+                Picasso.with(mContext).load(recievedPackage.getString(mImageURLString)).into(PosterView);
 
 
             } else {
 
-q
+
             }
         }
         // If the item screen rotates
         else {
             Movie = savedInstanceState.getParcelable("movie");
-            FavStatus = savedInstanceState.getParcelable("status");
-            Title = Movie.savedTitle;
-            ReleaseDate = Movie.savedDate;
-            Rating = Movie.savedRating;
-            MovieIdString = Movie.savedId;
-            ImageURLString = Movie.savedURL;
-            Plot = Movie.savedPlot;
+            mFavStatus = savedInstanceState.getParcelable("status");
+            mTitle = Movie.savedTitle;
+            mReleaseDate = Movie.savedDate;
+            mRating = Movie.savedRating;
+            mMovieIdString = Movie.savedId;
+            mImageURLString = Movie.savedURL;
+            mPlot = Movie.savedPlot;
 
         }
         //mCallback must be initialize with some value to prevent a void error
-        if (FavStatus.equals("true")) {
+        if (mFavStatus.equals("true")) {
            FavoriteButton.setBackgroundResource(R.drawable.star_gold);
 
         } else {
@@ -141,11 +151,6 @@ q
            FavoriteButton.setBackgroundResource(R.drawable.star_black);
         }
 
-        //Assigns values attained to UI
-        titleView.setText(Title);
-        dateView.setText(ReleaseDate);
-        ratingView.setText(Rating);
-        synopsisView.setText(Plot);
 
 
 
@@ -165,19 +170,17 @@ q
         FavoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+/*
                 if (FavStatus == false) {
 
                     CharSequence text = "Added!";
                     int duration = Toast.LENGTH_SHORT;
-                    MToast = Toast.makeText(getActivity(), text, duration);
-                    MToast.show();
                     FavStatus = true;
                     MoviePackage = new Bundle();
                    FavoriteButton.setBackgroundResource(R.drawable.star_gold);
 
                 }
-
+*/
 
 
             }
@@ -212,7 +215,6 @@ q
     @Override
     public void onSaveInstanceState(Bundle bundle) {
         bundle.putParcelable("movie", Movie);
-        bundle.putBoolean("status", FavStatus);
         super.onSaveInstanceState(bundle);
     }
     @Override
@@ -229,37 +231,9 @@ q
 //Interface
 
 
-    public void update(String title, String date, String rating, String plot, String id, String url, boolean status, ArrayList<TrailerObject> list){
-
-       ImageURLString = url; //For posterpath
-       MovieIdString = id;  //For pulling additional data of selected movie
-       Title = title;
-       Rating = rating;
-       ReleaseDate = rating;
-       Plot = plot;
-
-
-        titleView.setText(title);
-        dateView.setText(date);
-        ratingView.setText(rating);
-        synopsisView.setText(plot);
-        Picasso.with(mContext).load(url).into(PosterView);
-
-        addList(list);
-        Log.v("Size" , Integer.toString(list.size()));
-
-
-    }
-    public interface OnMovieSelectedListener {
-        void updateData(String title, String date, String rating, String plot, String id, String url, boolean status, ArrayList<TrailerObject> list);
-    }
 
 
     public void addList(ArrayList<TrailerObject> flist){
-
-
-
-
 
         for(int i = 0; i < flist.size(); ++i){
                 trailerObjects.add(flist.get(i));
