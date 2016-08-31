@@ -43,14 +43,13 @@ public class MovieDetailFragment extends Fragment{
 
 
     //To be sent back if selected as favorite
-    String ImageURLString; //For posterpath
-    String MovieIdString;  //For pulling additional data of selected movie
-    String Title;
-    String Rating;
-    String ReleaseDate;
-    String Plot;
-    boolean FavStatus;
-    Toast MToast;
+    String ImageURLString = "image"; //For posterpath
+    String MovieIdString = "id";  //For pulling additional data of selected movie
+    String Title = "title";
+    String Rating = "vote_average";
+    String ReleaseDate = "release_date";
+    String Plot = "synopsis";;
+   String FavStatus = "true";
 
 
     //Used to send back MovieObject if Selected as favorite
@@ -111,27 +110,19 @@ public class MovieDetailFragment extends Fragment{
 
         //When the fragment is opened. Used in phone. Initializes the variables for UI
         if(savedInstanceState == null) {
-            if (isNetworkAvailable() && recievedPackage != null) {
-                ImageURLString = recievedPackage.getString("image");
-                MovieIdString = recievedPackage.getString("id");
-                Plot = recievedPackage.getString("synopsis");
-                Title = recievedPackage.getString("title");
-                ReleaseDate = recievedPackage.getString("release_date");
-                Rating = recievedPackage.getString("vote_average");
-                FavStatus = recievedPackage.getBoolean("favStatus");
+            if(recievedPackage != null) {
 
-                Movie = new MovieObject(Title, ReleaseDate, Rating, Plot, MovieIdString, ImageURLString);
 
 
             } else {
 
-                titleView.setText("Connection lost");
+q
             }
         }
         // If the item screen rotates
         else {
             Movie = savedInstanceState.getParcelable("movie");
-            FavStatus = savedInstanceState.getBoolean("status");
+            FavStatus = savedInstanceState.getParcelable("status");
             Title = Movie.savedTitle;
             ReleaseDate = Movie.savedDate;
             Rating = Movie.savedRating;
@@ -141,7 +132,7 @@ public class MovieDetailFragment extends Fragment{
 
         }
         //mCallback must be initialize with some value to prevent a void error
-        if (FavStatus == true) {
+        if (FavStatus.equals("true")) {
            FavoriteButton.setBackgroundResource(R.drawable.star_gold);
 
         } else {

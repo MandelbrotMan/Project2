@@ -1,5 +1,6 @@
 package com.example.raymondlian.movieappv2;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
@@ -53,7 +54,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     ArrayList<TrailerObject> trailerObjects = new ArrayList<>();
 
     MovieDetailFragment.OnMovieSelectedListener communicator;
-    int positionSelected;
 
     FragmentManager manager;
 
@@ -68,6 +68,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     LinearLayout HeaderProgress;
     Bundle formMovieDetailPackage;
+    Callback mCallback;
 
     private static final String[] NOTIFY_MOVIE_PROJECTION = new String[] {
             MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
@@ -76,7 +77,9 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
             MovieContract.MovieEntry.COLUMN_MOVIE_ID,
             MovieContract.MovieEntry.COLUMN_SYNOPSIS,
-            MovieContract.MovieEntry.COLUMN_IMG_URL
+            MovieContract.MovieEntry.COLUMN_IMG_URL,
+            MovieContract.MovieEntry.COLUMN_FAV_STAT
+
     };
     static final int COLUMN_ID = 0;
     static final int COLUMN_TITLE = 1;
@@ -85,6 +88,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     static final int COLUMN_ID_MOVIE = 4;
     static final int COLUMN_SYNOPSIS = 5;
     static final int COLUMN_IMG_URL = 6;
+    static final int COLUMN_FAV_STAT = 7;
 
     private static  final String [] NOTIFY_TRAILER_PROJECTION = new String[]{
             MovieContract.TrailerEntry.COLUMN_TITLE, MovieContract.TrailerEntry.COLUMN_LINK_URL,
@@ -101,6 +105,9 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
 
     public MainActivityFragment() {
+    }
+    public interface Callback {
+        public void onItemSelected(String moviePosterURL, String title, String releaseDate, String voteAvg, String synopsis, String favStatus);
     }
 
     @Override
@@ -132,17 +139,28 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         if (savedInstanceState == null || !savedInstanceState.containsKey("movies")) {
           //  new DownloadImageTask((GridView) mRoot.findViewById(R.id.gridview)).execute("popular");
 
-
         }
         mPosterGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-
-                positionSelected = position;
-                Intent intent1 = new Intent(getActivity(), Detail_Activity.class);
-                startActivity(intent1);
-
-
+            @Override
+            public void onItemClick(AdapterView adapterView, View view, int position, long l) {
+                // CursorAdapter returns a cursor at the correct position for getItem(), or null
+                // if it cannot seek to that position.
+                Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
+                if (cursor != null) {
+                    /*
+                    String locationSetting = Utility.getPreferredLocation(getActivity());
+                    Intent intent = new Intent(getActivity(), DetailActivity.class)
+                            .setData(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
+                                    locationSetting, cursor.getLong(COL_WEATHER_DATE)
+                            ));
+                    startActivity(intent);
+                    */
+                    //(String moviePosterURL, String title, String releaseDate, String voteAvg, String synopsis)
+                    mCallback.onItemSelected(cursor.getString(COLUMN_IMG_URL),cursor.getString(COLUMN_TITLE),
+                            cursor.getString(COLUMN_RELEASE_DATE),cursor.getString(COLUMN_VOTE_AVERAGE),
+                            cursor.getString(COLUMN_SYNOPSIS), cursor.getString(CO));
+                    mPosition = position;
+                }
             }
         });
 
@@ -157,9 +175,19 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         communicator = (MovieDetailFragment.OnMovieSelectedListener) getActivity();
         getLoaderManager().initLoader(0, null, this);
     }
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
 
-
-
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback = (Callback) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement Callback");
+        }
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {

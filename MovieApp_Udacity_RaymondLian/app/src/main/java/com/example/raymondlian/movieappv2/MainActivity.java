@@ -13,7 +13,7 @@ import com.example.raymondlian.movieappv2.SyncServices.MovieSyncAdapter;
 
 import java.util.ArrayList;
 
-public class MainActivity extends ActionBarActivity implements  MovieDetailFragment.OnMovieSelectedListener{
+public class MainActivity extends ActionBarActivity implements  MainActivityFragment.Callback{
 
     private boolean mTwoPane;
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
@@ -49,14 +49,9 @@ public class MainActivity extends ActionBarActivity implements  MovieDetailFragm
     }
 
 
-
-
     @Override
-    public void updateData(String titleS, String dateS, String ratingS, String plotS, String idS, String urlS, boolean statusS, ArrayList<TrailerObject> list){
-
-
+    public void onItemSelected(String moviePosterURL, String title, String releaseDate, String voteAvg, String synopsis, String favStatus) {
+        Bundle toDetails = new Bundle();
+        toDetails.putParcelable();
     }
-
-
-
 }
