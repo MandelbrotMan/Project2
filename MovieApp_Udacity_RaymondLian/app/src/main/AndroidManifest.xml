@@ -31,7 +31,7 @@
             android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.raymondlian.movieappv2.MainActivity" />
+                android:value="com.example.raymondlian.movieappv2.Detail_Activity" />
         </activity>
         <provider
             android:authorities="@string/content_authority"

@@ -67,7 +67,7 @@ public class MainActivity extends ActionBarActivity implements  MainActivityFrag
             getSupportFragmentManager().beginTransaction().
                     replace(R.id.movie_detail_container, fragment, DETAILFRAGMENT_TAG).commit();
         }else{
-            Intent intent = new Intent(this, MovieDetailFragment.class);
+            Intent intent = new Intent(this, Detail_Activity.class);
             intent.putExtras(toDetails);
             startActivity(intent);
 

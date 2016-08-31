@@ -1,5 +1,6 @@
 package com.example.raymondlian.movieappv2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
@@ -13,9 +14,12 @@ public class Detail_Activity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_);
-
+        MovieDetailFragment fragment = new MovieDetailFragment();
+        Intent fromMain = getIntent();
+        Bundle toFrag = fromMain.getExtras();
+        fragment.setArguments(toFrag);
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.movie_detail_container, new MovieDetailFragment())
+                .add(R.id.movie_detail_container, fragment)
                 .commit();
 
     }
