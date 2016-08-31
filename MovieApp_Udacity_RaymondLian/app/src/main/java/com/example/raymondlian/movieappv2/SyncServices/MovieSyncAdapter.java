@@ -51,6 +51,8 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         String queryType = extras.getString(getContext().getString(R.string.QueryType));
+        getContext().getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI,null,null);
+        getContext().getContentResolver().delete(MovieContract.TrailerEntry.CONTENT_URI,null,null);
 
 
         String popularURL = getJsonURL(SEARCH_POPULAR);
@@ -175,10 +177,11 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
         final String get_TITLE = "title";
         final String get_ID = "id";
 
-
+        Log.v("Trailers array List", url);
         JSONObject popularJSON = new JSONObject(url);
 
         JSONArray movieArray = popularJSON.getJSONArray(get_RESULTS);
+
         Vector<ContentValues> cVVector = new Vector<ContentValues>(movieArray.length());
         //Extracting details of movies from json
         for (int j = 0; j < movieArray.length(); j++) {
@@ -213,7 +216,6 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
         ContentValues values[] = cVVector.toArray(new ContentValues[cVVector.size()]);
         int count = 0;
         count = cVVector.size();
-        getContext().getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI,null,null);
         getContext().getContentResolver().bulkInsert(MovieContract.MovieEntry.CONTENT_URI,values);
 
 

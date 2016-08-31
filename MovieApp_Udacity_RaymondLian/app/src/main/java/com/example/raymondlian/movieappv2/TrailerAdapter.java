@@ -3,21 +3,18 @@ package com.example.raymondlian.movieappv2;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
 
 /**
  * Created by raymond on 8/31/16.
  */
 public class TrailerAdapter extends CursorAdapter {
-    private final int PHONE_VIEW_TYPE = 0;
-    private final int TABLET_VIEW_TYPE = 1;
-    boolean mTwoPane = false;
+
     public TrailerAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
     }
@@ -34,6 +31,7 @@ public class TrailerAdapter extends CursorAdapter {
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         View view = null;
         int layoutId = -1;
+
         layoutId = R.layout.trailer_item;
         view = LayoutInflater.from(context).inflate(layoutId, parent, false);
         ViewHolder holder = new ViewHolder(view);
@@ -67,6 +65,9 @@ public class TrailerAdapter extends CursorAdapter {
             trailerView = (TextView) view.findViewById(R.id.list_item_trailer_textview);
         }
 
+    }
+    public void log(){
+        Log.v("adapter created", "test other area");
     }
 
 

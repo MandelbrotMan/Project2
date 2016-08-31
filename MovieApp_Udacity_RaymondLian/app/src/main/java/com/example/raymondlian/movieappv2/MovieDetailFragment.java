@@ -11,10 +11,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -59,8 +61,6 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     //Used to send back MovieObject if Selected as favorite
     Bundle MoviePackage = null;
 
-    MovieObject Movie; //For on rotation saveInstance
-
 
 
     ImageView PosterView;
@@ -77,17 +77,19 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     TrailerAdapter mAdapter;
 
     private static final String[] TRAILER_PROJECTION = new String[] {
-            MovieContract.TrailerEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
-            MovieContract.TrailerEntry.COLUMN_TITLE,
+            MovieContract.TrailerEntry.TABLE_NAME + "." + MovieContract.TrailerEntry._ID,
             MovieContract.TrailerEntry.COLUMN_MOVIE_ID,
-            MovieContract.TrailerEntry.COLUMN_LINK_URL};
+            MovieContract.TrailerEntry.COLUMN_LINK_URL,
+            MovieContract.TrailerEntry.COLUMN_TITLE};
 
 
     static final int COLUMN_ID = 0;
-    static final int COLUMN_TITLE = 1;
-    static final int COLUMN_MOVIE_ID = 2;
-    static final int COLUMN_LINK_URL = 3;
+    static final int COLUMN_MOVIE_ID = 1;
+    static final int COLUMN_LINK_URL = 2;
+    static final int COLUMN_TITLE = 3;
 
+
+    Cursor cursor;
 
 
 
@@ -102,15 +104,17 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mAdapter = new TrailerAdapter(getActivity(), null, 0);
-
         view=inflater.inflate(R.layout.fragment_movie_detail, container,false);
 
+        mAdapter = new TrailerAdapter(getActivity(), null, 0);
+        ArrayList<String> myStringArray = new ArrayList<String>();
 
+        ArrayAdapter adapter = new ArrayAdapter(this, R.id.list_item_trailer_textview, myStringArray)
         listView = (ListView) view.findViewById(R.id.trailerListView);
+        Adapter adapter = new Adapter()
 
         listView.setAdapter(mAdapter);
-        super.onCreate(savedInstanceState);
+
 
 
         Bundle recievedPackage = this.getArguments();
@@ -127,6 +131,8 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
 
 
+        cursor = getActivity().getContentResolver().
+                query(MovieContract.TrailerEntry.CONTENT_URI, null,null,null,null);
 
 
 
@@ -148,14 +154,6 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         }
         // If the item screen rotates
         else {
-            Movie = savedInstanceState.getParcelable("movie");
-            mFavStatus = savedInstanceState.getParcelable("status");
-            mTitle = Movie.savedTitle;
-            mReleaseDate = Movie.savedDate;
-            mRating = Movie.savedRating;
-            mMovieIdString = Movie.savedId;
-            mImageURLString = Movie.savedURL;
-            mPlot = Movie.savedPlot;
 
         }
         //mCallback must be initialize with some value to prevent a void error
@@ -186,19 +184,13 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         FavoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-/*
-                if (FavStatus == false) {
 
-                    CharSequence text = "Added!";
-                    int duration = Toast.LENGTH_SHORT;
-                    FavStatus = true;
-                    MoviePackage = new Bundle();
-                   FavoriteButton.setBackgroundResource(R.drawable.star_gold);
+                if(cursor.moveToNext()){
+                    mAdapter.swapCursor(cursor);
 
+                }else{
+                    Log.v("Trailer is empty", "no entry");
                 }
-*/
-
-
             }
 
         });
@@ -230,7 +222,6 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onSaveInstanceState(Bundle bundle) {
-        bundle.putParcelable("movie", Movie);
         super.onSaveInstanceState(bundle);
     }
     @Override
@@ -239,14 +230,6 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
 
     }
-
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////
-//Interface
-
-
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -258,11 +241,13 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
                 null,
                 null);
 
+
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mAdapter.swapCursor(data);
+        Log.v("TrailerAdapter called ", "on load finished");
 
     }
 
@@ -270,17 +255,7 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     public void onLoaderReset(Loader<Cursor> loader) {
 
     }
-    ////////////////////////////////////////////////////////////////////////////////////////////
-//Image tasks and async methods
 
-
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
 
 
 

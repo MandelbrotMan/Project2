@@ -49,12 +49,8 @@ import java.util.ArrayList;
  */
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     //Global variables start with Capital letters
-    ArrayList<MovieObject> MoviesListed = new ArrayList<MovieObject>();
-    static ArrayList<MovieObject> FavoriteMovies = new ArrayList<MovieObject>();
 
 
-
-    FragmentManager manager;
 
     MovieAdapter mPosterAdapter;
     GridView mPosterGridview;
@@ -121,6 +117,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
         mPosterGridview = (GridView) mRoot.findViewById(R.id.gridview);
         mListTitle = (TextView) mRoot.findViewById(R.id.textView);
+
         mPosterGridview.setAdapter(mPosterAdapter);
 
 
@@ -214,7 +211,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         if (id == R.id.action_popularityMenu
                 ) {
 
-            MovieSyncAdapter.syncImmediately(getActivity());
             Cursor swapThis = getActivity().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,null,null,null,null);
             mPosterAdapter.swapCursor(swapThis);
 
@@ -225,17 +221,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         if (id == R.id.action_ratingMenu
                 ) {
 
-            ContentValues value = new ContentValues();
-            value.put(MovieContract.TrailerEntry.COLUMN_MOVIE_ID, "Test title");
-            value.put(MovieContract.TrailerEntry.COLUMN_LINK_URL,  "test id");
-            value.put(MovieContract.TrailerEntry.COLUMN_TITLE, "test url");
-            getActivity().getContentResolver().insert(MovieContract.TrailerEntry.CONTENT_URI, value);
 
-            Cursor tempCursor = getActivity().getContentResolver().query(MovieContract.TrailerEntry.CONTENT_URI, null,null,null,null);
-            if(tempCursor.moveToFirst()){
-                Log.v("Insert was successful ", tempCursor.getString(COLUMN_T_ID));
-            }
-            UriMatcher sUriMatcher = MovieProvider.buildUriMatcher();
 
         }
         if (id == R.id.action_FavoriteMenu){
@@ -299,6 +285,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mPosterAdapter.swapCursor(data);
+        Log.v("MoveAdapter was called ", "on load finished");
         if (mPosition != ListView.INVALID_POSITION) {
             // If we don't need to restart the loader, and there's a desired position to restore
             // to, do so now.

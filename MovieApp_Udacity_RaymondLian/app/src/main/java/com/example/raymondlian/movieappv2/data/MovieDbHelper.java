@@ -38,8 +38,6 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        // Create a table to hold locations.  A location consists of the string supplied in the
-        // location setting, the city name, and the latitude and longitude
 
         final String SQL_CREATE_TRAILER_TABLE = "CREATE TABLE " + TrailerEntry.TABLE_NAME + " (" +
                 TrailerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -49,14 +47,8 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 " );";
 
         final String SQL_CREATE_MOVIE_TABLE = "CREATE TABLE " + MovieEntry.TABLE_NAME + " (" +
-                // Why AutoIncrement here, and not above?
-                // Unique keys will be auto-generated in either case.  But for weather
-                // forecasting, it's reasonable to assume the user will want information
-                // for a certain date and all dates *following*, so the forecast data
-                // should be sorted accordingly.
-                 MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
 
-                // the ID of the location entry associated with this weather data
                 MovieEntry.COLUMN_LIST_TYPE + " TEXT NOT NULL, " +
                 MovieEntry.COLUMN_FAV_STAT + " TEXT NOT NULL, " +
                 MovieEntry.COLUMN_MOVIE_ID + " TEXT NOT NULL, " +
