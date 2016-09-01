@@ -61,6 +61,7 @@ public class MainActivity extends ActionBarActivity implements  MainActivityFrag
         toDetails.putString(MovieDetailFragment.mRating, voteAvg);
         toDetails.putString(MovieDetailFragment.mImageURLString, moviePosterURL);
         toDetails.putString(MovieDetailFragment.mMovieIdString, id);
+        toDetails.putString(MovieDetailFragment.mFavStatus, favStatus);
         if(mTwoPane) {
 
             MovieDetailFragment fragment = new MovieDetailFragment();

@@ -157,6 +157,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                             cursor.getString(COLUMN_SYNOPSIS), cursor.getString(COLUMN_FAV_STAT),
                             cursor.getString(COLUMN_ID_MOVIE));
                     mPosition = position;
+                    Log.v("Favorite status ", cursor.getString(COLUMN_FAV_STAT));
                 }
             }
         });

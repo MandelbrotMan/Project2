@@ -1,6 +1,7 @@
 package com.example.raymondlian.movieappv2;
 
 import android.app.LoaderManager;
+import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
@@ -58,6 +59,10 @@ public class MovieDetailFragment extends Fragment {
    public static String mPlot = "synopsis";;
    public static String mFavStatus = "true";
 
+    //Used for searching through the trailer table and adding favorites in the sqlite database;
+    String mQueryId;
+    String mFavorite = "False";
+
 
     //Used to send back MovieObject if Selected as favorite
     Bundle MoviePackage = null;
@@ -110,10 +115,10 @@ public class MovieDetailFragment extends Fragment {
         Cursor cursor = null;
         view=inflater.inflate(R.layout.fragment_movie_detail, container,false);
         if(recievedPackage != null) {
-            String queryId = recievedPackage.getString(mMovieIdString);
+            mQueryId = recievedPackage.getString(mMovieIdString);
 
             cursor = getActivity().getContentResolver().query(MovieContract.TrailerEntry.CONTENT_URI,TRAILER_PROJECTION,
-                    MovieContract.TrailerEntry.COLUMN_MOVIE_ID + " = ?",new String[]{queryId}, null);
+                    MovieContract.TrailerEntry.COLUMN_MOVIE_ID + " = ?",new String[]{mQueryId}, null);
 
         }
 
@@ -153,6 +158,7 @@ public class MovieDetailFragment extends Fragment {
                 ratingView.setText(recievedPackage.getString(mRating));
                 synopsisView.setText(recievedPackage.getString(mPlot));
                 Picasso.with(mContext).load(recievedPackage.getString(mImageURLString)).into(PosterView);
+                mFavorite = recievedPackage.getString(mFavStatus);
 
 
             } else {
@@ -165,13 +171,13 @@ public class MovieDetailFragment extends Fragment {
 
         }
         //mCallback must be initialize with some value to prevent a void error
-        if (mFavStatus.equals("true")) {
-           FavoriteButton.setBackgroundResource(R.drawable.star_gold);
+        if (mFavorite.equals("False")) {
+          FavoriteButton.setBackgroundResource(R.drawable.star_black);
 
         } else {
 
 
-           FavoriteButton.setBackgroundResource(R.drawable.star_black);
+          FavoriteButton.setBackgroundResource(R.drawable.star_gold);
         }
 
 
@@ -198,6 +204,13 @@ public class MovieDetailFragment extends Fragment {
         FavoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                ContentValues update = new ContentValues();
+                update.put(MovieContract.MovieEntry.COLUMN_FAV_STAT, "true");
+                getActivity().getContentResolver().update(MovieContract.MovieEntry.CONTENT_URI, update,
+                        MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ?", new String[]{mQueryId});
+
+                FavoriteButton.setBackgroundResource(R.drawable.star_gold);
 
             }
 
