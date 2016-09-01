@@ -69,6 +69,8 @@ public class MovieContract {
         // In order to uniquely pinpoint the location on the map when we launch the
         // map intent, we store the latitude and longitude as returned by openweathermap.
         public static final String COLUMN_MOVIE_ID = "movie_id";
+        public static final String COLUMN_IS_FAVORITE = "favorite";
+
 
 
 

@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.raymondlian.movieappv2.SyncServices.MovieSyncAdapter;
 import com.example.raymondlian.movieappv2.data.MovieContract;
 import com.squareup.picasso.Picasso;
 
@@ -86,13 +87,15 @@ public class MovieDetailFragment extends Fragment {
             MovieContract.TrailerEntry.TABLE_NAME + "." + MovieContract.TrailerEntry._ID,
             MovieContract.TrailerEntry.COLUMN_MOVIE_ID,
             MovieContract.TrailerEntry.COLUMN_LINK_URL,
-            MovieContract.TrailerEntry.COLUMN_TITLE};
+            MovieContract.TrailerEntry.COLUMN_TITLE,
+            MovieContract.TrailerEntry.COLUMN_IS_FAVORITE};
 
 
     static final int COLUMN_ID = 0;
     static final int COLUMN_MOVIE_ID = 1;
     static final int COLUMN_LINK_URL = 2;
     static final int COLUMN_TITLE = 3;
+    static final int COLUMN_IS_FAVORITE = 4;
 
 
     Cursor cursor;
@@ -204,13 +207,32 @@ public class MovieDetailFragment extends Fragment {
         FavoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Cursor favStatus = getActivity().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
+                        new String[]{MovieContract.TrailerEntry.COLUMN_IS_FAVORITE},
+                        MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ?",
+                        new String[]{mQueryId}, null);
+                String result = favStatus.getString(COLUMN_IS_FAVORITE);
+                ContentValues updateTrailer = new ContentValues();
 
-                ContentValues update = new ContentValues();
-                update.put(MovieContract.MovieEntry.COLUMN_FAV_STAT, "True");
-                getActivity().getContentResolver().update(MovieContract.MovieEntry.CONTENT_URI, update,
+                ContentValues updateMovie = new ContentValues();
+                if(result.equals(MovieSyncAdapter.FALSE)) {
+
+                    updateMovie.put(MovieContract.MovieEntry.COLUMN_FAV_STAT, MovieSyncAdapter.TRUE);
+
+                    updateTrailer.put(MovieContract.MovieEntry.COLUMN_FAV_STAT, MovieSyncAdapter.TRUE);
+                    FavoriteButton.setBackgroundResource(R.drawable.star_gold);
+                }else {
+                    updateMovie.put(MovieContract.MovieEntry.COLUMN_FAV_STAT, MovieSyncAdapter.FALSE);
+                    updateTrailer.put(MovieContract.MovieEntry.COLUMN_FAV_STAT, MovieSyncAdapter.FALSE);
+                    FavoriteButton.setBackgroundResource(R.drawable.star_black);
+                }
+
+                getActivity().getContentResolver().update(MovieContract.MovieEntry.CONTENT_URI, updateMovie,
                         MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ?", new String[]{mQueryId});
+                getActivity().getContentResolver().update(MovieContract.TrailerEntry.CONTENT_URI, updateTrailer,
+                        MovieContract.TrailerEntry.COLUMN_MOVIE_ID+ " = ?", new String[]{mQueryId});
 
-                FavoriteButton.setBackgroundResource(R.drawable.star_gold);
+
 
             }
 

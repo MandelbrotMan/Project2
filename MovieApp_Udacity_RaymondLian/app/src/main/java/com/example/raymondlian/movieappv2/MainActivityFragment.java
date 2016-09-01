@@ -2,17 +2,11 @@ package com.example.raymondlian.movieappv2;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.LoaderManager;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
-import android.content.UriMatcher;
 import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,23 +20,9 @@ import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.raymondlian.movieappv2.SyncServices.MovieSyncAdapter;
 import com.example.raymondlian.movieappv2.data.MovieContract;
-import com.example.raymondlian.movieappv2.data.MovieProvider;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -235,7 +215,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         }
         if (id == R.id.action_FavoriteMenu){
             Cursor swapThis = getActivity().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,NOTIFY_MOVIE_PROJECTION,
-                    MovieContract.MovieEntry.COLUMN_FAV_STAT + " = ?",new String[]{MovieSyncAdapter.FAV_TRUE}, null);
+                    MovieContract.MovieEntry.COLUMN_FAV_STAT + " = ?",new String[]{MovieSyncAdapter.TRUE}, null);
             mPosterAdapter.swapCursor(swapThis);
             mListTitle.setText("Favorites");
 
