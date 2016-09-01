@@ -36,8 +36,10 @@ import java.util.Vector;
  */
 public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
     static Context mContext;
-    private static String SEARCH_POPULAR = "popular";
-    private static String SEARCH_TOP_RATED = "top_rated";
+    public static final String SEARCH_POPULAR = "popular";
+    public static final String SEARCH_TOP_RATED = "top_rated";
+    public static final String FAV_TRUE = "True";
+    public static final String FAV_FALSE = "False";
     public static final int SYNC_INTERVAL = 60 * 60 * 24; //everyday
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
     private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
@@ -209,7 +211,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
             value.put(MovieContract.MovieEntry.COLUMN_SYNOPSIS, singleMovie.getString(get_SYNOPSIS));
             value.put(MovieContract.MovieEntry.COLUMN_IMG_URL, urlBitmap);
             value.put(MovieContract.MovieEntry.COLUMN_LIST_TYPE, searchType);
-            value.put(MovieContract.MovieEntry.COLUMN_FAV_STAT, "False");
+            value.put(MovieContract.MovieEntry.COLUMN_FAV_STAT, FAV_FALSE);
             cVVector.add(value);
 
         }

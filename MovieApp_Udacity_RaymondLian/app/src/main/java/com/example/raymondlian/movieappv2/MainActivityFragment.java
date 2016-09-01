@@ -85,6 +85,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     static final int COLUMN_IMG_URL = 6;
     static final int COLUMN_FAV_STAT = 7;
 
+
+
     private static  final String [] NOTIFY_TRAILER_PROJECTION = new String[]{
             MovieContract.TrailerEntry.COLUMN_TITLE, MovieContract.TrailerEntry.COLUMN_LINK_URL,
             MovieContract.TrailerEntry.COLUMN_MOVIE_ID};
@@ -213,8 +215,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         if (id == R.id.action_popularityMenu
                 ) {
 
-            Cursor swapThis = getActivity().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,null,null,null,null);
+            Cursor swapThis = getActivity().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,NOTIFY_MOVIE_PROJECTION,
+                    MovieContract.MovieEntry.COLUMN_LIST_TYPE + " = ?",new String[]{MovieSyncAdapter.SEARCH_POPULAR}, null);
             mPosterAdapter.swapCursor(swapThis);
+            mListTitle.setText(MovieSyncAdapter.SEARCH_POPULAR);
 
 
 
@@ -222,11 +226,18 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         }
         if (id == R.id.action_ratingMenu
                 ) {
-
+            Cursor swapThis = getActivity().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,NOTIFY_MOVIE_PROJECTION,
+                    MovieContract.MovieEntry.COLUMN_LIST_TYPE + " = ?",new String[]{MovieSyncAdapter.SEARCH_TOP_RATED}, null);
+            mPosterAdapter.swapCursor(swapThis);
+            mListTitle.setText(MovieSyncAdapter.SEARCH_TOP_RATED);
 
 
         }
         if (id == R.id.action_FavoriteMenu){
+            Cursor swapThis = getActivity().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,NOTIFY_MOVIE_PROJECTION,
+                    MovieContract.MovieEntry.COLUMN_FAV_STAT + " = ?",new String[]{MovieSyncAdapter.FAV_TRUE}, null);
+            mPosterAdapter.swapCursor(swapThis);
+            mListTitle.setText("Favorites");
 
 
         }

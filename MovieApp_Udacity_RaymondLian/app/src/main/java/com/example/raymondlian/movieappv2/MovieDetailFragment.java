@@ -206,7 +206,7 @@ public class MovieDetailFragment extends Fragment {
             public void onClick(View v) {
 
                 ContentValues update = new ContentValues();
-                update.put(MovieContract.MovieEntry.COLUMN_FAV_STAT, "true");
+                update.put(MovieContract.MovieEntry.COLUMN_FAV_STAT, "True");
                 getActivity().getContentResolver().update(MovieContract.MovieEntry.CONTENT_URI, update,
                         MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ?", new String[]{mQueryId});
 
