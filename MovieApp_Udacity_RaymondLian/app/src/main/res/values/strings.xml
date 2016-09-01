@@ -21,5 +21,6 @@
 
     <string name="QueryType">"Query This"</string>
     <string name="sync_account_type">movieappv2.example.com</string>
+    <string name="trailer"> Trailers </string>
 
 </resources>

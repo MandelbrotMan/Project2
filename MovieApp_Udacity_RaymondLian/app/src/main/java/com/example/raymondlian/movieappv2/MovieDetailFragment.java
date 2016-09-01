@@ -105,12 +105,20 @@ public class MovieDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Bundle recievedPackage = this.getArguments();
+        Cursor cursor = null;
         view=inflater.inflate(R.layout.fragment_movie_detail, container,false);
-        Cursor cursor = getActivity().getContentResolver().query(MovieContract.TrailerEntry.CONTENT_URI,TRAILER_PROJECTION,null,null, null);
+        if(recievedPackage != null) {
+            String queryId = recievedPackage.getString(mMovieIdString);
+
+            cursor = getActivity().getContentResolver().query(MovieContract.TrailerEntry.CONTENT_URI,TRAILER_PROJECTION,
+                    MovieContract.TrailerEntry.COLUMN_MOVIE_ID + " = ?",new String[]{queryId}, null);
+
+        }
+
         mAdapter = new TrailerAdapter(getActivity(), cursor, 0);
-        test.add("hello");
-        test.add("good bye");
-        test.add("Other people");
+
 
         listView = (ListView) view.findViewById(R.id.trailerListView);
 
@@ -118,8 +126,6 @@ public class MovieDetailFragment extends Fragment {
         listView.setAdapter(mAdapter);
 
 
-
-        Bundle recievedPackage = this.getArguments();
 
         //Connect UI variables with XML id's
         ReviewButton = (Button) view.findViewById(R.id.reviewButton);
@@ -174,13 +180,19 @@ public class MovieDetailFragment extends Fragment {
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+            public void onItemClick(AdapterView adapterView, View view, int position, long l) {
+                // CursorAdapter returns a cursor at the correct position for getItem(), or null
+                // if it cannot seek to that position.
+                Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
+                if (cursor != null) {
 
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                startActivity(intent);
+                    String hyperlink = cursor.getString(COLUMN_LINK_URL);
+                    startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(hyperlink)));
 
+                }
             }
         });
+
 
 
         FavoriteButton.setOnClickListener(new View.OnClickListener() {

@@ -67,17 +67,17 @@
             android:layout_height="wrap_content"
             />
         <TextView android:text="Trailers" android:layout_width="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:id="@+id/trailerListText"
             android:layout_height="wrap_content"
             />
         <ListView
             android:layout_marginTop="5dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="200dp"
             android:id="@+id/trailerListView"
-            >
-        </ListView>
+            android:divider="@null"/>
+
 
 
     </LinearLayout>

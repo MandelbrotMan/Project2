@@ -102,7 +102,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public MainActivityFragment() {
     }
     public interface Callback {
-        public void onItemSelected(String moviePosterURL, String title, String releaseDate, String voteAvg, String synopsis, String favStatus);
+        public void onItemSelected(String moviePosterURL, String title, String releaseDate, String voteAvg, String synopsis, String favStatus, String id);
     }
 
     @Override
@@ -154,7 +154,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                     //(String moviePosterURL, String title, String releaseDate, String voteAvg, String synopsis)
                     mCallback.onItemSelected(cursor.getString(COLUMN_IMG_URL),cursor.getString(COLUMN_TITLE),
                             cursor.getString(COLUMN_RELEASE_DATE),cursor.getString(COLUMN_VOTE_AVERAGE),
-                            cursor.getString(COLUMN_SYNOPSIS), cursor.getString(COLUMN_FAV_STAT));
+                            cursor.getString(COLUMN_SYNOPSIS), cursor.getString(COLUMN_FAV_STAT),
+                            cursor.getString(COLUMN_ID_MOVIE));
                     mPosition = position;
                 }
             }
