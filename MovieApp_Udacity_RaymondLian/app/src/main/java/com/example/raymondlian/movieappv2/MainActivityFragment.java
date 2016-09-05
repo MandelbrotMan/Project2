@@ -67,14 +67,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
 
 
-    private static  final String [] NOTIFY_TRAILER_PROJECTION = new String[]{
-            MovieContract.TrailerEntry.COLUMN_TITLE, MovieContract.TrailerEntry.COLUMN_LINK_URL,
-            MovieContract.TrailerEntry.COLUMN_MOVIE_ID};
 
-    static final int COLUMN_T_ID = 0;
-    static final int COLUMN_T_TITLE = 1;
-    static final int COLUMN_T_URL = 2;
-    static final int COLUMN_T_ID_TRAILERS = 3;
 
 
 

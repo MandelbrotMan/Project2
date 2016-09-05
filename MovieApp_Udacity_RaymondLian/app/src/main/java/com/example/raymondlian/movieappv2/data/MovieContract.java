@@ -64,11 +64,13 @@ public class MovieContract {
         //Contains hyperlinks to movie trailers on youtube
         public static final String COLUMN_LINK_URL = "link_url";
 
+
+        public static final String COLUMN_IS_FAVORITE = "favorite";
+
         //links each entry in this table with a entry in the movie table
         public static final String COLUMN_MOVIE_ID = "movie_id";
 
-        //Used to preserve data when a new search is called in the syncadapter
-        public static final String COLUMN_IS_FAVORITE = "favorite";
+
 
 
 

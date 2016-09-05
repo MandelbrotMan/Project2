@@ -61,7 +61,7 @@ public class MovieDetailFragment extends Fragment {
    public static String mFavStatus = "true";
 
     //Used for searching through the trailer table and adding favorites in the sqlite database;
-    String mQueryId;
+    String mQueryId = null;
     String mFavorite = "False";
 
 
@@ -88,7 +88,8 @@ public class MovieDetailFragment extends Fragment {
             MovieContract.TrailerEntry.COLUMN_MOVIE_ID,
             MovieContract.TrailerEntry.COLUMN_LINK_URL,
             MovieContract.TrailerEntry.COLUMN_TITLE,
-            MovieContract.TrailerEntry.COLUMN_IS_FAVORITE};
+            MovieContract.TrailerEntry.COLUMN_IS_FAVORITE
+          };
 
 
     static final int COLUMN_ID = 0;
@@ -158,7 +159,7 @@ public class MovieDetailFragment extends Fragment {
                 //Assigns values attained to UI
                 titleView.setText(recievedPackage.getString(mTitle));
                 dateView.setText(recievedPackage.getString(mReleaseDate));
-                ratingView.setText(recievedPackage.getString(mRating));
+                ratingView.setText(formatRating(recievedPackage.getString(mRating)));
                 synopsisView.setText(recievedPackage.getString(mPlot));
                 Picasso.with(mContext).load(recievedPackage.getString(mImageURLString)).into(PosterView);
                 mFavorite = recievedPackage.getString(mFavStatus);
@@ -207,35 +208,41 @@ public class MovieDetailFragment extends Fragment {
         FavoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Cursor favStatus = getActivity().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
-                        new String[]{MovieContract.TrailerEntry.COLUMN_IS_FAVORITE},
-                        MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ?",
-                        new String[]{mQueryId}, null);
-                String result = favStatus.getString(COLUMN_IS_FAVORITE);
-                ContentValues updateTrailer = new ContentValues();
+                if (mQueryId != null) {
+                    String result = null;
 
-                ContentValues updateMovie = new ContentValues();
-                if(result.equals(MovieSyncAdapter.FALSE)) {
+                    Cursor favStatusMovie = getActivity().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
+                            new String[]{MovieContract.MovieEntry.COLUMN_FAV_STAT},
+                            MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ?",
+                            new String[]{mQueryId}, null);
+                    if(favStatusMovie.moveToFirst()) {
+                        result = favStatusMovie.getString(0);
+                    }
+                    ContentValues updateTrailer = new ContentValues();
 
-                    updateMovie.put(MovieContract.MovieEntry.COLUMN_FAV_STAT, MovieSyncAdapter.TRUE);
+                    ContentValues updateMovie = new ContentValues();
 
-                    updateTrailer.put(MovieContract.MovieEntry.COLUMN_FAV_STAT, MovieSyncAdapter.TRUE);
-                    FavoriteButton.setBackgroundResource(R.drawable.star_gold);
-                }else {
-                    updateMovie.put(MovieContract.MovieEntry.COLUMN_FAV_STAT, MovieSyncAdapter.FALSE);
-                    updateTrailer.put(MovieContract.MovieEntry.COLUMN_FAV_STAT, MovieSyncAdapter.FALSE);
-                    FavoriteButton.setBackgroundResource(R.drawable.star_black);
+
+
+                    if (result.equals(MovieSyncAdapter.FALSE)) {
+
+                        updateMovie.put(MovieContract.MovieEntry.COLUMN_FAV_STAT, MovieSyncAdapter.TRUE);
+
+                        updateTrailer.put(MovieContract.TrailerEntry.COLUMN_IS_FAVORITE, MovieSyncAdapter.TRUE);
+                        FavoriteButton.setBackgroundResource(R.drawable.star_gold);
+                    } else {
+                        updateMovie.put(MovieContract.MovieEntry.COLUMN_FAV_STAT, MovieSyncAdapter.FALSE);
+                        updateTrailer.put(MovieContract.TrailerEntry.COLUMN_IS_FAVORITE, MovieSyncAdapter.FALSE);
+                        FavoriteButton.setBackgroundResource(R.drawable.star_black);
+                    }
+
+                    getActivity().getContentResolver().update(MovieContract.MovieEntry.CONTENT_URI, updateMovie,
+                            MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ?", new String[]{mQueryId});
+                    getActivity().getContentResolver().update(MovieContract.TrailerEntry.CONTENT_URI, updateTrailer,
+                            MovieContract.TrailerEntry.COLUMN_MOVIE_ID + " = ?", new String[]{mQueryId});
+
                 }
-
-                getActivity().getContentResolver().update(MovieContract.MovieEntry.CONTENT_URI, updateMovie,
-                        MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ?", new String[]{mQueryId});
-                getActivity().getContentResolver().update(MovieContract.TrailerEntry.CONTENT_URI, updateTrailer,
-                        MovieContract.TrailerEntry.COLUMN_MOVIE_ID+ " = ?", new String[]{mQueryId});
-
-
-
             }
-
         });
 
         ReviewButton.setOnClickListener(new View.OnClickListener() {
@@ -268,10 +275,13 @@ public class MovieDetailFragment extends Fragment {
         super.onSaveInstanceState(bundle);
     }
     @Override
-    public void onActivityCreated(Bundle bundle){
+    public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
 
 
+    }
+    public String formatRating(String rating){
+        return rating + " out of 10";
     }
 
 

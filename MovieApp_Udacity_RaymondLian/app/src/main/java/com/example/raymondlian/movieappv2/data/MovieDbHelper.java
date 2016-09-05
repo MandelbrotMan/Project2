@@ -41,11 +41,12 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
         final String SQL_CREATE_TRAILER_TABLE = "CREATE TABLE " + TrailerEntry.TABLE_NAME + " (" +
                 TrailerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                TrailerEntry.COLUMN_IS_FAVORITE + " TEXT  NOT NULL, " +
                 TrailerEntry.COLUMN_MOVIE_ID + " TEXT NOT NULL, " +
                 TrailerEntry.COLUMN_LINK_URL + " TEXT NOT NULL, " +
-                TrailerEntry.COLUMN_TITLE + " TEXT  NOT NULL," +
-                TrailerEntry.COLUMN_IS_FAVORITE + " TEXT  NOT NULL " +
-                " );";
+                TrailerEntry.COLUMN_TITLE + " TEXT  NOT NULL " +
+
+                ");";
 
         final String SQL_CREATE_MOVIE_TABLE = "CREATE TABLE " + MovieEntry.TABLE_NAME + " (" +
                 MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
