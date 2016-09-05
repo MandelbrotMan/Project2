@@ -58,17 +58,16 @@ public class MovieContract {
         // Table name
         public static final String TABLE_NAME = "trailer";
 
-        // The location setting string is what will be sent to openweathermap
-        // as the location query.
+        // What is displayed in the listview on the details page
         public static final String COLUMN_TITLE = "title";
 
-        // Human readable location string, provided by the API.  Because for styling,
-        // "Mountain View" is more recognizable than 94043.
+        //Contains hyperlinks to movie trailers on youtube
         public static final String COLUMN_LINK_URL = "link_url";
 
-        // In order to uniquely pinpoint the location on the map when we launch the
-        // map intent, we store the latitude and longitude as returned by openweathermap.
+        //links each entry in this table with a entry in the movie table
         public static final String COLUMN_MOVIE_ID = "movie_id";
+
+        //Used to preserve data when a new search is called in the syncadapter
         public static final String COLUMN_IS_FAVORITE = "favorite";
 
 
@@ -93,15 +92,11 @@ public class MovieContract {
         // Table name
         public static final String TABLE_NAME = "movie";
 
-
-
         public static final String COLUMN_TITLE = "title";
 
-
+        //Bitmap
         public static final String COLUMN_IMG_URL = "image_url";
 
-        // In order to uniquely pinpoint the location on the map when we launch the
-        // map intent, we store the latitude and longitude as returned by openweathermap.
         public static final String COLUMN_RELEASE_DATE = "release_date";
         public static final String COLUMN_VOTE_AVERAGE = "vote_average";
 

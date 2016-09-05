@@ -138,11 +138,10 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
         }
         return JsonUrl;
     }
+
+    //Each json object returns a id required to make the url for the posterviews
     private String getBitMapURL(String urlId) throws IOException {
         HttpURLConnection posterUrlConnection = null;
-
-
-
 
             Uri builtUri = Uri.parse("http://image.tmdb.org").buildUpon()
                     .appendPath("t")
@@ -152,14 +151,11 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
             try {
                 URL bitmapURL = new URL(builtUri.toString());
 
-
                 posterUrlConnection = (HttpURLConnection) bitmapURL.openConnection();
                 posterUrlConnection.setRequestMethod("GET");
                 posterUrlConnection.connect();
 
-
                 return builtUri.toString();
-
 
             } catch (IOException e) {
                 return null;
@@ -218,10 +214,12 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
         ContentValues values[] = cVVector.toArray(new ContentValues[cVVector.size()]);
         int count = 0;
         count = cVVector.size();
+        //Where insertion in the table is made
         getContext().getContentResolver().bulkInsert(MovieContract.MovieEntry.CONTENT_URI,values);
 
 
     }
+    //Trailers are created after the movie database is created
     private String getTrailerJsonURL(String trailerId) {
         String JsonUrl = "";
         HttpURLConnection urlConnection = null;

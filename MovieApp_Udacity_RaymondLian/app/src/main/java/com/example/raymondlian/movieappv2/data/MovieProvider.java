@@ -37,88 +37,43 @@ public class MovieProvider extends ContentProvider {
 
     static{
         MovieQueryBuilder = new SQLiteQueryBuilder();
-        
-        //This is an inner join which looks like
-        //weather INNER JOIN location ON weather.location_id = location._id
+
         MovieQueryBuilder.setTables(
                 MovieContract.MovieEntry.TABLE_NAME
-                        //"." + MovieContract.MovieEntry.COLUMN_TRAILER_KEY +
-                       // " = " + MovieContract.TrailerEntry.TABLE_NAME +
-                       // "." + MovieContract.MovieEntry._ID
+
                        );
         MovieQueryBuilder.setTables(
                 MovieContract.TrailerEntry.TABLE_NAME
-                //"." + MovieContract.MovieEntry.COLUMN_TRAILER_KEY +
-                // " = " + MovieContract.TrailerEntry.TABLE_NAME +
-                // "." + MovieContract.MovieEntry._ID
         );
 
     }
-/*
-    //location.location_setting = ?
-    private static final String sLocationSettingSelection =
-            WeatherContract.LocationEntry.TABLE_NAME+
-                    "." + WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? ";
 
-    //location.location_setting = ? AND date >= ?
-    private static final String sLocationSettingWithStartDateSelection =
-            WeatherContract.LocationEntry.TABLE_NAME+
-                    "." + WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? AND " +
-                    WeatherContract.WeatherEntry.COLUMN_DATE + " >= ? ";
-
-    //location.location_setting = ? AND date = ?
-    private static final String sLocationSettingAndDaySelection =
-            WeatherContract.LocationEntry.TABLE_NAME +
-                    "." + WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? AND " +
-                    WeatherContract.WeatherEntry.COLUMN_DATE + " = ? ";
-*/
-
-
-    /*
-        Students: Here is where you need to create the UriMatcher. This UriMatcher will
-        match each URI to the WEATHER, WEATHER_WITH_LOCATION, WEATHER_WITH_LOCATION_AND_DATE,
-        and LOCATION integer constants defined above.  You can test this by uncommenting the
-        testUriMatcher test within TestUriMatcher.
-     */
     public static UriMatcher buildUriMatcher() {
-        // I know what you're thinking.  Why create a UriMatcher when you can use regular
-        // expressions instead?  Because you're not crazy, that's why.
 
-        // All paths added to the UriMatcher have a corresponding code to return when a match is
-        // found.  The code passed into the constructor represents the code to return for the root
-        // URI.  It's common to use NO_MATCH as the code for this case.
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = MovieContract.CONTENT_AUTHORITY;
 
-        // For each type of URI you want to add, create a corresponding code.
+
         matcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIE);
         matcher.addURI(authority, MovieContract.PATH_TRAILER, TRAILER);
         return matcher;
     }
 
-    /*
-        Students: We've coded this for you.  We just create a new WeatherDbHelper for later use
-        here.
-     */
+
     @Override
     public boolean onCreate() {
         mOpenHelper = new MovieDbHelper(getContext());
         return true;
     }
 
-    /*
-        Students: Here's where you'll code the getType function that uses the UriMatcher.  You can
-        test this by uncommenting testGetType in TestProvider.
 
-     */
     @Override
     public String getType(Uri uri) {
 
-        // Use the Uri Matcher to determine what kind of URI this is.
         final int match = sUriMatcher.match(uri);
 
         switch (match) {
-            // Student: Uncomment and fill out these two cases
+
             case MOVIE:
                 return MovieContract.MovieEntry.CONTENT_TYPE;
             case TRAILER:
@@ -131,8 +86,7 @@ public class MovieProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
                         String sortOrder) {
-        // Here's the switch statement that, given a URI, will determine what kind of request it is,
-        // and query the database accordingly.
+
         Cursor retCursor;
         switch (sUriMatcher.match(uri)) {
 
@@ -168,9 +122,7 @@ public class MovieProvider extends ContentProvider {
         return retCursor;
     }
 
-    /*
-        Student: Add the ability to insert Locations to the implementation of this function.
-     */
+
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
@@ -206,8 +158,8 @@ public class MovieProvider extends ContentProvider {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
         int rowsDeleted;
-        // this makes delete all rows return the number of rows deleted
-        if ( null == selection ) selection = "1";
+
+        if (null == selection) selection = "1";
         switch (match) {
             case MOVIE:
                 rowsDeleted = db.delete(
@@ -226,16 +178,6 @@ public class MovieProvider extends ContentProvider {
         }
         return rowsDeleted;
     }
-/*
-    private void normalizeDate(ContentValues values) {
-        // normalize the date value
-        if (values.containsKey(WeatherContract.WeatherEntry.COLUMN_DATE)) {
-            long dateValue = values.getAsLong(WeatherContract.WeatherEntry.COLUMN_DATE);
-            values.put(WeatherContract.WeatherEntry.COLUMN_DATE, WeatherContract.normalizeDate(dateValue));
-        }
-    }
-    */
-
     @Override
     public int update(
             Uri uri, ContentValues values, String selection, String[] selectionArgs) {
@@ -302,10 +244,6 @@ public class MovieProvider extends ContentProvider {
                 return super.bulkInsert(uri, values);
         }
     }
-
-    // You do not need to call this method. This is a method specifically to assist the testing
-    // framework in running smoothly. You can read more at:
-    // http://developer.android.com/reference/android/content/ContentProvider.html#shutdown()
     @Override
     @TargetApi(11)
     public void shutdown() {
