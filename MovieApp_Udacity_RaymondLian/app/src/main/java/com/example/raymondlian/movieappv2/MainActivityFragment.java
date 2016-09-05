@@ -278,7 +278,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mPosterAdapter.swapCursor(data);
-        Log.v("MoveAdapter was called ", "on load finished");
         if (mPosition != ListView.INVALID_POSITION) {
             // If we don't need to restart the loader, and there's a desired position to restore
             // to, do so now.
