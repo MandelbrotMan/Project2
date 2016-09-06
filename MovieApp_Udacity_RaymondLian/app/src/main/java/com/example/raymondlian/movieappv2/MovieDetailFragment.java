@@ -248,11 +248,9 @@ public class MovieDetailFragment extends Fragment {
         ReviewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              //  Intent intentReviewPage = new Intent(getActivity(), ReviewsActivity.class);
-              //  intentReviewPage.putExtra("id", MovieIdString);
-
-
-               // startActivity(intentReviewPage);
+                Intent intentReviewPage = new Intent(getActivity(), Reviews_Activity.class);
+                intentReviewPage.putExtra("id", mQueryId);
+                startActivity(intentReviewPage);
             }
         });
 
