@@ -55,13 +55,8 @@ public class MainActivity extends ActionBarActivity implements  MainActivityFrag
     @Override
     public void onItemSelected(String moviePosterURL, String title, String releaseDate, String voteAvg, String synopsis, String favStatus, String id) {
         Bundle toDetails = new Bundle();
-        toDetails.putString(MovieDetailFragment.mPlot, synopsis);
-        toDetails.putString(MovieDetailFragment.mTitle, title);
-        toDetails.putString(MovieDetailFragment.mReleaseDate, releaseDate);
-        toDetails.putString(MovieDetailFragment.mRating, voteAvg);
-        toDetails.putString(MovieDetailFragment.mImageURLString, moviePosterURL);
         toDetails.putString(MovieDetailFragment.mMovieIdString, id);
-        toDetails.putString(MovieDetailFragment.mFavStatus, favStatus);
+
         if(mTwoPane) {
 
             MovieDetailFragment fragment = new MovieDetailFragment();
@@ -69,7 +64,6 @@ public class MainActivity extends ActionBarActivity implements  MainActivityFrag
             fragment.setArguments(toDetails);
             getSupportFragmentManager().beginTransaction().
                     replace(R.id.movie_detail_container, fragment, DETAILFRAGMENT_TAG).commit();
-            fragment.makeButtonsVisible();
         }else{
             Intent intent = new Intent(this, Detail_Activity.class);
             intent.putExtras(toDetails);

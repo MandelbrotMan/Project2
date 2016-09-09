@@ -49,7 +49,7 @@ public class TrailerAdapter extends CursorAdapter {
         // our view is pretty simple here --- just a text view
         // we'll keep the UI functional with a simple (and slow!) binding.
         ViewHolder viewHeld = (ViewHolder) view.getTag();
-        viewHeld.trailerView.setText(cursor.getString(MovieDetailFragment.COLUMN_TITLE));
+        viewHeld.trailerView.setText(cursor.getString(MovieDetailFragment.T_COLUMN_TITLE));
 
 
 

@@ -121,7 +121,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                             cursor.getString(COLUMN_SYNOPSIS), favoriteStatus,id
                             );
                     mPosition = position;
-                    Log.v("Favorite status ", cursor.getString(COLUMN_FAV_STAT));
+
                 }
             }
         });

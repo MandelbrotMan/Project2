@@ -2,7 +2,6 @@ package com.example.raymondlian.movieappv2;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
 
 
@@ -22,7 +21,7 @@ public class Detail_Activity extends ActionBarActivity {
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.movie_detail_container, fragment)
                 .commit();
-        fragment.makeButtonsVisible();
+
 
     }
 

@@ -181,7 +181,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
         final String get_TITLE = "title";
         final String get_ID = "id";
 
-        Log.v("Trailers array List", url);
+
         JSONObject popularJSON = new JSONObject(url);
 
         JSONArray movieArray = popularJSON.getJSONArray(get_RESULTS);
