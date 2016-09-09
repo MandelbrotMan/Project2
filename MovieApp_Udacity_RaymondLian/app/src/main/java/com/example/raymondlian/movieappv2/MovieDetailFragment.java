@@ -130,6 +130,13 @@ public class MovieDetailFragment extends Fragment implements  LoaderManager.Load
             if(recievedPackage != null) {
                 //Assigns values attained to UI
               SaveId = recievedPackage.getString(mMovieIdString);
+                 cursor = getActivity().getContentResolver().query(
+                        MovieContract.TrailerEntry.CONTENT_URI, NOTIFY_TRAILER_PROJECTION,
+                        MovieContract.TrailerEntry.COLUMN_MOVIE_ID + " = ?", new String[]{SaveId},
+                        null);
+
+                mAdapter = new TrailerAdapter(getActivity(), cursor, 0);
+                listView.setAdapter(mAdapter);
 
 
 
@@ -150,14 +157,7 @@ public class MovieDetailFragment extends Fragment implements  LoaderManager.Load
         } else {
           FavoriteButton.setBackgroundResource(R.drawable.star_gold);
         }
-        Cursor cursor = getActivity().getContentResolver().query(
-                MovieContract.TrailerEntry.CONTENT_URI, NOTIFY_TRAILER_PROJECTION,
-                MovieContract.TrailerEntry.COLUMN_MOVIE_ID + " = ?", new String[]{SaveId},
-                null);
-        if(cursor.moveToFirst()) {
-            mAdapter = new TrailerAdapter(getActivity(), cursor, 0);
-            listView.setAdapter(mAdapter);
-        }
+
 
 
 
