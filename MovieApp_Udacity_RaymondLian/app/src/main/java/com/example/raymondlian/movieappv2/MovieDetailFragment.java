@@ -99,7 +99,7 @@ public class MovieDetailFragment extends Fragment implements  LoaderManager.Load
     static final int M_COLUMN_IMG_URL = 6;
     static final int M_COLUMN_FAV_STAT = 7;
 
-    Cursor cursor;
+    Cursor cursor = null;
 
     public MovieDetailFragment() {
     }
