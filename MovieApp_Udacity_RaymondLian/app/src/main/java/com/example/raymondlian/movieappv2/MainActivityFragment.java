@@ -89,48 +89,37 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         mPosterAdapter.setUseTalbletLayout(isTablet);
 
         getActivity().setTitle("Blue Ray Movies");
-
         mPosterGridview = (GridView) mRoot.findViewById(R.id.gridview);
         mListTitle = (TextView) mRoot.findViewById(R.id.textView);
-
         mPosterGridview.setAdapter(mPosterAdapter);
-
-
         Intent intent = getActivity().getIntent();
         formMovieDetailPackage = intent.getExtras();
+        mListTitle.setText(MovieSyncAdapter.SEARCH_POPULAR);
 
-
-
-
-
-
-
-
-        //For preserving screen data during screen rotation
-        if (savedInstanceState == null || !savedInstanceState.containsKey("movies")) {
-          //  new DownloadImageTask((GridView) mRoot.findViewById(R.id.gridview)).execute("popular");
-
-        }
         mPosterGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView adapterView, View view, int position, long l) {
+                Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
+                String id = cursor.getString(COLUMN_ID_MOVIE);
+                String favoriteStatus = MovieSyncAdapter.FALSE;
+
+                //Prevents more than two copies of the same entry if the favorite button is pressed again.
+                Cursor favCursor =   getActivity().getContentResolver().query
+                        (MovieContract.MovieEntry.CONTENT_URI,new String[]{MovieContract.MovieEntry.COLUMN_FAV_STAT},
+                        MovieContract.MovieEntry.COLUMN_FAV_STAT + " = ? AND " + MovieContract.MovieEntry._ID + " = ?"
+                                ,new String[]{MovieSyncAdapter.TRUE, id}, null);
+                if(favCursor.moveToFirst()){
+                    favoriteStatus = MovieSyncAdapter.TRUE;
+                }
+
                 // CursorAdapter returns a cursor at the correct position for getItem(), or null
                 // if it cannot seek to that position.
-                Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
-                    /*
-                    String locationSetting = Utility.getPreferredLocation(getActivity());
-                    Intent intent = new Intent(getActivity(), DetailActivity.class)
-                            .setData(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
-                                    locationSetting, cursor.getLong(COL_WEATHER_DATE)
-                            ));
-                    startActivity(intent);
-                    */
-                    //(String moviePosterURL, String title, String releaseDate, String voteAvg, String synopsis)
+
                     mCallback.onItemSelected(cursor.getString(COLUMN_IMG_URL),cursor.getString(COLUMN_TITLE),
                             cursor.getString(COLUMN_RELEASE_DATE),cursor.getString(COLUMN_VOTE_AVERAGE),
-                            cursor.getString(COLUMN_SYNOPSIS), cursor.getString(COLUMN_FAV_STAT),
-                            cursor.getString(COLUMN_ID_MOVIE));
+                            cursor.getString(COLUMN_SYNOPSIS), favoriteStatus,id
+                            );
                     mPosition = position;
                     Log.v("Favorite status ", cursor.getString(COLUMN_FAV_STAT));
                 }
@@ -222,34 +211,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
 
 
-
-
-
-        /*
-        private class trailerTask extends AsyncTask<String, Void, ArrayList<TrailerObject>> {
-            HttpURLConnection posterUrlConnection = null;
-
-
-            protected ArrayList<TrailerObject> doInBackground(String... param) {
-                trailerObjects.clear(); //Ensure there are no trailers from previous tasks
-                String movieTrailersUrl = getTrailerJsonURL(param[0]); //Set up URL for pulling the JSON Data
-
-
-                try {
-                    getTrailersJSON(movieTrailersUrl); // Fill up the trailerObjects list with trailers
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-
-                return null;
-
-            }
-
-
-        }
-        */
-
     public void setUILayout(boolean type){
         mPosterAdapter.setUseTalbletLayout(type);
     }
@@ -262,9 +223,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         return new CursorLoader(getActivity(),
                 MovieContract.MovieEntry.CONTENT_URI,
                 NOTIFY_MOVIE_PROJECTION,
-                null,
-                null,
+                MovieContract.MovieEntry.COLUMN_LIST_TYPE + " = ?",
+                new String[]{MovieSyncAdapter.SEARCH_POPULAR},
                 null);
+
 
     }
 
@@ -283,4 +245,5 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public void onLoaderReset(Loader<Cursor> loader) {
 
     }
+
 }

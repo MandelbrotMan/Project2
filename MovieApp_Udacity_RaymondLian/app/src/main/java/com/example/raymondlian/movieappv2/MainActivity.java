@@ -65,14 +65,17 @@ public class MainActivity extends ActionBarActivity implements  MainActivityFrag
         if(mTwoPane) {
 
             MovieDetailFragment fragment = new MovieDetailFragment();
+
             fragment.setArguments(toDetails);
             getSupportFragmentManager().beginTransaction().
                     replace(R.id.movie_detail_container, fragment, DETAILFRAGMENT_TAG).commit();
+            fragment.makeButtonsVisible();
         }else{
             Intent intent = new Intent(this, Detail_Activity.class);
             intent.putExtras(toDetails);
             startActivity(intent);
 
         }
+
     }
 }

@@ -28,12 +28,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import android.widget.ListView;
-import android.widget.Toast;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class ReviewsActivityFragment extends Fragment {
+    static final String arrayKey = "id";
     ArrayList<String> Reviews = new ArrayList<String>();
     ArrayAdapter<String> adapter;
     String MovieId;
@@ -48,19 +48,20 @@ public class ReviewsActivityFragment extends Fragment {
         View root = (View) inflater.inflate(R.layout.fragment_reviews, container, false);
         ListView listView = (ListView) root.findViewById(R.id.ReviewsListView);
 
-        Intent intent = getActivity().getIntent();
-        Bundle recieved = intent.getExtras();
-        MovieId = recieved.getString("id");
-        new LoadReviews().execute("");
-        adapter = new ArrayAdapter<String>(getActivity(), R.layout.review_item, R.id.review_item_textview, Reviews);
-        listView.setAdapter(adapter);
-        if(Reviews.size() == 0){
-            Toast toast;
-            CharSequence text = "No Reviews Found";
-            int duration = Toast.LENGTH_SHORT;
-            toast = Toast.makeText(getActivity(), text, duration);
-            toast.show();
+        if(savedInstanceState == null) {
+            Intent intent = getActivity().getIntent();
+            Bundle recieved = intent.getExtras();
+            MovieId = recieved.getString("id");
+            new LoadReviews().execute("");
+            adapter = new ArrayAdapter<String>(getActivity(), R.layout.review_item, R.id.review_item_textview, Reviews);
+            listView.setAdapter(adapter);
+        } else {
+            Reviews.clear();
+            Reviews = savedInstanceState.getStringArrayList(arrayKey);
+            adapter = new ArrayAdapter<String>(getActivity(), R.layout.review_item, R.id.review_item_textview, Reviews);
+            listView.setAdapter(adapter);
         }
+
 
         return root;
     }
@@ -71,6 +72,15 @@ public class ReviewsActivityFragment extends Fragment {
         super.onCreateOptionsMenu(menu, menuInflater);
 
 
+    }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        savedInstanceState.putStringArrayList(arrayKey, Reviews);
+
+
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -18,9 +18,11 @@ public class Detail_Activity extends ActionBarActivity {
         Intent fromMain = getIntent();
         Bundle toFrag = fromMain.getExtras();
         fragment.setArguments(toFrag);
+
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.movie_detail_container, fragment)
                 .commit();
+        fragment.makeButtonsVisible();
 
     }
 

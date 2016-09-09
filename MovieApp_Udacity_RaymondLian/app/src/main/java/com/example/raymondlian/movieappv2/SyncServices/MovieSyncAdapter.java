@@ -38,6 +38,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
     static Context mContext;
     public static final String SEARCH_POPULAR = "popular";
     public static final String SEARCH_TOP_RATED = "top_rated";
+    public static final String SEARCH_FAVORITES = "favorite";
     public static final String TRUE = "True";
     public static final String FALSE = "False";
     public static final int SYNC_INTERVAL = 60 * 60 * 24; //everyday
@@ -52,9 +53,14 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
-        String queryType = extras.getString(getContext().getString(R.string.QueryType));
-        getContext().getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI,null,null);
-        getContext().getContentResolver().delete(MovieContract.TrailerEntry.CONTENT_URI,null,null);
+        ContentValues updateMovie = new ContentValues();
+        updateMovie.put(MovieContract.MovieEntry.COLUMN_LIST_TYPE, SEARCH_FAVORITES);
+        getContext().getContentResolver().update(MovieContract.MovieEntry.CONTENT_URI, updateMovie,
+                MovieContract.MovieEntry.COLUMN_FAV_STAT + " = ?", new String[]{TRUE});
+
+
+        getContext().getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI, MovieContract.MovieEntry.COLUMN_FAV_STAT + " = ?", new String[]{FALSE});
+        getContext().getContentResolver().delete(MovieContract.TrailerEntry.CONTENT_URI,MovieContract.TrailerEntry.COLUMN_IS_FAVORITE + " = ?", new String[]{FALSE});
 
 
         String popularURL = getJsonURL(SEARCH_POPULAR);
@@ -322,21 +328,6 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
 
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
