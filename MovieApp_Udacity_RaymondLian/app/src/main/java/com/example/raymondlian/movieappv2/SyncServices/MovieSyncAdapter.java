@@ -135,7 +135,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
 
 
         } catch (IOException e) {
-            Log.e("error", String.valueOf(e));
+           // Log.e("error", String.valueOf(e));
             return null;
         } finally {
             if (urlConnection != null) {
@@ -273,7 +273,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
 
 
         } catch (IOException e) {
-            Log.e("error", String.valueOf(e));
+           // Log.e("error", String.valueOf(e));
             return null;
         } finally {
             if (urlConnection != null) {
@@ -307,7 +307,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
                 urlConnection.connect();
 
             } catch (IOException e) {
-                Log.e("error", String.valueOf(e));
+               // Log.e("error", String.valueOf(e));
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();

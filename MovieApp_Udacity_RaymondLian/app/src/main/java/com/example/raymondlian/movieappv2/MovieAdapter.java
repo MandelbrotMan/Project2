@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
+
 
 import com.squareup.picasso.Picasso;
 
@@ -56,7 +56,7 @@ public class MovieAdapter extends CursorAdapter {
         // we'll keep the UI functional with a simple (and slow!) binding.
         ViewHolder viewHeld = (ViewHolder) view.getTag();
 
-            Picasso.with(mContext).load(cursor.getString(MainActivityFragment.COLUMN_IMG_URL)).into(viewHeld.posterView);
+            Picasso.with(mContext).load(cursor.getString(MovieDetailFragment.M_COLUMN_IMG_URL)).into(viewHeld.posterView);
 
 
 

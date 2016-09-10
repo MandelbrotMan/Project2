@@ -46,7 +46,7 @@ public class ReviewsActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = (View) inflater.inflate(R.layout.fragment_reviews, container, false);
+        View root = inflater.inflate(R.layout.fragment_reviews, container, false);
         ListView listView = (ListView) root.findViewById(R.id.ReviewsListView);
 
         if(savedInstanceState == null) {
@@ -54,12 +54,12 @@ public class ReviewsActivityFragment extends Fragment {
             Bundle recieved = intent.getExtras();
             MovieId = recieved.getString("id");
             new LoadReviews().execute("");
-            adapter = new ArrayAdapter<String>(getActivity(), R.layout.review_item, R.id.review_item_textview, Reviews);
+            adapter = new ArrayAdapter<>(getActivity(), R.layout.review_item, R.id.review_item_textview, Reviews);
             listView.setAdapter(adapter);
         } else {
             Reviews.clear();
             Reviews = savedInstanceState.getStringArrayList(arrayKey);
-            adapter = new ArrayAdapter<String>(getActivity(), R.layout.review_item, R.id.review_item_textview, Reviews);
+            adapter = new ArrayAdapter<>(getActivity(), R.layout.review_item, R.id.review_item_textview, Reviews);
             listView.setAdapter(adapter);
         }
         if(Reviews.size() < 1){
@@ -120,24 +120,12 @@ public class ReviewsActivityFragment extends Fragment {
 
         }
 
-        protected void onPostExecute() {
-            adapter.clear();
-            String trailerName = "";
-            for (int i = 0; i < Reviews.size(); ++i) {
-                trailerName = Reviews.get(i);
-                adapter.add(trailerName);
-            }
-            adapter.notifyDataSetChanged();
-
-
-        }
 
         private String getTrailerJsonURL() {
             String JsonUrl = "";
             HttpURLConnection urlConnection = null;
             BufferedReader reader;
 
-            InputStream stream;
             URL popularURL;
 
 

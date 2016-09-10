@@ -1,30 +1,16 @@
 package com.example.raymondlian.movieappv2;
 
-import android.app.Activity;
+
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-
-
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
-
 import com.example.raymondlian.movieappv2.SyncServices.MovieSyncAdapter;
-
-import java.util.ArrayList;
 
 public class MainActivity extends ActionBarActivity implements  MainActivityFragment.Callback{
 
     private boolean mTwoPane;
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
-    boolean FavStatus = false;
-    FragmentManager manager;
-    MainActivityFragment fragmentMain;
-    MovieDetailFragment fragmentDetail;
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +23,6 @@ public class MainActivity extends ActionBarActivity implements  MainActivityFrag
                     .replace(R.id.movie_detail_container, new MovieDetailFragment())
                     .commit();
             mTwoPane = true;
-
-
-
-
         }else{
             mTwoPane = false;
         }
@@ -53,14 +35,12 @@ public class MainActivity extends ActionBarActivity implements  MainActivityFrag
 
 
     @Override
-    public void onItemSelected(String moviePosterURL, String title, String releaseDate, String voteAvg, String synopsis, String favStatus, String id) {
+    public void onItemSelected(String id) {
         Bundle toDetails = new Bundle();
         toDetails.putString(MovieDetailFragment.mMovieIdString, id);
 
         if(mTwoPane) {
-
             MovieDetailFragment fragment = new MovieDetailFragment();
-
             fragment.setArguments(toDetails);
             getSupportFragmentManager().beginTransaction().
                     replace(R.id.movie_detail_container, fragment, DETAILFRAGMENT_TAG).commit();
@@ -68,7 +48,6 @@ public class MainActivity extends ActionBarActivity implements  MainActivityFrag
             Intent intent = new Intent(this, Detail_Activity.class);
             intent.putExtras(toDetails);
             startActivity(intent);
-
         }
 
     }
