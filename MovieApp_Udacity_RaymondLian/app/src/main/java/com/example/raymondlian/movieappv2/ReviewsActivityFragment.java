@@ -28,6 +28,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import android.widget.ListView;
+import android.widget.Toast;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -60,6 +61,9 @@ public class ReviewsActivityFragment extends Fragment {
             Reviews = savedInstanceState.getStringArrayList(arrayKey);
             adapter = new ArrayAdapter<String>(getActivity(), R.layout.review_item, R.id.review_item_textview, Reviews);
             listView.setAdapter(adapter);
+        }
+        if(Reviews.size() < 1){
+            Toast.makeText(getActivity(), "No reviews found", Toast.LENGTH_LONG);
         }
 
 

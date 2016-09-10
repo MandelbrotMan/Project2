@@ -27,7 +27,51 @@ import java.util.ArrayList;
 import android.widget.Button;
 
 /**
- * A placeholder fragment containing a simple view.
+
+ TrailerAdapter mAdapter;
+
+ private static final String[] TRAILER_PROJECTION = new String[] {
+ MovieContract.TrailerEntry.TABLE_NAME + "." + MovieContract.TrailerEntry._ID,
+ MovieContract.TrailerEntry.COLUMN_MOVIE_ID,
+ MovieContract.TrailerEntry.COLUMN_LINK_URL,
+ MovieContract.TrailerEntry.COLUMN_TITLE};
+
+
+ static final int COLUMN_ID = 0;
+ static final int COLUMN_MOVIE_ID = 1;
+ static final int COLUMN_LINK_URL = 2;
+ static final int COLUMN_TITLE = 3;
+
+
+ Cursor cursor;
+
+
+
+
+
+
+ public MovieDetailFragment() {
+ }
+ //////////////////////////////////////////////////////////////////////////////////////////////////
+ //On create
+
+ @Override
+ public View onCreateView(LayoutInflater inflater, ViewGroup container,
+ Bundle savedInstanceState) {
+
+ Bundle recievedPackage = this.getArguments();
+ Cursor cursor = null;
+ view=inflater.inflate(R.layout.fragment_movie_detail, container,false);
+ if(recievedPackage != null) {
+ String queryId = recievedPackage.getString(mMovieIdString);
+
+ cursor = getActivity().getContentResolver().query(MovieContract.TrailerEntry.CONTENT_URI,TRAILER_PROJECTION,
+ MovieContract.TrailerEntry.COLUMN_MOVIE_ID + " = ?",new String[]{queryId}, null);
+
+ }
+
+ mAdapter = new TrailerAdapter(getActivity(), cursor, 0);
+
  */
 public class MovieDetailFragment extends Fragment implements  LoaderManager.LoaderCallbacks<Cursor>{
 
@@ -44,13 +88,6 @@ public class MovieDetailFragment extends Fragment implements  LoaderManager.Load
 
     //Used for searching through the trailer table and adding favorites in the sqlite database;
     String SaveId = Empty;
-    String SaveFavorite = "False";
-    String SaveImage;
-    String SaveTitle;
-    String SaveRating;
-    String SaveRelese;
-    String SavePlot;
-
     private static final int DETAIL_LOADER = 0;
 
     //Used to send back MovieObject if Selected as favorite
@@ -82,7 +119,8 @@ public class MovieDetailFragment extends Fragment implements  LoaderManager.Load
     private static final String[] NOTIFY_TRAILER_PROJECTION = new String[] {
             MovieContract.TrailerEntry.TABLE_NAME + "." + MovieContract.TrailerEntry._ID,
             MovieContract.TrailerEntry.COLUMN_MOVIE_ID,
-            MovieContract.TrailerEntry.COLUMN_LINK_URL
+            MovieContract.TrailerEntry.COLUMN_LINK_URL,
+            MovieContract.TrailerEntry.COLUMN_TITLE
             };
 
     static final int T_COLUMN_ID = 0;
@@ -99,7 +137,6 @@ public class MovieDetailFragment extends Fragment implements  LoaderManager.Load
     static final int M_COLUMN_IMG_URL = 6;
     static final int M_COLUMN_FAV_STAT = 7;
 
-    Cursor cursor = null;
 
     public MovieDetailFragment() {
     }
@@ -111,6 +148,7 @@ public class MovieDetailFragment extends Fragment implements  LoaderManager.Load
                              Bundle savedInstanceState) {
 
         Bundle recievedPackage = this.getArguments();
+        Cursor cursor = null;
 
         view=inflater.inflate(R.layout.fragment_movie_detail, container,false);
         listView = (ListView) view.findViewById(R.id.trailerListView);
@@ -125,38 +163,15 @@ public class MovieDetailFragment extends Fragment implements  LoaderManager.Load
         synopsisView = (TextView) view.findViewById(R.id.synopsisText);
         PosterView = (ImageView) view.findViewById(R.id.posterImageView);
 
-        //When the fragment is opened. Used in phone. Initializes the variables for UI
-        if(savedInstanceState == null) {
-            if(recievedPackage != null) {
-                //Assigns values attained to UI
-              SaveId = recievedPackage.getString(mMovieIdString);
-                 cursor = getActivity().getContentResolver().query(
-                        MovieContract.TrailerEntry.CONTENT_URI, NOTIFY_TRAILER_PROJECTION,
-                        MovieContract.TrailerEntry.COLUMN_MOVIE_ID + " = ?", new String[]{SaveId},
-                        null);
 
-                mAdapter = new TrailerAdapter(getActivity(), cursor, 0);
-                listView.setAdapter(mAdapter);
-
-
-
+            if (recievedPackage != null) {
+                SaveId = recievedPackage.getString(mMovieIdString);
             }
-        } else {
-            SaveImage = savedInstanceState.getString(mImageURLString);
-            SaveTitle = savedInstanceState.getString(mTitle); ;
-            SaveRating = formatRating(savedInstanceState.getString(mRating));
-            SaveRelese = savedInstanceState.getString(mReleaseDate);
-            SavePlot =   savedInstanceState.getString(mPlot);
-            SaveId = savedInstanceState.getString(mMovieIdString);
-            SaveFavorite = savedInstanceState.getString(mFavStatus);
-        }
-        //mCallback must be initialize with some value to prevent a void error
-        if (SaveFavorite.equals("False")) {
-          FavoriteButton.setBackgroundResource(R.drawable.star_black);
 
-        } else {
-          FavoriteButton.setBackgroundResource(R.drawable.star_gold);
-        }
+
+        mAdapter = new TrailerAdapter(getActivity(), cursor, 0);
+        listView.setAdapter(mAdapter);
+        //mCallback must be initialize with some value to prevent a void error
 
 
 
@@ -248,12 +263,6 @@ public class MovieDetailFragment extends Fragment implements  LoaderManager.Load
     @Override
     public void onSaveInstanceState(Bundle bundle) {
         bundle.putString(mMovieIdString, SaveId);
-        bundle.putString(mPlot, SavePlot);
-        bundle.putString(mFavStatus, SaveFavorite);
-        bundle.putString(mImageURLString,SaveImage);
-        bundle.putString(mRating,SaveRating);
-        bundle.putString(mReleaseDate,SaveRelese);
-        bundle.putString(mTitle, SaveTitle);
         super.onSaveInstanceState(bundle);
     }
     @Override
@@ -283,6 +292,15 @@ public class MovieDetailFragment extends Fragment implements  LoaderManager.Load
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if(data.moveToFirst()){
+            if(data.getString(M_COLUMN_FAV_STAT).equals(MovieSyncAdapter.TRUE)){
+                FavoriteButton.setBackgroundResource(R.drawable.star_gold);
+            }else{
+                FavoriteButton.setBackgroundResource(R.drawable.star_black);
+            }
+            SaveId = data.getString(M_COLUMN_ID_MOVIE);
+            Cursor TrailerCursor = getActivity().getContentResolver().query(MovieContract.TrailerEntry.CONTENT_URI,NOTIFY_TRAILER_PROJECTION,
+                    MovieContract.TrailerEntry.COLUMN_MOVIE_ID + " = ?",new String[]{SaveId}, null);
+            mAdapter.swapCursor(TrailerCursor);
             titleView.setText(data.getString(M_COLUMN_TITLE));
             dateView.setText(data.getString(M_COLUMN_RELEASE_DATE));
             ratingView.setText(formatRating(data.getString(M_COLUMN_VOTE_AVERAGE)));
@@ -290,6 +308,7 @@ public class MovieDetailFragment extends Fragment implements  LoaderManager.Load
             Picasso.with(mContext).load(data.getString(MainActivityFragment.COLUMN_IMG_URL)).into(PosterView);
             FavoriteButton.setVisibility(View.VISIBLE);
             ReviewButton.setVisibility(View.VISIBLE);
+
 
         }
     }
