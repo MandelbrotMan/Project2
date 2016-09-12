@@ -57,23 +57,17 @@ public class MovieAdapter extends CursorAdapter {
         ViewHolder viewHeld = (ViewHolder) view.getTag();
 
             Picasso.with(mContext).load(cursor.getString(MovieDetailFragment.M_COLUMN_IMG_URL)).into(viewHeld.posterView);
-
-
-
-
     }
+
     public static class ViewHolder{
-
-
         ImageView posterView;
-
-
         public ViewHolder(View view) {
 
             posterView = (ImageView) view.findViewById(R.id.movie_imageview);
         }
 
     }
+
     public void setUseTalbletLayout(boolean useTodayLayout) {
         mTwoPane = useTodayLayout;
 

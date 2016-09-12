@@ -18,14 +18,10 @@ public class TrailerAdapter extends CursorAdapter {
     public TrailerAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
     }
-
-    //To determine which view to inflate and which data belongs to which view
-
     @Override
     public int getViewTypeCount(){
         return 2;
     }
-
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
@@ -50,25 +46,15 @@ public class TrailerAdapter extends CursorAdapter {
         // we'll keep the UI functional with a simple (and slow!) binding.
         ViewHolder viewHeld = (ViewHolder) view.getTag();
         viewHeld.trailerView.setText(cursor.getString(MovieDetailFragment.T_COLUMN_TITLE));
-
-
-
     }
+
     public static class ViewHolder{
-
-
         TextView trailerView;
 
-
         public ViewHolder(View view) {
-
             trailerView = (TextView) view.findViewById(R.id.list_item_trailer_textview);
         }
 
     }
-    public void log(){
-        Log.v("adapter created", "test other area");
-    }
-
 
 }

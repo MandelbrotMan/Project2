@@ -14,8 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-import static com.squareup.picasso.Picasso.LoadedFrom.MEMORY;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -102,33 +100,23 @@ public class ReviewsActivityFragment extends Fragment {
     }
 
     private class LoadReviews extends AsyncTask<String, Void, Void> {
-        HttpURLConnection posterUrlConnection = null;
-
-
         protected Void doInBackground(String... param) {
             String movieTrailersUrl = getTrailerJsonURL();
-
-
             try {
-                getTrailersJSON(movieTrailersUrl);
+                getReviews(movieTrailersUrl);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-
             return null;
-
         }
 
-
+        //URL is tested to ensure the correct reference to the API can be made
         private String getTrailerJsonURL() {
             String JsonUrl = "";
             HttpURLConnection urlConnection = null;
             BufferedReader reader;
 
             URL popularURL;
-
-
             Uri base = Uri.parse("https://api.themoviedb.org").buildUpon().
                     appendPath("3").
                     appendPath("movie").
@@ -137,8 +125,6 @@ public class ReviewsActivityFragment extends Fragment {
                     appendQueryParameter("api_key", "0109ddff503db8186924929b1814320e").
                     appendQueryParameter("language", "en").
                     appendQueryParameter("include_image)langauge", "en, us").build();
-
-
             try {
                 popularURL = new URL(base.toString());
 
@@ -178,7 +164,8 @@ public class ReviewsActivityFragment extends Fragment {
 
         }
 
-        private void getTrailersJSON(String urlString) throws JSONException {
+        //Breaking up the reviews in case there is more than one review
+        private void getReviews(String urlString) throws JSONException {
 
             JSONObject trailersObject = new JSONObject(urlString);
             JSONArray trailerArray = trailersObject.getJSONArray("results");

@@ -21,8 +21,6 @@ public class Detail_Activity extends ActionBarActivity {
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.movie_detail_container, fragment)
                 .commit();
-
-
     }
 
 }

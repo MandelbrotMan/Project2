@@ -9,6 +9,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SyncRequest;
 import android.content.SyncResult;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -16,6 +17,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.raymondlian.movieappv2.MainActivityFragment;
+import com.example.raymondlian.movieappv2.MovieDetailFragment;
 import com.example.raymondlian.movieappv2.R;
 import com.example.raymondlian.movieappv2.data.MovieContract;
 
@@ -57,11 +60,8 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
         updateMovie.put(MovieContract.MovieEntry.COLUMN_LIST_TYPE, SEARCH_FAVORITES);
         getContext().getContentResolver().update(MovieContract.MovieEntry.CONTENT_URI, updateMovie,
                 MovieContract.MovieEntry.COLUMN_FAV_STAT + " = ?", new String[]{TRUE});
-
-
         getContext().getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI, MovieContract.MovieEntry.COLUMN_FAV_STAT + " = ?", new String[]{FALSE});
-        getContext().getContentResolver().delete(MovieContract.TrailerEntry.CONTENT_URI,MovieContract.TrailerEntry.COLUMN_IS_FAVORITE + " = ?", new String[]{FALSE});
-
+        getContext().getContentResolver().delete(MovieContract.TrailerEntry.CONTENT_URI, MovieContract.TrailerEntry.COLUMN_IS_FAVORITE + " = ?", new String[]{FALSE});
 
         String popularURL = getJsonURL(SEARCH_POPULAR);
         String topRatedURL = getJsonURL(SEARCH_TOP_RATED);
@@ -80,6 +80,18 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
             }
 
         }
+        //To prevent multiple movie entries in case a movie is saved as a favorite and it is re-entered when the app pulls from the api
+        Cursor cleanUpCursor = getContext().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, new String[]{MovieContract.MovieEntry.COLUMN_MOVIE_ID}, MovieContract.MovieEntry.COLUMN_FAV_STAT + " = ?", new String[]{TRUE}, null);
+        while(cleanUpCursor.moveToNext()){
+            String id = cleanUpCursor.getString(0);
+            getContext().getContentResolver().delete(MovieContract.TrailerEntry.CONTENT_URI, MovieContract.TrailerEntry.COLUMN_MOVIE_ID + " = ? AND " + MovieContract.TrailerEntry.COLUMN_IS_FAVORITE + " = ? " ,
+                    new String[]{id, FALSE});
+            getContext().getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI, MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ? AND " + MovieContract.MovieEntry.COLUMN_FAV_STAT + " = ? " ,
+                    new String[]{id, FALSE});
+        }
+
+
+
 
 
     }
@@ -375,19 +387,10 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
         // If the password doesn't exist, the account doesn't exist
         if ( null == accountManager.getPassword(newAccount) ) {
 
-        /*
-         * Add the account and account type, no password or user data
-         * If successful, return the Account object, otherwise report an error.
-         */
             if (!accountManager.addAccountExplicitly(newAccount, "", null)) {
                 return null;
             }
-            /*
-             * If you don't set android:syncable="true" in
-             * in your <provider> element in the manifest,
-             * then call ContentResolver.setIsSyncable(account, AUTHORITY, 1)
-             * here.
-             */
+
 
             onAccountCreated(newAccount, context);
         }
@@ -405,9 +408,6 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
          */
         ContentResolver.setSyncAutomatically(newAccount, context.getString(R.string.content_authority), true);
 
-        /*
-         * Finally, let's do a sync to get things started
-         */
         syncImmediately(context);
     }
 

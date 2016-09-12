@@ -38,13 +38,14 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     View mRoot;
     private boolean isTablet = false;
-    static int CurrentList = 0; //0 if its MoviesListed, 1 if FavoriteMovies --used for item selection
 
-    LinearLayout HeaderProgress;
     Bundle formMovieDetailPackage;
     Callback mCallback;
 
-    private static final String[] NOTIFY_MOVIE_PROJECTION = new String[] {
+    private static int mStateValue = 0; //0 == popular, 1 == rating, 2 == favorites;
+
+
+    public static final String[] NOTIFY_MOVIE_PROJECTION = new String[] {
             MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
             MovieContract.MovieEntry.COLUMN_TITLE,
             MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
@@ -63,6 +64,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     static final int COLUMN_SYNOPSIS = 5;
     static final int COLUMN_IMG_URL = 6;
     static final int COLUMN_FAV_STAT = 7;
+
+    static final String mState = "State";
 
 
 
@@ -100,29 +103,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             public void onItemClick(AdapterView adapterView, View view, int position, long l) {
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 String id = cursor.getString(COLUMN_ID_MOVIE);
-                String favoriteStatus = MovieSyncAdapter.FALSE;
-
-                //Prevents more than two copies of the same entry if the favorite button is pressed again.
-                Cursor favCursor =   getActivity().getContentResolver().query
-                        (MovieContract.MovieEntry.CONTENT_URI,new String[]{MovieContract.MovieEntry.COLUMN_FAV_STAT},
-                        MovieContract.MovieEntry.COLUMN_FAV_STAT + " = ? AND " + MovieContract.MovieEntry._ID + " = ?"
-                                ,new String[]{MovieSyncAdapter.TRUE, id}, null);
-                if(favCursor.moveToFirst()){
-                    favoriteStatus = MovieSyncAdapter.TRUE;
-                }
-
-                // CursorAdapter returns a cursor at the correct position for getItem(), or null
-                // if it cannot seek to that position.
-                if (cursor != null) {
-
                     mCallback.onItemSelected(id
                             );
-                    mPosition = position;
-
-                }
             }
         });
-
 
         setHasOptionsMenu(true);
         return mRoot;
@@ -130,8 +114,11 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     }
     @Override
     public  void onActivityCreated(Bundle saveInstanceState){
+        Bundle bundle = new Bundle();
+        bundle.putInt(mState, mStateValue);
+        getLoaderManager().restartLoader(0, bundle, this);
         super.onActivityCreated(saveInstanceState);
-        getLoaderManager().initLoader(0, null, this);
+
     }
     @Override
     public void onAttach(Activity activity) {
@@ -158,6 +145,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     }
     @Override
     public void onSaveInstanceState(Bundle bundle) {
+        bundle.putInt(mState, mStateValue);
         super.onSaveInstanceState(bundle);
     }
 
@@ -173,15 +161,11 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_popularityMenu
                 ) {
-
             Cursor swapThis = getActivity().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,NOTIFY_MOVIE_PROJECTION,
                     MovieContract.MovieEntry.COLUMN_LIST_TYPE + " = ?",new String[]{MovieSyncAdapter.SEARCH_POPULAR}, null);
             mPosterAdapter.swapCursor(swapThis);
             mListTitle.setText(MovieSyncAdapter.SEARCH_POPULAR);
-
-
-
-
+            mStateValue = 0;
         }
         if (id == R.id.action_ratingMenu
                 ) {
@@ -189,18 +173,15 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                     MovieContract.MovieEntry.COLUMN_LIST_TYPE + " = ?",new String[]{MovieSyncAdapter.SEARCH_TOP_RATED}, null);
             mPosterAdapter.swapCursor(swapThis);
             mListTitle.setText(MovieSyncAdapter.SEARCH_TOP_RATED);
-
-
+            mStateValue = 1;
         }
         if (id == R.id.action_FavoriteMenu){
             Cursor swapThis = getActivity().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,NOTIFY_MOVIE_PROJECTION,
                     MovieContract.MovieEntry.COLUMN_FAV_STAT + " = ?",new String[]{MovieSyncAdapter.TRUE}, null);
             mPosterAdapter.swapCursor(swapThis);
             mListTitle.setText("Favorites");
-
-
+            mStateValue = 2;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -216,26 +197,43 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        
-        return new CursorLoader(getActivity(),
-                MovieContract.MovieEntry.CONTENT_URI,
-                NOTIFY_MOVIE_PROJECTION,
-                MovieContract.MovieEntry.COLUMN_LIST_TYPE + " = ?",
-                new String[]{MovieSyncAdapter.SEARCH_POPULAR},
-                null);
+        mStateValue = args.getInt(mState);
+        switch (mStateValue) {
+            case 1:
+                return new CursorLoader(getActivity(),
+                        MovieContract.MovieEntry.CONTENT_URI,
+                        NOTIFY_MOVIE_PROJECTION,
+                        MovieContract.MovieEntry.COLUMN_LIST_TYPE + " = ?",
+                        new String[]{MovieSyncAdapter.SEARCH_TOP_RATED},
+                        null);
+            case 2:
+                return new CursorLoader(getActivity(),
+                        MovieContract.MovieEntry.CONTENT_URI,
+                        NOTIFY_MOVIE_PROJECTION,
+                        MovieContract.MovieEntry.COLUMN_LIST_TYPE + " = ?",
+                        new String[]{MovieSyncAdapter.SEARCH_FAVORITES},
+                        null);
 
-
+            default: return new CursorLoader(getActivity(),
+                    MovieContract.MovieEntry.CONTENT_URI,
+                    NOTIFY_MOVIE_PROJECTION,
+                    MovieContract.MovieEntry.COLUMN_LIST_TYPE + " = ?",
+                    new String[]{MovieSyncAdapter.SEARCH_POPULAR},
+                    null);
+        }
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mPosterAdapter.swapCursor(data);
-        if (mPosition != ListView.INVALID_POSITION) {
-            // If we don't need to restart the loader, and there's a desired position to restore
-            // to, do so now.
-            mPosterGridview.smoothScrollToPosition(mPosition);
+        switch (mStateValue){
+            case 1:  mListTitle.setText("Top Rated");
+                break;
+            case 2:  mListTitle.setText("Favorites");
+                break;
+            default: mListTitle.setText("Popular");
+                break;
         }
-
     }
 
     @Override
